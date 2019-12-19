@@ -1,0 +1,66 @@
+
+   
+  Windows批处理的高级用法            【字体：小 大】 
+ 
+  
+   
+   
+ Windows批处理的高级用法 
+ 
+作者：未知 文章来源：华夏收集 点击数：795 更新时间：2006-5-28 
+ 
+ 
+ 
+嗯，标题好像很大，貌似会图文并茂的讲解很多用法似的……嘿嘿，其实没这么复杂，只是从一个例子出发，抛砖引玉，引出Windows批处理中并不为我们注意的高级用法。真的很有用哦！
+
+有这么一个需求，要求做一个批处理文件，能够自动执行某个目录中的几个可执行文件，并且把它们的屏幕输出存入一个Log文件中。这里涉及到两个问题：
+
+如何将屏幕输出转向到文件 
+如何确定Log的文件名 
+这两个问题都比较简单。第一个问题，通过“>”和“>>”可以轻松搞定，第二个问题似乎也不难，因为Windows支持环境变量，其中有一个“%DATE%”代表当前的日期，还有个“%TIME%”代表当时的时间，精确到百分之一秒。似乎这已经足够了吧，于是写出下面的脚本：
+
+@echo off
+SET LogFile=%DATE%%TIME%.log
+
+app1.exe param1 param2  > %LogFile%
+app2.exe param1 param2 >> %LogFile%
+app3.exe param1 param2 >> %LogFile%
+但是，很可惜，它无法按预期结果运行，它只会生成一个没有扩展名的文件，形如“2006-05-25”。想了想，哦，明白了，因为%DATE%打出来的东西是“2006-05-25 星期四”，遇到空格之后重定向的机制就开始起作用了，它以为这就是文件名全称了。
+好了，那么我来加上引号，这下应该无敌了吧。
+
+@echo off
+SET LogFile="%DATE%%TIME%.log"
+
+app1.exe param1 param2  > %LogFile%
+app2.exe param1 param2 >> %LogFile%
+app3.exe param1 param2 >> %LogFile%
+
+
+但是，还是很可惜，Windows会报告“参数错误”。这又是怎么了呢？嗯，原来，Windows不允许文件名或目录名中含有“:”，而%TIME%的输出结果中恰好有两个“:”。这就无语了。
+正在绝望之时，突然在命令行里鬼使神差的敲了一个“help set”，一切问题都明白了！以前都没有意识到啊，Windows批处理竟有如此强大的威力（当然，这还是没法和*nix比，不过已经比原来认识到的强多了）。
+现在知道了，这个脚本可以这样写：
+
+@echo off
+SET LogFile=%DATE%%TIME%
+REM 把 : 都替换成 -
+SET LogFile=%LogFile::=-%
+REM 把空格都替换成 -
+SET LogFile=%LogFile =-%
+REM 把 . 都替换成 -
+SET LogFile=%LogFile.=-%
+
+SET LogFile=%LogFile%.log
+
+app1.exe param1 param2  > %LogFile%
+app2.exe param1 param2 >> %LogFile%
+app3.exe param1 param2 >> %LogFile%
+
+至于具体的原理，大家可以在命令行里面敲help set就可以清楚看到了，Windows的文档做的就是好啊。
+此外，还有help if和help call也很值得看，这些东西组合起来就构成了Windows批处理的高级用法。
+
+嗯，说完了（噢，好像什么都没说啊……）。 
+ 
+ 
+ 
+ 
+ 

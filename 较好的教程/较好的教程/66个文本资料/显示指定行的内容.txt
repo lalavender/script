@@ -1,0 +1,102 @@
+
+    显示指定行的内容
+
+出处：http://www.cn-dos.net/forum/viewthread.php?tid=21647
+
+
+This page shows how to read specific lines from a text file. There are many ways to have the for /f command read the input file, for instance:-
+
+for /f "delims=" %%a in (input.txt) do ...
+
+for /f "delims=" %%a in ('type input.txt') do ... 
+
+for /f "delims=" %%a in ('more ^< input.txt') do ... 
+
+However, only the last method (using the more command) will give consistent results across Windows NT, 2000, XP and 2003. The first method does not recognise unicode files. Also, the usebackq switch must be used if the input filename contains spaces. The second method, using the type command, also fails to recognise unicode files on Windows 2000, XP and 2003 if the input file does not begin with a bit order mark (BOM).
+
+In all the examples, assume the contents of of the file numbers.txt to be:-
+
+one
+two
+three
+four
+five
+six
+seven
+eight
+nine
+ten
+
+Displaying the first line
+
+This example prints one.
+
+@echo off & setlocal ENABLEEXTENSIONS
+set "first="
+for /f "delims=" %%a in ('more ^< numbers.txt') do (
+  if not defined first set first=%%a
+)
+echo/%first%
+
+Displaying the first X lines
+
+This example prints one, two and three.
+
+@echo off & setlocal ENABLEEXTENSIONS
+set "lines=3"
+set i=-1
+set "ok=" 
+for /f "delims=" %%a in ('more ^< numbers.txt') do (
+  set/a i+=1 & for /f %%z in ('echo/%%i%%') do (
+    if "%%z"=="%lines%" set ok=1
+  )
+  if not defined ok echo/%%a
+)
+
+Displaying the last line
+
+This example prints ten. 
+
+@echo off & setlocal ENABLEEXTENSIONS
+for /f "delims=" %%a in ('more ^< numbers.txt') do set "last=%%a"
+echo/%last% 
+
+Displaying the last X lines
+
+This example prints nine and ten. 
+
+@echo off & setlocal ENABLEEXTENSIONS
+set "lines=2"
+for /f %%a in ('find/c /v "" ^< numbers.txt') do set/a skip=%%a-lines
+for /f "delims=" %%a in ('more/e +%skip% ^< numbers.txt') do (
+  echo/%%a
+)
+
+Displaying the Nth line
+
+This example prints three. Note that instead of using the more command's /e switch, the skip option could have been used with the for /f command, however, this fails is it is set to any number less than one. 
+
+@echo off & setlocal ENABLEEXTENSIONS
+set LineNo=3
+set "line="
+set/a LineNo-=1
+for /f "delims=" %%a in ('more/e +%LineNo% ^< numbers.txt') do (
+  if not defined line set "line=%%a"
+)
+echo/%line%
+
+Displaying the Nth line plus X number of lines 
+
+This example prints five and six. 
+
+@echo off & setlocal ENABLEEXTENSIONS
+set start=5
+set "lines=2"
+set/a i=-1,start-=1
+set "ok=" 
+for /f "delims=" %%a in ('more/e +%start% ^< numbers.txt') do (
+  set/a i+=1 & for /f %%z in ('echo/%%i%%') do (
+    if "%%z"=="%lines%" set ok=1
+  )
+  if not defined ok echo/%%a
+)

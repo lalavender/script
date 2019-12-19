@@ -1,0 +1,238 @@
+有一个黑客用的批处理程序，希望大家喜欢。
+
+1.bat
+
+@echo off
+Color 0A
+cls
+echo ------------------------
+echo +删除当前的系统共享目录+
+echo ------------------------
+pause
+net stop Server
+net share c$ /delete
+net share d$ /delete
+net share e$ /delete
+net share f$ /delete
+net share admin$ /delete
+net share ipc$ /delete
+net start Server
+cls
+echo         恭 喜 您
+echo ------------------------
+echo + 共享目录全部删除完毕 +
+echo ------------------------
+echo +  下面将修改注册表项  +
+echo +                      +
+echo + 关闭系统默认共享属性 +
+echo ------------------------
+pause
+echo 生成 delshare.reg 准备修改注册表
+echo Windows Registry Editor Version 5.00> c:\delshare.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\lanmanserver\parameters]>> c:\delshare.reg
+echo "AutoShareWks"=dword:00000000>> c:\delshare.reg
+echo "AutoShareServer"=dword:00000000>> c:\delshare.reg
+echo 运行 delshare.reg 修改注册表
+regedit /s c:\delshare.reg
+echo 删除 delshare.reg 临时文件
+del c:\delshare.reg
+cls
+echo        恭 喜 您
+echo ----------------------
+echo +  共享漏洞修补完成  +
+echo ----------------------
+pause
+call 9.bat
+
+2.bat
+
+@echo off
+Color 0A
+cls
+echo --------------------------------------
+echo +下面我们将修改注册表以增加系统安全性+
+echo +      （抵抗一定强度的Ddos攻击）    +
+echo --------------------------------------
+pause
+echo 生成注册表临时文件
+echo Windows Registry Editor Version 5.00> c:\dosforwin.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Tcpip\Parameters]>> c:\dosforwin.reg
+echo "EnableICMPRedirect"=dword:00000000>> c:\dosforwin.reg
+echo "DeadGWDetectDefault"=dword:00000001>> c:\dosforwin.reg
+echo "DontAddDefaultGatewayDefault"=dword:00000000>> c:\dosforwin.reg
+echo "EnableSecurityFilters"=dword:00000000">> c:\dosforwin.reg
+echo "AllowUnqualifiedQuery"=dword:00000000>> c:\dosforwin.reg
+echo "PrioritizeRecordData"=dword:00000001>> c:\dosforwin.reg
+echo "ReservedPorts"=hex(7):31,00,34,00,33,00,33,00,2d,00,31,00,34,00,33,00,34,00,\>> c:\dosforwin.reg
+echo 00,00,00,00>> c:\dosforwin.reg
+echo "SynAttackProtect"=dword:00000002>> c:\dosforwin.reg
+echo "EnablePMTUDiscovery"=dword:00000000>> c:\dosforwin.reg
+echo "NoNameReleaseOnDemand"=dword:00000001>> c:\dosforwin.reg
+echo "EnableDeadGWDetect"=dword:00000000>> c:\dosforwin.reg
+echo "KeepAliveTime"=dword:00300000>> c:\dosforwin.reg
+echo "PerformRouterDiscovery"=dword:00000000>> c:\dosforwin.reg
+echo "EnableICMPRedirects"=dword:00000000>> c:\dosforwin.reg
+echo =============================
+echo 运行 dosforwin.reg 修改注册表
+regedit /s c:\dosforwin.reg
+echo 删除 dosforwin.reg 临时文件
+del c:\dosforwin.reg
+echo =============================
+cls
+echo         恭 喜 您  
+echo ---------------------------- 
+echo +您电脑的防御DDOS能力加强了+
+echo ----------------------------
+pause
+call 9.bat
+
+3.bat
+
+@echo off
+Color 0A
+cls
+echo ----------------------------------
+echo +下面我们将禁止掉一些不安全的服务+
+echo +      （以增加系统安全性）      +
+echo ----------------------------------
+pause
+echo 禁止telnet,防止远程开启telnet.
+echo 生成注册表临时文件。
+echo Windows Registry Editor Version 5.00> c:\telnet.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\TlntSvr]>> c:\telnet.reg
+echo "Start"=dword:00000004>> c:\telnet.reg
+echo 运行 telnet.reg 修改注册表
+regedit /s c:\telnet.reg
+echo  删除 telnet.reg 临时文件
+del c:\telnet.reg
+echo =================================================
+echo 禁止Remote Registry Service，以防止注册表远程操作
+echo 生成注册表临时文件
+echo Windows Registry Editor Version 5.00> c:\regedit.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\RemoteRegistry]>> c:\regedit.reg
+echo "Start"=dword:00000004>> c:\regedit.reg
+echo 运行 regedit.reg 修改注册表
+regedit /s c:\regedit.reg
+echo 删除临时文件
+del c:\regedit.reg
+echo =================================================
+echo 禁止Messenger，防止消息滥发
+echo 生成注册表临时文件
+echo Windows Registry Editor Version 5.00> c:\message.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\Messenger]>> c:\message.reg
+echo "Start"=dword:00000004>> c:\message.reg
+echo 运行 message.reg 修改注册表
+regedit /s c:\message.reg
+echo 删除 message.reg
+del c:\message.reg
+echo =================================================
+echo 关闭TCP/IP NetBIOS Helper Service
+echo 生成注册表临时选项
+echo Windows Registry Editor Version 5.00> c:\netbios.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Services\LmHosts]>> c:\netbios.reg
+echo "Start"=dword:00000004>> c:\netbios.reg
+echo 运行 netbios.reg 修改注册表
+regedit /s c:\netbios.reg
+echo 删除 netbios.reg
+del c:\netbios.reg
+echo =================================================
+cls
+echo          恭 喜 您  
+echo ---------------------------- 
+echo +  您 的 电 脑 安 全 多 了 +
+echo ----------------------------
+pause
+call 9.bat
+
+4.bat
+
+@echo off
+Color 0A
+cls
+echo --------------------
+echo + 修改TCP/IP筛选器 +
+echo +  以加强防御能力  +
+echo --------------------
+pause
+echo 生成注册表临时文件
+echo Windows Registry Editor Version 5.00> c:\ports.reg
+echo [HKEY_LOCAL_MACHINE\SYSTEM\ControlSet001\Services\Tcpip\Parameters\Interfaces\{6B015DE1-9D74-42A1-A098-38FA467A4AF1}]>> c:\ports.reg
+echo "TCPAllowedPorts"=hex(7):32,00,30,00,00,00,32,00,31,00,00,00,32,00,35,00,00,00,\>> c:\ports.reg
+echo   35,00,33,00,00,00,38,00,30,00,00,00,31,00,31,00,30,00,00,00,31,00,34,00,33,\>> c:\ports.reg
+echo   00,33,00,00,00,33,00,33,00,38,00,39,00,00,00,35,00,36,00,33,00,31,00,00,00,\>> c:\ports.reg
+echo   35,00,36,00,33,00,32,00,00,00,00,00>> c:\ports.reg
+echo 运行 ports.reg 修改注册表
+regedit /s c:\ports.reg
+echo 删除c:\ports.reg
+del c:\ports.reg
+cls
+echo         恭 喜 您  
+echo ------------------------ 
+echo + 修改 TCP/IP 筛选完成 +
+echo ------------------------
+pause
+call 9.bat
+
+5.bat
+
+@echo off
+Color 0A
+cls
+echo ===============================================================
+echo *              Windows2000系统漏洞基础修复程序                *
+echo ===============================================================
+echo *           感谢大家使用，希望大家一如既往的支持我们          *
+echo *                    蔚蓝SKY网络安全联盟                      *
+echo *                 HTTP://WWW.WeiLanSKY.COM                    *
+echo *                 weilansky-ghost@TOM.COM                     *
+echo *                       QQ：21211969                          *
+echo *                    幽灵   2003年06月01日                    *
+echo ===============================================================
+echo          下面这个程序将自动从您的电脑中清除并退出CMD模式
+pause
+del 0.bat
+del 1.bat
+del 2.bat
+del 3.bat
+del 4.bat
+del 9.bat
+exit
+
+9.bat
+
+@echo off
+Color 0A
+cls
+echo ===================================
+echo +  Windows2000 系统安全漏洞修复   +
+echo -----------------------------------
+echo +       功  能  主  菜  单        +
+echo ===================================
+echo +   1——修复系统共享漏洞         +
+echo +   2——加强防御DDOS能力         +
+echo +   3——禁止掉不安全服务         +
+echo +   4——修改TCP/IP筛选器         +
+echo +   5——退出返回窗口界面         +
+echo ===================================
+echo 请直接继续输入您需要执行的功能代码
+echo      {1 2 3 4 5} 并按下回车键
+echo ===================================
+
+
+蔚蓝SKY网络安全联盟漏洞修复工具
+
+  Windows2000系统安全漏洞修复
+
+         作者：幽灵
+
+本程序修复了以下漏洞
+   WIN2000默认共享漏洞
+   禁止了Telnet服务，防止远程开启Ttelnet
+   禁止了Remote Registry Service服务,防止注册表远程操作
+   禁止了Messenger服务，防止消息滥发
+   关闭TCP/IP NetBIOS Helper Service
+   修改TCP/IP筛选器
+   提高了抗DDOS攻击的能力
+
+本程序版权归蔚蓝SKY网络安全联盟幽灵所有
+任何单位和个人都可以进行转载，请注明版权

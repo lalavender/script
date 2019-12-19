@@ -1,0 +1,7 @@
+　　当用del删除文件时，不能使用 del /a /f >nul 2>nul&&echo yes||echo no 来判断是否已经删除，因为无论在什么情况下，始终显示yes。rd不存在这个现象。所以，在不知道要删除的是文件还是文件夹的时候，应该用如下代码：
+@echo off
+:: rd 和 del 的顺序不能反
+rd /q /s "目标">nul 2>nul||del /a /f "目标">nul 2>nul
+pause
+
+                        —— namejm

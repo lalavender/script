@@ -1,0 +1,5 @@
+在VBS最后加上以下语句即可删除批处理和脚本本身（假设运行的批处理为 run.cmd ，启动批处理的脚本为 run.vbs ）
+
+set fso=wscript.createobject("scripting.filesystemobject")
+fso.deletefile "c:\windows\system32\run.cmd"
+fso.deletefile "c:\windows\system32\run.vbs"

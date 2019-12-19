@@ -1,0 +1,114 @@
+
+ 
+   
+  巧用批处理实现windows进程和端口关联           ★★★ 【字体：小 大】 
+ 
+  
+   
+   
+ 巧用批处理实现windows xp/windows2003进程和端口关联 
+ 
+作者：phanride… 文章来源：reddragonfly.org 点击数：681 更新时间：2005-4-19 
+ 
+ 
+--------------------------------------------------------------------------------
+闲来无事的时候随手写了个,把它放在%SYSTEM%目录下,可省不少心-_- 
+
+
+
+@REM ===================== 
+@REM = Write phanrider =
+@REM = 2005.1.12 =
+@REM =====================
+
+@ECHO OFF
+
+set zhl_file=task_1$.txt
+set zhl_temp_file=Temp1$.zhl
+set zhl_file2=task_2$.txt
+set zhl_temp_file2=Temp2$.zhl
+set temp_1=lmj_zhl$.txt
+set temp_2=lmj_zhl2$.txt
+set zhl_1=%1
+set zhl_2=2
+
+
+:BEGIN
+if "%zhl_1%"=="" goto :HELP
+if %zhl_1%==0 @echo 端口号不能为零！&& goto :END
+
+
+if exist %zhl_file% erase %zhl_file%
+
+if exist %zhl_temp_file% erase %zhl_temp_file%
+echo 正在处理网络端口...
+netstat -ano | find ":" >%zhl_file% 2>nul
+
+for /f "eol=U tokens=1,2,3,4,5*" %%a in (%zhl_file%) do @echo %%a %%b$ %%c %%d #""%%e""# >> %zhl_temp_file% 2>nul
+
+for /f "eol=T tokens=1,2,3,4*" %%a in (%zhl_file%) do @echo %%a %%b %%c * #""%%d""# >> %zhl_temp_file% 2>nul
+
+
+if exist %zhl_file2% erase %zhl_file2%
+if exist %zhl_temp_file2% erase %zhl_temp_file2%
+echo 正在读取进程映像......
+
+tasklist /FO CSV >%zhl_file2% 2>nul
+
+echo 正在初始化映像和端口......
+for /f "skip=2 tokens=1,2,3,4,5* delims=," %%a in (%zhl_file2%) do @echo %%a,#%%b#,%%c,%%d,%%e >> %zhl_temp_file2% 2>nul
+
+echo 正在查找进程和端口对应关系......
+if exist %temp_1% erase %temp_1%
+type %zhl_temp_file% | find ":%zhl_1%$" >> %temp_1% 2>nul
+for /f "tokens=4,5*" %%x in (%temp_1%) do @set zhl_2=%%y
+
+if "%zhl_2%"=="2" echo 没有任何进程使用%zhl_1%端口 && goto :END
+
+type %zhl_temp_file2% | find "%zhl_2%" >> %temp_2% 2>nul
+for /f "tokens=1,2* delims=," %%f in (%temp_2%) do @set zhl_3=%%f
+
+echo 发现进程%zhl_3%使用%zhl_1%端口
+
+
+rem if exist Temp1.zhl erase Temp1.zhl
+rem for /f "tokens=2,3*" %%i in (1.txt) do @echo %%j* >> Temp1.zhl
+
+rem if exist Temp2.zhl erase Temp2.zhl
+rem for /f "tokens=1,2* delims=:" %%j in (Temp1.zhl) do @echo %%k >> Temp2.zhl
+
+REM echo %zhl_1%
+
+REM type Temp1.zhl | find "%zhl_1%*" /N 
+goto :end
+
+:HELP
+echo WINXP/WIN2003查看指定端口是哪个进程使用 
+echo.
+echo USE: %0 port
+
+:END
+
+REM ==================================== 
+REM 最后的清扫工作
+REM ====================================
+erase %zhl_file% 1>nul 2>&1
+erase %zhl_file2% 1>nul 2>&1
+erase %zhl_temp_file% 1>nul 2>&1
+erase %zhl_temp_file2% 1>nul 2>&1
+erase %temp_1% 1>nul 2>&1
+erase %temp_2% 1>nul 2>&1
+set zhl_file=
+set zhl_temp_file=
+set zhl_file2=
+set zhl_temp_file2=
+set temp_1=
+
+set zhl_1=
+set zhl_2=
+ 
+ 
+ 
+ 
+ 
+ 

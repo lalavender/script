@@ -1,0 +1,9 @@
+其实for /l %i in (1,1,99) do @echo %i 括号中间的分隔号有多种
+形式如下：
+for /l %i in (1,1,99) do @echo %i
+for /l %i in (1 1 99) do @echo %i
+for /l %i in (1;1;99) do @echo %i
+for /l %i in (1=1=99) do @echo %i
+for /l %i in (1<tab>1<tab>99) do @echo %i  <tab>----tab键
+
+9527 于 2006-12-22 发表于中国DOS联盟

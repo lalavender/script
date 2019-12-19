@@ -1,0 +1,98 @@
+一、
+
+    —— pengfei
+
+@echo off
+for /f "tokens=*" %%i in ('dir /s /a-d /b "D:\Share iles\资料\*f*.*"') do (
+    echo %%i
+    echo %%i>>file.txt
+)
+pause
+
+提取这个文件夹下的所有存在f的文件.
+资料\*f*.*
+
+提取到的文件会生成到file.txt中
+
+文件夹弄错啦!
+
+这里正常提取到ftp.txt
+
+ok 问题出现了
+
+提取到娟平 014.jpg等不存以f字符, 但中间有空格的文件.
+
+D:\Share iles\资料\照片\花花公子\11961873_218529.jpg
+
+这个文件存在_符号.
+
+D:\Share iles\资料\ADSL\ftp2.txt
+D:\Share iles\资料\照片\1\娟平 014.jpg
+D:\Share iles\资料\照片\1\娟平 007.jpg
+D:\Share iles\资料\照片\1\娟平 015.jpg
+D:\Share iles\资料\照片\1\娟平 016.jpg
+D:\Share iles\资料\照片\1\娟平 017.jpg
+D:\Share iles\资料\照片\1\娟平 018.jpg
+D:\Share iles\资料\照片\1\娟平 019.jpg
+D:\Share iles\资料\照片\1\娟平 104.jpg
+D:\Share iles\资料\照片\1\娟平 105.jpg
+D:\Share iles\资料\照片\1\娟平 106.jpg
+D:\Share iles\资料\照片\1\娟平 107.jpg
+D:\Share iles\资料\照片\1\娟平 108.jpg
+D:\Share iles\资料\照片\1\娟平 109.jpg
+D:\Share iles\资料\照片\1\娟平 114.jpg
+D:\Share iles\资料\照片\1\娟平 115.jpg
+D:\Share iles\资料\照片\1\娟平 116.jpg
+D:\Share iles\资料\照片\1\娟平 117.jpg
+D:\Share iles\资料\照片\1\娟平 118.jpg
+D:\Share iles\资料\照片\1\娟平 119.jpg
+D:\Share iles\资料\照片\1\娟平 124.jpg
+D:\Share iles\资料\照片\1\娟平 128.jpg
+D:\Share iles\资料\照片\1\娟平 134.jpg
+D:\Share iles\资料\照片\1\娟平 138.jpg
+D:\Share iles\资料\照片\1\娟平 146.jpg
+D:\Share iles\资料\照片\1\娟平 156.jpg
+D:\Share iles\资料\照片\1\娟平 166.jpg
+D:\Share iles\资料\照片\1\娟平 176.jpg
+D:\Share iles\资料\照片\1\娟平 186.jpg
+D:\Share iles\资料\照片\3\cmy8543_61.gif
+D:\Share iles\资料\照片\3\misukhot_44.gif
+D:\Share iles\资料\照片\3\misukhot_80.gif
+D:\Share iles\资料\照片\3\refiju_42.jpg
+D:\Share iles\资料\照片\3\refiju_43.jpg
+D:\Share iles\资料\照片\3\zkmrf005-qqyeri2.gif
+D:\Share iles\资料\照片\7\爬山 017.jpg
+D:\Share iles\资料\照片\7\照片 002.jpg
+D:\Share iles\资料\照片\5\照片 042.jpg
+D:\Share iles\资料\照片\5\照片 032.jpg
+D:\Share iles\资料\照片\5\照片 022.jpg
+D:\Share iles\资料\照片\5\照片 012.jpg
+D:\Share iles\资料\照片\5\照片 006.jpg
+D:\Share iles\资料\照片\5\照片 002.jpg
+D:\Share iles\资料\照片\花花公子\11961840_218524.jpg
+D:\Share iles\资料\照片\花花公子\11961851_218527.jpg
+D:\Share iles\资料\照片\花花公子\11961873_218529.jpg
+
+二、
+
+  —— namejm
+
+比较如下两段代码：
+1、
+@echo off
+for /f "tokens=*" %%i in ('dir /a /b /s "D:\test"') do (
+    echo %%~ai
+)
+pause
+
+2、
+@echo off
+for /f %%i in ('dir /a /b "D:\test.txt"') do (
+    echo %%~ai
+)
+pause
+
+1的代码能正确取到每个文件的属性，但是，2的代码取到的是当前目录下test.txt的属性，
+解决办法是把2中的'dir /a /b "D:\test.txt"'改为"d:\test.txt"
+
+
