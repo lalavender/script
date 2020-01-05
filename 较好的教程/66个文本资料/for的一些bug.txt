@@ -1,0 +1,49 @@
+
+　　1、关于冒号：当某行内容以 : 打头时，用 for /f "tokens=1* delims=:" %%i in ('findstr /n .* test.txt') do echo.%%j 会把 : 过滤掉；
+
+　　2、关于分号：findstr .* test.txt 可以把以分号打头的行完整显示出来，但是，用在for语句中就不能找到了，必须加上参数/n才可以，似乎是for语句会把以分号打头的行当作注释内容忽略掉，好象不是findstr的错；而不放在for语句中的 type、more和findstr都是可以的；
+
+　　解决问题1和问题2的方案有：
+
+稍微复杂一点的：
+
+@echo off
+:: 不会忽略空行
+for /f "delims=" %%i in ('findstr /n .* test.txt') do (
+    set "str=%%i"
+    call set "str=%%str:*:=%%"
+    call echo "%%str%%"
+)
+pause
+
+最简洁的：
+
+@echo off
+:: 此代码会忽略空行
+for /f "delims= eol=" %%i in (test.txt) do echo %%i
+pause
+
+
+　　3、在for扩展中，%%~si 表示扩充的路径只含短文件名，但是在以下的测试过程中，却发现真正的情况并非如此：
+
+　　测试环境：
+--------------------------------------------------------------------------------
+D:\abcdefg hijk\abcd efgh.txt
+D:\abcdefg hijk\te st.txt
+
+　　测试代码：
+--------------------------------------------------------------------------------
+@echo off
+for /f "delims=" %%i in ('dir /a /b *.txt') do echo %%~si
+pause
+
+　　测试结果：
+--------------------------------------------------------------------------------
+D:\ABCDEF~1\ABCDEF~1.TXT
+D:\ABCDEF~1\TEST~1.TXTtxt
+
+　　看到测试结果的最后一条记录了吗？居然扩展到了 TEST~1.TXTtxt ！
+
+　　总结了一下出错的情形，似乎是这样的：当路径中有超过一个的地方因为目录名超过11个字符而扩充到短文件名的时候，文件名+后缀名 少于11个字符且带空格的文件就会发生扩展错误。
+
+                                                           —— namejm

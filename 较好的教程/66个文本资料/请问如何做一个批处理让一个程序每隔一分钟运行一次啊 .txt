@@ -1,0 +1,10 @@
+用VBS应该好解决：
+CODE:  [Copy to clipboard]
+--------------------------------------------------------------------------------
+
+dim a
+set a=CreateObject("Wscript.Shell")
+Do
+a.run "运行的程序"
+Wscript.Slleep 60000
+Loop

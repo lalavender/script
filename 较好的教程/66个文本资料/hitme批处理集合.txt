@@ -1,0 +1,2177 @@
+
+
+        此文本文档由pdf格式转换过来，由于转换的限制，
+    代码可能存在断行的情况，在使用的过程中请注意检查。
+
+-----------------------------------------------------------------------------
+
+
+1. CMD.mdb 
+1. 16<=>10  
+          欲在cmd下转进制，自己搞加减乘除? 喝多了头疼死，算了 
+          偷了把鸡，利用ping和set帮忙运算了一把 
+          hoho，什么都不会，就会投机，巨人肩膀上一站，技术在那里？ 
+          用法: DxH 数字 
+          例如: 
+          DxH 1234567 
+          DxH 0x1234fd3 
+          @echo off 
+           if "%1"  "" goto :syntax 
+           if "%1"  "/?" goto :syntax 
+           :H2D 
+          set tmpx=%1 
+           if "%tmpx:~0,2%"  "0x" ( 
+          for /f "delims=" %%i in ('set /a %1') do ( 
+          echo. 
+          echo %1 = %%i 
+          goto :end 
+          ) 
+          ) 
+           :D2H 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /f "tokens=2" %%i in ('ping %1 -n 1 -w 1 ^|find "Pinging"') do ( 
+          for /f "tokens=1-4 delims=." %%a in ("%%i") do ( 
+          set /a tmp1 = %%a / 16 
+          set /a tmp2 = %%a - 16 * !tmp1! 
+          set /a tmp3 = %%b / 16 
+          set /a tmp4 = %%b - 16 * !tmp3! 
+           set /a tmp5 = %%c / 16 
+           set /a tmp6 = %%c - 16 * !tmp5! 
+           set /a tmp7 = %%d / 16 
+           set /a tmp8 = %%d - 16 * !tmp7! 
+           for /l %%a in (1,1,8) do ( 
+           if !tmp%%a!  10 set tmp%%a=!tmp%%a:10=A! 
+           if !tmp%%a!  11 set tmp%%a=!tmp%%a:11=B! 
+           if !tmp%%a!  12 set tmp%%a=!tmp%%a:12=C! 
+           if !tmp%%a!  13 set tmp%%a=!tmp%%a:13=D! 
+           if !tmp%%a!  14 set tmp%%a=!tmp%%a:14=E! 
+           if !tmp%%a!  15 set tmp%%a=!tmp%%a:15=F! 
+           ) 
+           ) 
+           ) 
+           echo. 
+           echo %1 = 0x!tmp1!!tmp2!!tmp3!!tmp4!!tmp5!!tmp6!!tmp7!!tmp8! 
+           endlocal 
+           :end 
+           goto:eof 
+           :syntax 
+           cls 
+           echo. 
+           echo.DxH.cmd 16进制^<=^>10进制 互转脚本. Written by hitme 2005.7.27 
+           echo. 
+           echo.用法:  DxH 数字 
+           echo. 
+           echo.例如:  DxH 1234567 
+           echo.       DxH 0x1234fd3 
+           DxH.rar 
+2. CCF 
+          attachment.rar 
+3. cmd  
+          述求：有一个party，达到对到场人员，随机分组玩团队游戏的目的。。。 
+          能够随意的输入姓名，输入完后，把随机分组排列的姓名显示在屏幕上 
+          设姓名文本为name.txt,一个名字一行 
+          分组规则为：4人一组 
+          思路为：乱编号+编号排序=乱序，然后分组 
+          随机空间大小为10的3次方,几十人的party应该够了吧 
+          准备好name.txt,保存为xy.cmd运行,自定义修改红色部分 
+          @echo off 
+          for /f "delims=" %%i in (name.txt) do ( 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /l %%a in (1,1,3) do ( 
+                   echo %random% >nul 
+                   set  m=!m!!random:~-1! 
+                    ) 
+          echo !m!!:%%i>>tmp.txt 
+          endlocal 
+          ) 
+          setlocal ENABLEDELAYEDEXPANSION 
+          set /a num=0 
+          set /a linenum=0 
+          for /f "delims=" %%i in (tmp.txt) do set /a linenum=!linenum!+1 
+          for /f "tokens=1,2* delims=: " %%i in ('sort tmp.txt ^| findstr /n 
+          "."') do ( 
+          set n=%%k 
+          set m=!m!!n! 
+          set /a num=!num!+1 
+          if !num!  4 ( 
+          echo !m!>>tmp1.txt 
+          set /a num=0 
+          set m=) 
+          if "%%i"  "!linenum!" ( 
+          if "!m!" neq "" echo !m!>>tmp1.txt) 
+          ) 
+          endlocal 
+          findstr /n "." tmp1.txt>list.txt 
+          del tmp*.txt 
+          start list.txt 
+          xy.rar 
+4. cmd 
+          cmd下的一些文本处理 
+          开头跑个题，插播个广告，隆重推出，铛铛铛铛~~~，excel!excel!excel! 
+          m$那个电子表格软件？提它做什么？这题太跑了吧? 
+          做行文本处理！排序，过滤，中间插入，翻个身，倒个个，奇偶行交换，抽取 
+          1，4，9..行，合并，交叉合并，首行填充奇数行，等等72变 
+          相比xnix shell,各种文本编辑软件，决不逊色，入门还更容易，帮助文件更 
+          为详尽，实为居家旅行，杀人越货的强手货，没有概念的赶紧试用。 
+          使用时需要的仅仅是个思路。思路..思路很重要！ 
+          言归正传，还是cmd，用它做文本处理，只能算是勉为其难，凑合着用吧，常 
+         做深呼吸，小心给"憋"着了 
+         1.列表多个文本文件文件名+文件内容 
+         2.构造001.txt 002.txt 999.txt 文本内容分别是text001 text002 
+         3.构造http://..001|002|003../01|02|03.htm序列 
+         4.将一堆文本形式的网址单独转换成IE收藏夹的快捷方式 
+         5.将IE收藏夹导出为CSV格式文档 
+         6.有txt文件all.txt 和 a.txt 里面存放的是文件列表，求出a.txt里面没有 
+         ，而all.txt里有的文件列表 
+         7.文本文件中的单词实现全文自动统计并排序 
+         8.统计一个文本文件中某一单词出现的次数？ 
+         9.GB和Maxthon群组转换 
+         10.合并2个字幕文本文件 
+         11.snap&compare 多个html的固定内容 
+         1.列表多个文本文件文件名+文件内容 
+         find /v "" *.txt >list.txt 
+         *继续观察自带命令的有价值输出 
+         ------------------------------------------------------------ 
+         2.构造001.txt 002.txt 999.txt 文本内容分别是text001 text002 
+         for /l %i in (1,1,9) do @echo text00%i >00%i.txt 
+         for /l %i in (10,1,99) do @echo text0%i >0%i.txt 
+         for /l %i in (100,1,999) do @echo text%i >%i.txt 
+         *分段补零 
+         ----------------------------------------------------------------- 
+         3.构造http://..001|002|003../01|02|03.htm文件,以下内容保存为.bat文件 
+         执行 
+         代码: 
+         setlocal ENABLEDELAYEDEXPANSION 
+         for /l %%i in (1001,1,1162) do for /l %%j in (101,1,112) do @(set 
+         s=%%i && set t=%%j && echo ^<td^>^<a 
+         href="http://www.sergeaura.net/TGP/!s:~1,3!/images/!t:~1,2!.jpg"^>!s 
+          :~1,3!!t:~1,2!.jpg^</a^>^</td^> >>file.htm) 
+          endlocal 
+          *嵌套for，两组变量 
+          *00x,0x序号构造，加减高位 ccfer su99原创 
+          ------------------------------------------------------------ 
+          4.将一堆文本形式的网址单独转换成IE收藏夹的快捷方式 
+          for /f "tokens=1,2,3 delims=:/" %i in ('findstr /n "." 文本.txt') do 
+          echo [InternetShortcut] >>%k_%i.url && echo url=http://%k 
+          >>%k_%i.url 
+          *没什么特别的 
+          ------------------------------------------------------------ 
+          5.将IE收藏夹导出为CSV格式文档,以下内容保存为.bat文件执行 
+          代码: 
+          for /f "tokens=1,3,4 delims=:" %%i in ('findstr /s "http" *.url') do 
+          if %%k neq 0 (echo %%i,http:%%j:%%k >>list.csv) else echo 
+         %%i,http:%%j >>list.csv 
+          *findstr /s *.*得到文件相对路径，利用之 
+          ------------------------------------------------------------ 
+          6.有txt文件all.txt 和 a.txt 里面存放的是文件列表，求出a.txt里面没有 
+          ，而all.txt里有的文件列表 
+          #有txt文件 all.txt 和 a.txt 里面存放的是文件列表,a.txt 是 all.txt 的 
+          子集,求出a.txt里面没有，而all.txt里有的文件列表 
+          for /f "delims=" %i in (all.txt) do @findstr /x /c:"%i" a.txt >nul 
+          || @findstr /x /c:"%i " b.txt >nul || @echo %i>>b.txt 
+          *连续的||..||应用 
+          ------------------------------------------------------------ 
+          7.文本文件中的单词实现全文自动统计并排序 
+          一个文本文件，每行有一个单词或字符串（有重复的），几千行。用word或 
+          UE只能做到按字典顺序重新排列、或选中某词统计其个数。 
+          有没有一种方法能自动统计每一不同单词的出现次数，并输出结果列表（加按 
+          出现次数排序就更好了）。 
+          源文件内容： 
+          abc 
+          adfg 
+          aew 
+          dew 
+          abc 
+          abc 
+          aew 
+          adfg 
+          abc 
+          dew 
+          adfg 
+          ewq 
+          abc 
+          自动统计并排序后输出列表（假设）： 
+          abc　　　　5 
+          adfg　　　 3 
+          aew　　　　2 
+          dew　　　　2 
+          ewq　　　　1 
+          设输入文本为tmp 
+          for /f "delims=" %i in (tmp) do @echo %i >> %i.txt 
+          @findstr /n "." *.txt >tmp1 
+          for /f "tokens=1-3 delims=:" %i in (tmp1) do @echo %k %j>%i 
+          copy *.txt result.txt 
+          *分类汇总,excel,awk。。不合用的时候，cmd顶住 
+          *行号=数量 
+          ------------------------------------------------------------ 
+          8.统计一个文本文件中某一单词出现的次数？,以下内容保存为.bat文件执行 
+          find_word.bat 
+          代码: 
+           @echo off 
+           setlocal ENABLEDELAYEDEXPANSION 
+           set /p file=请输入要查询的文件名: 
+           set /p name=请输入要查询的单词: 
+           set /a n=0 
+           :loop 
+           set /a n=n+1 
+           for /f "tokens=%n% delims=,;.()[]{}!? " %%i in (%file%) do if /i %%i 
+           equ %name% echo %name% >>%name%.txt 
+           if %n% neq 255 (goto loop) else goto end 
+           :end 
+           for /f "delims=:" %%i in ('findstr /n "." %name%.txt') do set x=%%i 
+           echo %name%出现的次数为:%x% 
+           del %name%.txt 
+           endlocal 
+          *for进行单词匹配，慢死人的那种，纯属yy 
+          ------------------------------------------------------------ 
+           9.GB和Maxthon群组转换,以下内容保存为.bat文件执行 
+          GB和Maxthon群组转.bat 
+          代码: 
+           @echo off 
+           :common 
+           setlocal ENABLEDELAYEDEXPANSION 
+           findstr "CaptorGroup" *.cgp  && goto max_gb ||  goto gb_max 
+           :max_gb 
+          rd /s/q gb_group 
+          md gb_group 
+           for %%i in (*.cgp) do echo [Group]>>gb_group\\%%i 
+           for %%a in (*.cgp) do for /f "tokens=1-4 delims  :" %%i in ('findstr 
+          /n "=" "%%a                " ') do set /a n=%%i-2 && echo 
+          name!n!=%%j>>gb_group\%%a && echo ^url!n!=%%k:%%l>>gb_group\%%a 
+          goto end 
+           :gb_max 
+          rd /s/q max_group 
+          md max_group 
+          for %%a in (*.cgp) do for /f "tokens=2 delims  " %%i in ('findstr 
+          "." "%%a               " ') do echo %%i>>max_group\%%~na.txt 
+          for %%a in (max_group\*.txt) do echo 
+           [CaptorGroup]>>max_group\%%~na.cgp 
+          for %%a in (max_group\*.txt) do for /f "tokens=1,2 delims=: " %%i in 
+           ('findstr "." "%%a               " ') do if "%%i" neq "http" (set 
+          n=%%i) else (if "%%i"    "http" echo 
+           !n!=http:%%j>>max_group\%%~na.cgp) 
+          del /q max_group\*.txt 
+          goto end 
+          endlocal 
+           :end 
+          cls 
+          echo 转换完成，请查看子目录 
+          pause 
+          exit 
+          *两行并一行，一行拆两行 
+          ------------------------------------------------------------ 
+           10.合并2个字幕文本文件 
+          合并2个字幕文本文件 
+          原始文件1如下 
+          代码: 
+           1 
+          00:00:17,920 --> 00:00:18,625 
+          Charlie? 
+          2 
+          00:00:19,858 --> 00:00:20,606 
+          Charlie? 
+          3 
+            00:00:21,635 --> 00:00:23,140 
+            和我一块儿去散步怎样? 
+            4 
+            00:00:23,739 --> 00:00:24,456 
+            不 
+            5 
+            00:00:24,972 --> 00:00:27,317 
+            不，不去，Locke，今天我哪儿都不想去 
+            原始文件2如下 
+            代码: 
+            1 
+            00:00:17,820 --> 00:00:18,525 
+            Charlie? 
+            2 
+            00:00:19,758 --> 00:00:20,506 
+            Charlie? 
+            3 
+            00:00:21,535 --> 00:00:23,040 
+            How about you and I go for a walk? 
+            4 
+            00:00:23,639 --> 00:00:24,356 
+            No. 
+            5 
+            00:00:24,872 --> 00:00:27,217 
+            No, thanks, Locke. I think I'm gonna stay in today. 
+            要求合并后的文件如下 
+            代码: 
+            1 
+            00:00:17,920 --> 00:00:18,625 
+            Charlie? 
+            Charlie? 
+            2 
+          00:00:19,858 --> 00:00:20,606 
+          Charlie? 
+          Charlie? 
+          3 
+          00:00:21,635 --> 00:00:23,140 
+          和我一块儿去散步怎样? 
+          How about you and I go for a walk? 
+          4 
+          00:00:23,739 --> 00:00:24,456 
+          不 
+         No. 
+          5 
+          00:00:24,972 --> 00:00:27,317 
+          不，不去，Locke，今天我哪儿都不想去 
+         No, thanks, Locke. I think I'm gonna stay in today. 
+          想把中英文字幕合并起来，边看片子还可以边学学英文 
+          其实软件上是可以同时加载2个字幕的，也可以实现要求 
+          可是我现在看片子都是在Xbox上看，XBMC这个播放软件在同一时间只能支持一 
+          个srt字幕，所以才会有此要求 
+          设文件名为file1.txt file2.txt,以下内容保存为.bat文件执行 
+          fuck.bat 
+          代码: 
+          del 1.txt 2.txt all.txt 合并后文档.txt 
+          echo 加一行 >2.txt 
+          type file2.txt >>2.txt 
+          copy file1.txt 1.txt 
+          :#源文件准备 
+          findstr /n "." 1.txt 2.txt >tmp.txt 
+          :#合并源文件并添加行号 
+          for /l %%i in (1,1,500) do findstr /r "^1.txt:%%i:" tmp.txt 
+          >>all.txt || findstr /r "^2.txt:%%i:" tmp.txt >>all.txt 
+          :#分析,构造目标文件 
+         for /f "tokens=3,* delims=:" %%i in (all.txt) do echo %%i%%j >>合并 
+         后文档.txt 
+          :#滤除多余信息 
+         *交叉合并 
+         ------------------------------------------------------------ 
+          11.snap&compare 多个html的固定内容 
+         有以下内容 
+         http://www.abcd.com/pub/wrok1.html 
+         http://www.abcd.com/pub/wrok2.html 
+         http://www.abcd.com/pub/wrok3.html 
+         . 
+         .. 
+         ... 
+         http://www.abcd.com/pub/wrok(*).html 
+         每个html，几乎整个html部分都是固定内容，除了我要监测的（文本方式打开 
+         )第225行，第38位开始，75位结束这段，它们 
+         有不定时的改变，所有html更新的部分也许不止这一个地方，但我只想监测这 
+         一段 
+         有没有软件或方法snap一次镜像，然后下次再snap后作出对上次snap的对比 
+          ，得出哪个url的html内容监测段作出了改变？ 
+         无错误控制,以下内容保存为.bat文件执行 
+          snap&compare.bat 
+         代码: 
+         @echo off 
+         del 差异.txt 2>nul 
+         copy /y snap.txt snap_old.txt 1>nul 
+          :#清理及悲愤snap 
+          :snap 
+         echo        %date% %time%       >snap.txt 
+          :#加入时间戳 
+          set url=http://www.abcd.com/pub/wrok 
+          :#url变量赋值 
+          for /l %%i in (1,1,100) do curl %url%%%i.html | findstr /n "." | 
+          findstr /r "^225:" >>tmp.txt && echo %url%%%i >>tmp.txt 
+          :#下载htm并过滤所需行 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /f "tokens=1* delims=:" %%i in (tmp.txt) do if "%%i"  "http" 
+          (echo %%i%%j !n! >>snap.txt) else set n=%%j 
+          endlocal 
+          :#整型快照 
+          del tmp.txt 
+          :#删除临时文件 
+          :goto 
+          if not exist snap_old.txt cls && echo           第一次建立快照文件 
+          snap^.txt^,请再次运行snap^&compare^.cmd获取文件差异                       && pause 
+          && goto end 
+          :#判断是否存在对比快照，如不存在则不进行差异比较 
+          :compare 
+          findstr /n "." snap.txt >tmp1.txt 
+          findstr /n "." snap_old.txt >tmp2.txt 
+          :#为snap文本加入行号 
+          for /l %%i in (2,1,100) do findstr /r "^%%i:" tmp1.txt tmp2.txt 
+          >>tmp3.txt 
+          :#以行号为序合并tmp文件 
+          findstr /r "1:" tmp*.txt >>差异.txt 
+          :#添加时间戳 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /f "tokens=1* delims=:" %%i in (tmp3.txt) do if %%i  tmp1.txt 
+          (set n=%%j) else (if %%j neq !n! echo %%j>>差异.txt) 
+          endlocal 
+          :#比较文本，计算差异行及行号 
+          del tmp*.txt 
+          :#清理临时文件 
+          cls && echo            完成差异比较,请查看"差异.txt"                         && 
+          pause 
+          end: 
+          *两行并一行，相似文本比较 
+5. cmd 
+          cmd下的一些文件处理: 
+          1.保持文件夹结构，copy特定大小，时间，类型文件 
+          2.保持文件夹结构，copy文件名，内容空 
+          3.按文件数量移动文件到目标目录 
+          4.copy某层(3..4..5)子目录下的文件到目标路径 
+          5.删除文件夹中非某扩展名(如txt)的文件 
+          6.copy不同文件夹下的同名文件到目标文件夹 
+          7.同一文件copy到所有子文件夹中 
+          8.处理所有扩展名为e??且不是exe的文件 
+          9.每个文件生成一个同名文件夹，然后把各个文件拷贝到同名文件夹中 
+          10.删除空文件夹 
+          1.保持文件夹结构，copy特定大小，时间，类型文件 
+          #特定类型 
+          xcopy /s/y *.exe 目标路径 
+          *很多单独的命令(dir;xcopy等)自身就富有变化，善用之 
+          #特定大小 
+          (例如小于50000字节，具体运算符号:EQU - 等于 NEQ - 不等LSS - 小于 LEQ 
+         - NEQ - 不等于) 
+         for /r %i in (*.*) do if %~zi lss 50000 xcopy /s "%i" 目标路径"%~pi" 
+         *出动循环武器for命令，可与众多命令搭配使用，例如if,findstr,echo等等 
+         *这里用它枚举子文件夹下的文件，%~zi扩冲为文件大小,交给if命令进行比较 
+         运算，成功后xcopy至目标路径并copy文件夹 
+         *for命令执行顺序)输入，for枚举，do...爱干吗干嘛 
+         #特定时间 
+         例:拷贝特定时间（2005-04-19）的文件,以下内容保存为.bat文件执行 
+         代码: 
+         setlocal ENABLEDELAYEDEXPANSION 
+         for /r %%i in (*.*) do set dd=%%~ti && if "!dd:~0,8!"  "05-04-19" 
+         xcopy /s "%%i" 目标路径"%%~pi" 
+         endlocal 
+         *同上一条，还是for,if,xcopy,由于不能直接对for变量%~ti进行%~ti:~0,8这 
+         样的扩展，变通一下,set给普通变量，再做扩展 
+         *%var~:0,8%扩展的说明：两个数字表示偏移量和长度，具体参看set /? 
+         *关于ENABLEDELAYEDEXPANSION延迟环境变量扩充，参看set /?,有实例说明 
+         ----------------------------------------------- 
+         2.保持文件夹结构，copy文件名，内容空 
+         xcopy /t/s *.* 目标路径 
+         for /r %i in (*.*) do echoc >目标路径"%~pnxi" 
+         *xcopy /t/s建立镜象文件夹，for /r in (*.*)枚举子文件夹中的文件，利用 
+         echoc的bug,写入0字节文件 
+         ----------------------------------------------- 
+         3.按文件数量移动文件到目标文件夹，以下内容保存为.bat文件执行 
+         代码: 
+         setlocal ENABLEDELAYEDEXPANSION 
+          set /a n=0 
+          :loop 
+          set /a n=n+1 
+          md 文件夹%n% 
+          for %%i in (*.*) do move "%%i" 文件夹%n% & dir 文件夹%n% | findstr 
+          /c:"100 个文件" && goto loop 
+          endlocal 
+          *需求将源文件夹中的文件,每100个移动至文件夹1..2..3 
+          *for (*.*) do move一个 && 查找是否有100个了 && 找到跳出去,移动下 
+          100个 
+          ----------------------------------------------- 
+          4.copy某层(3..4..5)子目录下的文件到目标路径 
+          #复制第3层文件夹下的文件到目标路径 
+          dir /s/b/a:d >d.txt 
+          for /f "tokens=1-4 delims=\" %i in (d.txt) do echo n | xcopy /e 
+          "%i\%j\%k\%l" 目标路径 
+          *dir 列出没有标题信息或摘要的子文件夹，并重定向到d.txt 
+          *for /f ..(d.txt)，分析d.txt，交xcopy复制 
+          *也可以直接用for /f ..('dir /s/b/a:d') do dir输出会被抓进内存，当作 
+          文件分析。分两行写主要是考虑到文件夹复杂时的脚本效率 
+          ----------------------------------------------- 
+          5.删除文件夹中非某扩展名(如txt)的文件 
+          for /f "delims=/" %i in ('dir /b/s *.*') do dir /b/s *.txt | find 
+          "%i" || del "%i" 
+          *抓dir *.*的输出,在dir *.txt输出中查找,没找到则不是txt文件,删除之 
+          *可扩充为非txt+jpg+gif的文件,不会眼花了 
+          ----------------------------------------------- 
+          6.copy不同文件夹下的同名文件到目标文件夹 
+          文件夹1下面有一个文件123.jpg 
+         文件夹2下面也有一个文件123.jpg，文件名相同，内容不同 
+         文件夹3下面也有一个文件123.jpg，文件名相同，内容不同 
+          …… 
+         我想搜索所有的文件123.jpg，copy到一个目标文件夹下，但是我用搜索->复 
+         制，出现后者覆盖前者的问题，只能保留一个文件123.jpg，有没有 
+         办法把这些同名文件拷贝到相同文件夹下？或者是说如何自动重命名搜索到的 
+         文件？ 
+         dir /s/b 123.jpg | find /n "123.jpg" >temp.txt 
+         for /f "tokens=1,2 delims=[]" %i in (temp.txt) do copy "%j" d:\123- 
+         "%i".jpg 
+         *枚举所有123.jpg文件的完整路径,并加上行号重定向到temp.txt 
+         *for /f () do copy 同时重命名为123_行号.jpg,行号不会重复,利用一下 
+         ----------------------------------------------- 
+         7.同一文件copy到所有子文件夹中 
+         for /r %a in (.) do xcopy /y filename "%~pa" 
+         *for /r ..(.) do 只枚举文件夹 
+         ----------------------------------------------- 
+         8.处理所有扩展名为e??且不是exe的文件 
+         for %i in (*.e??) do if /i "%~xi" neq ".exe" echo %i 
+         ----------------------------------------------- 
+         9.每个文件生成一个同名文件夹，然后把各个文件拷贝到同名文件夹中 
+         for %i in (*.*) do md "%~ni" && copy %i "%~ni" 
+         ------------------------------------------------ 
+          10.删除空文件夹 
+         for /l %a in (1,1,9) do for /r %i in (.) do rd %~si 
+6. cmdhtm 
+         list.rar 
+         1.rar 
+7. cmd 
+         cmd一些其他应用 
+         1.快速建用户和共享文件夹 
+         2.让服务器在空闲时自动关机或休眠 
+         3.通过FTP自动备份文件 
+         4.扫描一个网段.用for和ping.然后得到存活主机把结果存为ip和ip之间用,隔 
+         开 
+         5.DOS下文件列表按文件名长度递增排列 
+         6.远程关机 
+         1.快速建用户和共享文件夹 
+         又要给学生机房装机了 
+         因为现在有这样的要求: 
+         在教师上加用户 (A1、A2、……A7、B1……H7)（对应学生机） 
+         在教师机上建目录共享 （要对应机器.........） 
+         就是要建A1目录给A1那台机用。 
+         好繁啊，有什么好的介绍吗？ 
+         for %i in (a b c d e f h) do for /l %j in (1,1,7) do echo %i%j 
+         >>name.txt 
+          :#构造序号文件 
+         for /f %i in (name.txt) do net user %i %i /add 
+          :#天家用户 
+         for /f %i in (name.txt) do md %i 
+          :#建目录 
+         for /f %i in (name.txt) do net share %i=盘符:\%i 
+          :#共享目录 
+         for /f %i in (name.txt) do cacls \%i /g %i:f administrator:f 
+         :#配置权限，一路y回车，即可 
+         *有for不繁 
+         --------------------------------------------------------------- 
+         2.让服务器在空闲时自动关机或休眠 
+         单位有一局域网，由于win2000的服务器代理上网，内网IP：192.168.0.* 
+         因大家不定时上网，一般在后半夜便无人再使用网络，但也不能搞一刀切，不 
+         能设定某个时间自动关机，现求一软件，能自动检测内网有无人开机，如果发 
+         现在0点后，半个 小时无人上网，服务器则自动关机（或休眠），我发现 
+         poweroff软件无法实现这个功能。希望大家帮忙。 
+         run.bat #计划任务 0：30分执行这个bat。每30分钟重复执行.注意别ping了 
+         服务器,没测试过，不太可靠 
+         以下内容保存为.bat文件执行 
+         代码: 
+         del reply.txt 
+         echo 关机日志 > reply.txt 
+         for /l %%i in (2,1,254) do ping -n 1 192.168.0.%%i | find "Reply" 
+         >>reply.txt 
+         find "Reply" reply.txt || shutdown 
+         --------------------------------------------------------------- 
+         3.通过FTP自动备份文件 
+         机器 A 
+         D:\\aaa\a\ ——》a.rar 
+         D:\\bbb\ ————》b.rar 
+         每 2个小时自动生成一个RAR文件，存放到 D:\\bak\日期\时间\ 目录下 
+          （D:\\bak\2005-01-04\02.00\）然后自动通过FTP传送到 机器B（专用备份机 
+         器） 
+         请问谁能帮忙写个脚本 谢谢。 或者把压缩过程省略，直接传送文件夹也可以 
+         ?传送目录？flashfxp啊 
+         以下内容保存为.bat文件执行 
+           代码: 
+           @echo off 
+           path=%path%;c:\program files\winrar 
+           :rar 
+           set tdate=%date:~4,10% 
+           set ttime=%time:~0,2% 
+           mkdir "d:\bak\%tdate%\%ttime%" 
+           rar a -r "d:\bak\%tdate%\%ttime%\a.rar" d:\aaa\*.* 
+           rar a -r "d:\bak\%tdate%\%ttime%\b.rar" d:\bbb\*.* 
+           :ftp 
+           echo open ftp.hitme.com >ftp.txt 
+           echo hitme >>ftp.txt 
+           echo password >>ftp.txt 
+           echo bin >>ftp.txt 
+           echo hash >>ftp.txt 
+           echo prompt >>ftp.txt 
+           echo cd bak >>ftp.txt 
+           echo lcd "d:\bak\%tdate%\%ttime%" >>ftp.txt 
+           echo mkdir %tdate% >>ftp.txt 
+           echo mkdir %tdate%/%ttime% >>ftp.txt 
+           echo cd %tdate%/%ttime% >>ftp.txt 
+           echo mput *.* >>ftp.txt 
+           echo cd /bak >>ftp.txt 
+           echo quit >>ftp.txt 
+           ftp -s:ftp.txt 
+           *echo 构造ftp.txt,利用了系统变量%date%,%time%的扩充形式 
+           --------------------------------------------------------------- 
+           4.扫描一个网段.用for和ping.然后得到存活主机把结果存为ip和ip之间用,隔 
+           开 
+           for /l %i in (1,1,254) do @echo connecting 192.168.1.%i && @(for /f 
+          "tokens=1,3 skip=2 delims=: " %j in ('ping 192.168.1.%i') do @if 
+          '%j'  'Reply' @find "192.168.1.%i" list.txt > nul 2>nul || @echo 
+          %k>>list.txt && @echo 192.168.1.%i connected) 
+          *code by su99 
+          *单行精品 
+          --------------------------------------------------------------- 
+          5.DOS下文件列表按文件名长度递增排列 
+          如果一个目录里面有如下四个文件(当然，实际中文件数量和文件名是随机的) 
+          1.txt,2.txt,10.txt,20.txt 
+          在DOS下要如何使用如何才能让他们按 
+          1.txt 
+          2.txt 
+          10.txt 
+          20.txt 
+          输出，而非 
+          1.txt 
+          10.txt 
+          2.txt 
+          20.txt 
+          输出？ 
+          我用的系统是xp~多谢大家～ 
+          for /l %a in (1,1,20) do @(if exist "%a.txt" echo %a.txt) 
+          *思路是穷举。前提是文件名有一定规律：除了数字外的部分要一样，如果是 
+          abc1.txt, xyz10.txt这样乱来，这个方法就不管用了（严格说，如果是有限 
+          个不同的pattern，仍然可以做到，不过麻烦一些） 
+          *code by su99 
+                        or 
+          list.bat,以下内容保存为.bat文件执行 
+          代码: 
+          @echo off 
+          set t=.... 
+          :loop 
+          set t=%t%. 
+          dir /b /a:-d | findstr /r "^%t%$" 
+          if "%t%"    "........................." goto end 
+          goto loop 
+          :end 
+          *findstr/r "^.....$过滤排序 
+          --------------------------------------------------------------- 
+          6.远程批量关机,以下内容保存为.bat文件执行 
+          代码: 
+          for /l %%i in (1,1,254) do @(arp -d & ping 192.168.3.%%i -n 1 -w 100 
+          & arp -a | find "00-00-00-00-00-00" > nul || shutdown -m 
+          \\192.168.3.%%i -s -f) 
+          *关闭了icmp,照关 
+8. cmd 
+          cmd中一些符号的说明： 
+          & 
+          最简单的组合命令，作用是连接n个命令，按顺序执行，不管是否有执行失败 
+          。 
+          a & b 
+          #依次执行a,b 
+          && 
+          组合命令，与&命令不同之处在于，判断是否有执行失败，如失败将不继续执 
+          行剩下的命令。 
+          a && b 
+          #a成功，b执行 
+          || 
+          作用与&&相反 
+          a || b 
+          #a失败，b执行 
+          连着用a && b || c,表示a成功，则执行b，b失败，则执行c 
+          >、>> 
+          输出重定向命令，将命令的输出写入到一个文件中。 
+          区别:>覆盖写入，>>尾部追加写入 
+          echo a>a.txt 
+          find /v "" *.txt >list.txt 
+          | 
+          管道命令，前一命令的输出作为后一命令的输入,常用于文本过滤操作 
+          dir | find "hitme.exe" 
+9. cmdUnicode to ASCII 
+          TYPE Unicode.txt > ASCII.txt 
+10. Curl- 
+          CURL? 嗯，说来话长了~~~~ 
+          这东西现在已经是苹果机上内置的命令行工具之一了，可见其魅力之一斑 
+          1) 
+          二话不说，先从这里开始吧！ 
+          curl http://www.yahoo.com 
+          回车之后，www.yahoo.com 的html就稀里哗啦地显示在屏幕上了~~~~~ 
+          2) 
+          嗯，要想把读过来页面存下来，是不是要这样呢？ 
+          curl http://www.yahoo.com > page.html 
+         当然可以，但不用这么麻烦的！ 
+         用curl的内置option就好，存下http的结果，用这个option: -o 
+         curl -o page.html http://www.yahoo.com 
+         这样，你就可以看到屏幕上出现一个下载页面进度指示。等进展到100%，自然 
+         就OK咯 
+         3) 
+         什么什么？！访问不到？肯定是你的proxy没有设定了。 
+         使用curl的时候，用这个option可以指定http访问所使用的proxy服务器及其 
+         端口： -x 
+         curl -x 123.45.67.89:1080 -o page.html http://www.yahoo.com 
+         4) 
+         访问有些网站的时候比较讨厌，他使用cookie来记录session信息。 
+         像IE/NN这样的浏览器，当然可以轻易处理cookie信息，但我们的curl呢 
+          ？..... 
+         我们来学习这个option: -D <-- 这个是把http的response里面的cookie信息 
+         存到一个特别的文件中去 
+         curl -x 123.45.67.89:1080 -o page.html -D cookie0001.txt 
+         http://www.yahoo.com 
+         这样，当页面被存到page.html的同时，cookie信息也被存到了 
+         cookie0001.txt里面了 
+         5） 
+         那么，下一次访问的时候，如何继续使用上次留下的cookie信息呢？要知道 
+         ，很多网站都是靠监视你的cookie信息， 
+         来判断你是不是不按规矩访问他们的网站的。 
+         这次我们使用这个option来把上次的cookie信息追加到http request里面去： 
+         -b 
+         curl -x 123.45.67.89:1080 -o page1.html -D cookie0002.txt -b 
+         cookie0001.txt http://www.yahoo.com 
+         这样，我们就可以几乎模拟所有的IE操作，去访问网页了！ 
+         6） 
+         稍微等等~~~~~我好像忘记什么了~~~~~ 
+         对了！是浏览器信息~~~~ 
+         有些讨厌的网站总要我们使用某些特定的浏览器去访问他们，有时候更过分的 
+         是，还要使用某些特定的版本~~~~ 
+         NND，哪里有时间为了它去找这些怪异的浏览器呢！？ 
+         好在curl给我们提供了一个有用的option，可以让我们随意指定自己这次访问 
+         所宣称的自己的浏览器信息： -A 
+         curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -x 
+         123.45.67.89:1080 -o page.html -D cookie0001.txt 
+         http://www.yahoo.com 
+         这样，服务器端接到访问的要求，会认为你是一个运行在Windows 2000上的 
+         IE6.0，嘿嘿嘿，其实也许你用的是苹果机呢！ 
+         而"Mozilla/4.73 [en] (X11; U; Linux 2.2; 15 i686"则可以告诉对方你是 
+         一台PC上跑着的Linux，用的是Netscape 4.73，呵呵呵 
+         7） 
+         另外一个服务器端常用的限制方法，就是检查http访问的referer。比如你先 
+         访问首页，再访问里面所指定的下载页，这第二次访问的referer地址就是第 
+         一次访问成功后的页面地址。这样，服务器端只要发现对下载页面某次访问的 
+         referer地址不 是首页的地址，就可以断定那是个盗连了~~~~~ 
+         讨厌讨厌~~~我就是要盗连~~~~~！！ 
+         幸好curl给我们提供了设定referer的option： -e 
+         curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -x 
+         123.45.67.89:1080 -e "mail.yahoo.com" -o page.html -D cookie0001.txt 
+         http://www.yahoo.com 
+         这样，就可以骗对方的服务器，你是从mail.yahoo.com点击某个链接过来的了 
+         ，呵呵呵 
+         8） 
+         写着写着发现漏掉什么重要的东西了！----- 利用curl 下载文件 
+         刚才讲过了，下载页面到一个文件里，可以使用 -o ，下载文件也是一样。 
+          比如， curl -o 1.jpg http://cgi2.tky.3web.ne.jp/~zzh/screen1.JPG 
+         这里教大家一个新的option： -O 
+         大写的O，这么用： curl -O 
+         http://cgi2.tky.3web.ne.jp/~zzh/screen1.JPG 
+         这样，就可以按照服务器上的文件名，自动存在本地了！ 
+         再来一个更好用的。 
+         如果screen1.JPG以外还有screen2.JPG、screen3.JPG、....、 
+         screen10.JPG需要下载，难不成还要让我们写一个script来完成这些操作？ 
+         不干！ 
+         在curl里面，这么写就可以了： 
+         curl -O http://cgi2.tky.3web.ne.jp/~zzh/screen[1-10].JPG 
+         呵呵呵，厉害吧？！~~~ 
+         9） 
+         再来，我们继续讲解下载！ 
+         curl -O http://cgi2.tky.3web.ne.jp/~{zzh,nick}/[001-201].JPG 
+         这样产生的下载，就是 
+         ~zzh/001.JPG 
+         ~zzh/002.JPG 
+         ... 
+         ~zzh/201.JPG 
+         ~nick/001.JPG 
+         ~nick/002.JPG 
+         ... 
+         ~nick/201.JPG 
+         够方便的了吧？哈哈哈 
+         咦？高兴得太早了。 
+          由于zzh/nick下的文件名都是001，002...，201，下载下来的文件重名，后面 
+         的把前面的文件都给覆盖掉了~~~ 
+         没关系，我们还有更狠的！ 
+         curl -o #2_#1.jpg http://cgi2.tky.3web.ne.jp/~{zzh,nick}/[001- 
+         201].JPG 
+         --这是.....自定义文件名的下载？ 
+         --对头，呵呵！ 
+         #1是变量，指的是{zzh,nick}这部分，第一次取值zzh，第二次取值nick 
+         #2代表的变量，则是第二段可变部分---[001-201]，取值从001逐一加到201 
+         这样，自定义出来下载下来的文件名，就变成了这样： 
+         原来： ~zzh/001.JPG ---> 下载后： 001-zzh.JPG 
+         原来： ~nick/001.JPG ---> 下载后： 001-nick.JPG 
+         这样一来，就不怕文件重名啦，呵呵 
+         9） 
+         继续讲下载 
+         我们平时在windows平台上，flashget这样的工具可以帮我们分块并行下载 
+         ，还可以断线续传。 
+         curl在这些方面也不输给谁，嘿嘿 
+          比如我们下载screen1.JPG中，突然掉线了，我们就可以这样开始续传 
+         curl -c -O http://cgi2.tky.3wb.ne.jp/~zzh/screen1.JPG 
+         当然，你不要拿个flashget下载了一半的文件来糊弄我~~~~别的下载软件的半 
+         截文件可不一定能用哦~~~ 
+         分块下载，我们使用这个option就可以了： -r 
+         举例说明 
+          比如我们有一个http://cgi2.tky.3web.ne.jp/~zzh/zhao1.mp3 要下载（赵老 
+         师的电话朗诵 :D ） 
+         我们就可以用这样的命令： 
+         curl -r 0-10240 -o "zhao.part1" 
+         http:/cgi2.tky.3web.ne.jp/~zzh/zhao1.mp3 &\ 
+         curl -r 10241-20480 -o "zhao.part1" 
+         http:/cgi2.tky.3web.ne.jp/~zzh/zhao1.mp3 &\ 
+         curl -r 20481-40960 -o "zhao.part1" 
+         http:/cgi2.tky.3web.ne.jp/~zzh/zhao1.mp3 &\ 
+         curl -r 40961- -o "zhao.part1" 
+         http:/cgi2.tky.3web.ne.jp/~zzh/zhao1.mp3 
+         这样就可以分块下载啦。 
+         不过你需要自己把这些破碎的文件合并起来 
+          如果你用UNIX或苹果，用 cat zhao.part* > zhao.mp3就可以 
+          如果用的是Windows，用copy /b 来解决吧，呵呵 
+          上面讲的都是http协议的下载，其实ftp也一样可以用。 
+          用法嘛， 
+          curl -u name:passwd ftp://ip:port/path/file 
+          或者大家熟悉的 
+          curl ftp://name:passwd@ip:port/path/file 
+          10) 
+          说完了下载，接下来自然该讲上传咯 
+          上传的option是 -T 
+          比如我们向ftp传一个文件： curl -T localfile -u name:passwd 
+          ftp://upload_site:port/path/ 
+          当然，向http服务器上传文件也可以 
+          比如 curl -T localfile http://cgi2.tky.3web.ne.jp/~zzh/abc.cgi 
+          注意，这时候，使用的协议是HTTP的PUT method 
+          刚才说到PUT，嘿嘿，自然让老服想起来了其他几种methos还没讲呢！ 
+          GET和POST都不能忘哦。 
+          http提交一个表单，比较常用的是POST模式和GET模式 
+          GET模式什么option都不用，只需要把变量写在url里面就可以了 
+          比如： 
+          curl http://www.yahoo.com/login.cgi?user=nickwolfe&password=12345 
+          而POST模式的option则是 -d 
+          比如，curl -d "user=nickwolfe&password=12345" 
+          http://www.yahoo.com/login.cgi 
+          就相当于向这个站点发出一次登陆申请~~~~~ 
+          到底该用GET模式还是POST模式，要看对面服务器的程序设定。 
+          一点需要注意的是，POST模式下的文件上的文件上传，比如 
+          <form method="POST" enctype="multipar/form-data" 
+          action="http://cgi2.tky.3web.ne.jp/~zzh/up_file.cgi"> 
+          <input type=file name=upload> 
+          <input type=submit name=nick value="go"> 
+          </form> 
+          这样一个HTTP表单，我们要用curl进行模拟，就该是这样的语法： 
+          curl -F upload=@localfile -F nick=go 
+          http://cgi2.tky.3web.ne.jp/~zzh/up_file.cgi 
+          罗罗嗦嗦讲了这么多，其实curl还有很多很多技巧和用法 
+          比如 https的时候使用本地证书，就可以这样 
+          curl -E localcert.pem https://remote_server 
+          再比如，你还可以用curl通过dict协议去查字典~~~~~ 
+          curl dict://dict.org/d:computer 
+          今天就先讲到这里吧，呵呵。疯狂的curl功能，需要你---一起来发掘。 
+          copyright by nickwolfe@CCF 
+          2004.08.24 21:24应朋友之邀所作--初稿 
+          curl.rar 
+11. MT<->IE cmd 
+          快捷组cgp->收藏夹url 
+          conv_c_u.cmd 
+          MT Groups目录下运行 
+          代码 
+          @echo off 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for %%a in (*.cgp) do ( 
+          set pathu=ie_url\%%~na 
+          md !pathu! 
+           set /a n=0 
+           for /f "skip=1 tokens=1* delims  " %%i in (%%a) do ( 
+           if "%%i"  "[Properties]" (set /a n=1) else ( 
+            if !n!  0 ( 
+               echo [InternetShortcut]>>"!pathu!\%%i".url 
+              echo URL=%%j>>"!pathu!\%%i".url) 
+              ) 
+           ) 
+           ) 
+           endlocal 
+           收藏夹url->快捷组cgp 
+           conv_u_c.cmd 
+           IE_Favorites目录下运行 
+           代码 
+           @echo off 
+           echo [CaptorGroup]>>url.cgp 
+           for /f %%i in ('dir /b/ad') do ( 
+           echo [CaptorGroup]>>%%i.cgp 
+           ) 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f "usebackq tokens=1,2* delims=\=" %%i in (`findstr /s /r 
+           "^URL=" *.url^|findstr "\\"`) do ( 
+           set n=%%j 
+           echo !n:~0,-8!=%%k>>%%i.cgp 
+           ) 
+           for /f "usebackq tokens=1* delims=\=" %%i in (`findstr /s /r "^URL=" 
+           *.url^|findstr /v "\\"`) do ( 
+           set n=%%i 
+           echo !n:~0,-8!=%%j>>url.cgp 
+           ) 
+           endlocal 
+           conv_c_u.rar 
+           conv_u_c.rar 
+12. PingDNS 
+           @echo off 
+           if [%1]  [] ( 
+                       set ip=emptyType 
+                       set str=Address 
+           ) else ( 
+                       set ip=%1 
+                       set str=Name 
+           )    
+           for /f  "tokens=2" %%i in ('nslookup %ip% ^|findstr "%str%"') do 
+           ping %2 %3 %%i 
+13. ping() 
+           试玩一下，test by win2kchs,部分系统注意自行替换红色部分 
+           用法：cmd下 
+           sping ip/hostname 
+           sping.rar 
+14. treehtm 
+           进入目录，一层层点，嫌烦 
+           tree命令只给看看。。不给点。。。我就是要点 
+           tree命令的htm版 
+           htm,css都没搞过，现学的，高手奸笑了 
+           根目录下运行，测试，保存为tree_htm.cmd运行 
+           @echo off 
+           del tree.htm 2>nul 
+           echo                   tree命令的htm版 
+           echo. 
+           echo              by hitme 2005.7.3 hitme@xiahaixiao.com 
+           echo. 
+           echo 可直接点击进入6层内目录，完美主义者请自行修改 
+           echo  
+           echo. 
+           echo 请稍候............. 
+            >end.htm echo ^<head^> 
+           >>end.htm echo ^<meta http-equiv="Content-Type" content="text/html^; 
+           charset=gb2312" ^/^> 
+           >>end.htm echo ^<style type="text/css"^> 
+           >>end.htm echo ^<!-- 
+           >>end.htm echo a:active { text-decoration: none ; color: red ; font- 
+           size: 12pt } 
+           >>end.htm echo a:visited { text-decoration: none ; color: green ; 
+           font-size: 12pt } 
+           >>end.htm echo a:link { text-decoration: none ; font-size: 12pt } 
+           >>end.htm echo --^> 
+           >>end.htm echo ^</style^> 
+           >>end.htm echo ^</head^> 
+           >>end.htm echo ^<body^> 
+           setlocal  ENABLEDELAYEDEXPANSION 
+           for /f "skip=2 delims=" %%i in ('tree') do ( 
+           set n=%%i 
+           if "!n:~1,1!"  ":" set n0=!n:~0,2! 
+           if "!n:~1,1!"  "─" (set n1=!n:~2! 
+                set n2 
+                set n3 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~4,1!"  "─" (set n2=!n:~5! 
+                set n3 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~5,1!"  "─" (set n2=!n:~6! 
+                set n3 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~7,1!"  "─" (set n3=!n:~8! 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~8,1!"  "─" (set n3=!n:~9! 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~9,1!"  "─" (set n3=!n:~10! 
+                set n4 
+                set n5 
+                set n6 
+                set n7=) 
+                if "!n:~10,1!"  "─" (set n4=!n:~11! 
+                set n5 
+                set n6 
+                set n7=) 
+           if "!n:~11,1!"  "─" (set n4=!n:~12! 
+           set n5 
+           set n6 
+           set n7=) 
+           if "!n:~12,1!"  "─" (set n4=!n:~13! 
+           set n5 
+           set n6 
+           set n7=) 
+              if "!n:~13,1!"  "─" (set n5=!n:~14! 
+           set n6 
+           set n7=) 
+           if "!n:~14,1!"  "─" (set n5=!n:~15! 
+           set n6 
+           set n7=) 
+           if "!n:~15,1!"  "─" (set n5=!n:~16! 
+           set n6 
+           set n7=) 
+           if "!n:~16,1!"  "─" (set n5=!n:~17! 
+           set n6 
+           set n7=) 
+           if "!n:~17,1!"  "─" (set n6=!n:~18!) 
+           if "!n:~18,1!"  "─" (set n6=!n:~19!) 
+           if "!n:~19,1!"  "─" (set n6=!n:~20!) 
+           if "!n:~20,1!"  "─" (set n6=!n:~21!) 
+           set n=!n: =^&nbsp;! 
+           >>end.htm echo ^<a href="!n0!\!n1!\!n2!\!n3!\!n4!\!n5!\!n6!" 
+           target="_blank"^>!n!^</a^> 
+           >>end.htm echo ^</br^> 
+           ) 
+           for /f "delims=" %%i in (end.htm) do ( 
+           set x=%%i 
+                                  for /l %%a in (1,1,5) do ( 
+              set x=!x:\\=\! 
+           ) 
+           echo !x!>>tree.htm 
+           ) 
+           endlocal 
+           del end.htm 
+           start tree.htm 
+           tree_htm.rar 
+15. wget 
+           hxxp://www.sergeaura.net/TGP/001/images/01.jpg 
+           ... 
+           hxxp://www.sergeaura.net/TGP/001/images/12.jpg 
+           ...... 
+           ...... 
+           ...... 
+           hxxp://www.sergeaura.net/TGP/162/images/01.jpg 
+           ... 
+           hxxp://www.sergeaura.net/TGP/162/images/12.jpg 
+           curl cmd下运行 
+           curl -o #1_#2.jpg hxxp://www.sergeaura.net/TGP/[001-162]/images/[01- 
+           12].jpg 
+           wget+for......九阳神功，内功部分稍显复杂，打通2脉后，功力日进。保存 
+           为get.cmd运行 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /l %%i in (1001,1,1162) do for /l %%j in (101,1,112) do @( 
+                                    set s=%%i 
+                                    set t=%%j 
+                                    wget -O !s:~1,3!!t:~1,2!.jpg 
+          hxxp://www.sergeaura.net/TGP/!s:~1,3!/images/!t:~1,2!.jpg) 
+          endlocal 
+          wget.zip 
+16.  
+          for /r %I in (*.*) do echo %~fnI >> c:\列表.txt 
+          简单: tree /f 
+17. QQ 3 
+          1.查看长期没联系的QQ好友，方便删除 比如3个月内没和你说话 
+          设导出的混在一起聊天记录为qq.txt 
+          ------------------------------------------- 
+          findstr "消息对象:" qq.txt >联系人.txt 
+          for /f "tokens=2 delims=()" %i in (联系人.txt) do findstr "2004-0[5- 
+          7]-" qq.txt ^ | find "%i"|| echo %i >>结果.txt 
+          2.提取msn 联系人email列表 方便导入邮件收发软件 
+          设导出的文件为msn.ctt,list.csv为结果 
+          for /f "tokens=3 delims=<>" %%i in (msn.ctt) do echo %%i >>list.csv 
+          1，导出总谈话记录 
+          2，为了最大兼容，把qq.txt拷贝到C盘根目录 
+          3，运行 -CMD（XP） 或者 windows 98 进入dos 状态 
+          4，输入 
+          findstr "消息对象:" qq.txt >联系人.txt 
+         回车 
+         5，输入 
+         for /f "tokens=2 delims=()" %i in (联系人.txt) do findstr "2004-0[5- 
+         7]-" qq.txt ^ | find "%i"|| echo %i >>结果.txt 
+         回车 
+         6，等待 
+         引用回复 
+18. 357 
+         吃完饭，mm要我给折腾个35选7的选号器，去试试运气，我运气很背的，买了 
+         5,6w了，基本没中300以上过，写的东西不知道背不背 
+         思路是： 
+         构造1-35数字的文本行，每行一个，同时加上3位的随机数 
+         例如 
+         234:1 
+         214:2 
+         523:3 
+         ... 
+         然后对此文本排序，取前7个数字，完成 
+         年纪大了，两瓶啤酒下去，就有点晕了。。。有兴趣的试试 
+         保存为35x7.cmd运行 
+         @echo off 
+          :start 
+         del tmp.txt 2>nul 
+         for /l %%i in (1,1,35) do ( 
+         setlocal ENABLEDELAYEDEXPANSION 
+         for /l %%a in (1,1,3) do ( 
+         echo %random% >nul 
+         set  m=!m!!random:~-1! 
+         ) 
+         echo !m!:%%i>>tmp.txt 
+           endlocal 
+           ) 
+           setlocal ENABLEDELAYEDEXPANSION 
+           set /a num=0 
+           for /f "tokens=2 delims=:" %%i in ('sort tmp.txt') do ( 
+           set n=%%i 
+           set m=!m! !n! 
+           set /a num=!num!+1 
+           if !num!  7 echo 本期35选7的中奖号码是: !m:~1! && goto :save 
+           ) 
+           :save 
+           set /p x=保留号码至num.txt[y/n] 
+           if /i [%x%]  [y] (echo !m:~1!>>num.txt && endlocal && goto :start) 
+           else (endlocal && goto :start) 
+           35x7.rar 
+19.  
+           保存为xx.cmd文档目录下运行，再次运行恢复 
+           @echo off 
+           setlocal  ENABLEDELAYEDEXPANSION 
+           for /f "delims=" %%i in ('dir /s/b *.doc') do ( 
+           set n=%%~ni 
+           set r_name=%%~ni 
+           set t_name 
+           for /l %%a in (1,1,100) do ( 
+           set n1=!n:~0,1! 
+           set n=!n:~1! 
+           set t_name=!n1!!t_name! 
+           if "!n!"  "" ( 
+           cd "%%~dpi" 
+           ren  "!r_name!.doc" "!t_name!.doc" 2>nul>nul 
+           ) 
+           ) 
+           ) 
+           endlocal 
+           xx.rar 
+20. htm-----CMD  
+           这是基础了。。。格式简单，构造起来较容易 
+           cmd查查也方便 如:help dir 
+           有人需要就造个htm手册玩玩 
+           保存为cmd_help.cmd运行 
+           @echo off 
+           del net_cmd_help.htm 2>nul 
+           echo. 
+           echo......请稍候，构造htm文件中..... 
+           echo. 
+           >cmd_help.htm echo ^<head^> 
+           >>cmd_help.htm echo ^<title^>Help for Net commands^</title^> 
+           >>cmd_help.htm echo ^<meta http-equiv="Content-Type" 
+           content="text/html^; charset=gb2312" ^/^> 
+           >>cmd_help.htm echo ^</head^> 
+           >>cmd_help.htm echo ^<A NAME="Top"^> 
+           >>cmd_help.htm echo ^<center^> 
+           >>cmd_help.htm echo ^<h1^>CMD 命令速查手册^</h1^> 
+           >>cmd_help.htm echo Written by Hitme 
+           >>cmd_help.htm echo ^</center^> 
+           >>cmd_help.htm echo ^<br^> 
+           ver|find "Windows XP" && goto:joke 
+           for /f "tokens=1*" %%i in ('help^|more +3') do ( 
+           help %%i>nul && echo ^<a href="#%%i"^>%%i^</a^>^&nbsp;^&nbsp;%%j 
+           >>cmd_help.htm || echo ^&nbsp;^&nbsp;^&nbsp;^&nbsp; %%i 
+           %%j>>cmd_help.htm 
+           >>cmd_help.htm echo ^</br^> 
+           ) 
+           for /f  %%i in ('help^|more +3') do ( 
+           help %%i>nul && ( 
+           >>cmd_help.htm echo ^<a name="%%i"^> 
+           >>cmd_help.htm echo ^<h2^>%%i^</h2^> 
+           >>cmd_help.htm echo ^<pre^> 
+           help %%i>>cmd_help.htm 
+           >>cmd_help.htm echo ^</pre^> 
+           >>cmd_help.htm echo ^<a href="#top"^>返回页首^</a^> 
+           ) 
+           ) 
+           start cmd_help.htm 
+           goto:eof 
+           :joke 
+           for /f "tokens=1*" %%i in ('help^|more +1') do ( 
+           help %%i>nul && echo ^&nbsp;^&nbsp;^&nbsp;^&nbsp; %%i 
+           %%j>>cmd_help.htm || echo ^<a 
+           href="#%%i"^>%%i^</a^>^&nbsp;^&nbsp;%%j >>cmd_help.htm 
+           >>cmd_help.htm echo ^</br^> 
+           ) 
+           for /f  %%i in ('help^|more +1') do ( 
+           help %%i>nul || ( 
+           >>cmd_help.htm echo ^<a name="%%i"^> 
+           >>cmd_help.htm echo ^<h2^>%%i^</h2^> 
+           >>cmd_help.htm echo ^<pre^> 
+           help %%i>>cmd_help.htm 
+           >>cmd_help.htm echo ^</pre^> 
+           >>cmd_help.htm echo ^<a href="#top"^>返回页首^</a^> 
+           ) 
+           ) 
+           start cmd_help.htm 
+           cmd_help.rar 
+21. htm-----Net  
+           net /? 
+           net view /help 
+           查看太烦，倒腾个手册玩玩 
+           保存为make.cmd运行 
+           @echo off 
+           del net_help.htm 2>nul 
+           echo. 
+           echo......请稍候，构造htm文件中..... 
+           echo. 
+           setlocal  ENABLEDELAYEDEXPANSION 
+           for /f "tokens=1,2 delims=:" %%i in ('net help^|more +9^|findstr /n 
+           "."') do ( 
+           set n=%%j 
+           if %%i gtr 0 (if %%i lss 10 ( 
+           echo !n:~3,22!>>tmp.txt 
+           echo !n:~28,14!>>tmp.txt 
+           echo !n:~50,14!>>tmp.txt 
+           ) 
+           ) 
+           ) 
+           for /f "delims=" %%i in ('sort tmp.txt') do ( 
+           set x=%%i 
+           set x=!x: =! 
+           set x=!x:CONFIGWORKSTATION=CONFIG WORKSTATION! 
+           set x=!x:CONFIGSERVER=CONFIG SERVER! 
+           set x=!x:NET=NET ! 
+           echo !x!>>tmp1.txt 
+           ) 
+           endlocal 
+            >net_help.htm echo ^<head^> 
+           >>net_help.htm echo ^<title^>Help for Net commands^</title^> 
+           >>net_help.htm echo ^<meta http-equiv="Content-Type" 
+           content="text/html^; charset=gb2312" ^/^> 
+           >>net_help.htm echo ^</head^> 
+           >>net_help.htm echo ^<A NAME="Top"^> 
+           >>net_help.htm echo ^<center^> 
+           >>net_help.htm echo ^<h1^>Net 命令速查手册^</h1^> 
+           >>net_help.htm echo Written by Hitme 
+           >>net_help.htm echo ^</center^> 
+           for /f "delims=" %%i in (tmp1.txt) do ( 
+           >>net_help.htm echo ^<a href="#%%i"^>%%i^</a^> 
+           >>net_help.htm echo ^</br^> 
+           ) 
+           for /f "delims=" %%i in (tmp1.txt) do ( 
+           >>net_help.htm echo ^<a name="%%i"^> 
+           >>net_help.htm echo ^<h2^>%%i^</h2^> 
+           >>net_help.htm echo ^<pre^> 
+           %%i /help|more /s>>net_help.htm 
+           >>net_help.htm echo ^</pre^> 
+           >>net_help.htm echo ^<a href="#top"^>返回页首^</a^> 
+           ) 
+           del tmp*.txt 
+           start net_help.htm 
+           net_help.rar 
+           make.rar 
+22. 297 
+           @echo off 
+           :start 
+           setlocal ENABLEDELAYEDEXPANSION 
+           :loop 
+           del tmp.txt 2>nul 
+           for /l %%i in (1,1,7) do ( 
+           echo %random% >nul 
+                 set /a m%%i=!random:~-1!+1 
+           set /a m%%i=!m%%i!/4 
+           set /a m%%i=!m%%i:~0,1! 
+           echo %random% >nul 
+           set /a n%%i=!random:~-1! 
+           if !m%%i!!n%%i!  00 goto:loop 
+           findstr /m "!m%%i!!n%%i!" tmp.txt 2>nul >nul && goto :loop 
+           echo !m%%i!!n%%i!>>tmp.txt 
+           ) 
+           endlocal 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f %%i in ('sort tmp.txt') do ( 
+           set n=%%i 
+           set m=!m! !n! 
+           ) 
+           del tmp.txt 
+           cls 
+           echo. 
+           echo.￥100000000000000000000000000000000000000000.00 
+           echo. 
+           echo. Hitme,29选7必中,号码是 !m! 
+           echo. 
+           echo.￥100000000000000000000000000000000000000000.00 
+           echo. 
+           set /p x=保留号码至num.txt[y/n] 
+           if /i [%x%]  [y] (echo !m!>>num.txt && endlocal && goto :start) else 
+           (endlocal && goto :start) 
+           29x7.rar 
+23. 6+1 
+           @echo off 
+           setlocal ENABLEDELAYEDEXPANSION 
+           cls 
+           del num.txt 2>nul 
+           :loop 
+           for /l %%i in (1,1,7) do ( 
+           echo %random% >nul 
+                 set n%%i=!random:~-1! 
+           ) 
+           set num=%n1%%n2%%n3%%n4%%n5%%n6%%n7% 
+           echo. 
+           echo.*********************************** 
+           echo Hitme,6+1必中,号码是%num% 
+           echo.*********************************** 
+           echo. 
+           set /p x=保留号码至num.txt[y/n] 
+           if /i %x%  y (echo %num%>>num.txt && goto :loop) else (goto :loop) 
+           endlocal 
+           6+1.rar 
+24.  
+           @echo off 
+            :start 
+           setlocal ENABLEDELAYEDEXPANSION 
+            :loop_a 
+           del tmp*.txt 2>nul 
+           for /l %%i in (1,1,6) do ( 
+           echo %random% >nul 
+           set /a s%%i=!random:~-1! 
+           echo %random% >nul 
+           set /a g%%i=!random:~-1! 
+           if "!s%%i!"  "0" (set /a _VAR_=!g%%i! / 3) else (set /a 
+           _VAR_=!s%%i!!g%%i! / 3) 
+           if "!_VAR_:~1,1!"  "" set _VAR_=0!_VAR_! 
+           findstr /m "!_VAR_!" tmp.txt 2>nul >nul && goto :loop_a 
+           if "!_VAR_!"  "00" (echo 33>>tmp.txt) else (echo !_VAR_!>>tmp.txt) 
+           ) 
+           sort tmp.txt>tmp1.txt 
+           endlocal 
+            :loop_b 
+           setlocal ENABLEDELAYEDEXPANSION 
+           echo %random% >nul 
+           set /a s=!random:~-1! 
+           echo %random% >nul 
+           set /a g=!random:~-1! 
+           if "!s!"  "0" (set /a _VAR_=!g! / 6) else (set /a _VAR_=!s!!g! / 6) 
+           if "!_VAR_:~1,1!"  "" set _VAR_=0!_VAR_! 
+           echo ^|>>tmp1.txt 
+           if "!_VAR_!"  "00" (echo 16>>tmp1.txt) else (echo !_VAR_!>>tmp1.txt) 
+           endlocal 
+           :echo 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f %%i in (tmp1.txt) do ( 
+           set n=%%i 
+           set m=!m! !n! 
+           ) 
+           del tmp*.txt 
+           cls 
+           echo. 
+           echo.￥1000000000000000000000000000000000000000000.00 
+           echo. 
+           echo. Hitme,双色球必中,号码是 !m! 
+           echo. 
+           echo.￥1000000000000000000000000000000000000000000.00 
+           echo. 
+           :save 
+           set /p x=保留号码至num.txt[y/n] 
+           if /i [%x%]  [y] (echo !m!>>num.txt && endlocal && goto :start) else 
+            (endlocal && goto :start) 
+           ab.rar 
+25.  &  
+           for windows2000+ 
+           @echo off 
+           :run 
+           for /F "tokens=2" %%i in ('netstat -e ^| find "Bytes"') do set 
+           down1=%%i 
+           for /F "tokens=3" %%i in ('netstat -e ^| find "Bytes"') do set 
+           up1=%%i 
+           ping -w 850 -n 1 1.1.1.1 2>nul >nul 
+           for /F "tokens=2" %%i in ('netstat -e ^| find "Bytes"') do set /a 
+           down=(%%i-%down1%)/1024 
+           for /F "tokens=3" %%i in ('netstat -e ^| find "Bytes"') do set /a 
+           up=(%%i-%up1%)/1024 
+           cls 
+           echo Down %down% KB 
+           echo Up   %up% KB 
+           title %down% KB Down %up% KB Up 
+           goto:run 
+           -------------------------------------- 
+           @echo off 
+           start /wait regedit /e tmp1.txt 
+           "HKEY_LOCAL_MACHINE\SYSTEM\MountedDevices\" 
+           for /f "tokens=3 delims=\:" %%i in ('find "\\DosDevices\\" 
+           tmp1.txt') do echo %%i >>tmp2.txt 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for %%i in (C D E F G H I J K L M N O P Q R S T U V W X Y Z) do find 
+           "%%i" tmp2.txt 2>nul >nul|| set n=!n!:,%%i 
+           echo freedrv=!n:~2! 
+           endlocal 
+           pause 
+           att-1.rar 
+26. TOP10 
+          功能：列出特定目录下最新目录名TOP10 
+          可以利用ftp登录显示最近更新的东西，方便抓取特定目录到最近更新的目录 
+          测试 
+          用法,cmd下 
+          t_ls /top数量 目录名 
+          1,以为if不能else，原来else (要带个空 
+          2,%var:~n,m% 
+          3,more +n| 去掉前几行，嘿，在管道里没有more作用 
+          4,setlocal ENABLEDELAYEDEXPANSION ,在for里可以用累“加”了。 
+          5,%var:string1=string2% 替换 
+          6,!var! 用在delayedexpansion 
+          @echo off 
+          cls 
+          echo. 
+          echo.....列表中....请少等 
+          echo. 
+          if "%1"  "" goto :syntax 
+          if "%1"  "/?" goto :syntax 
+          if "%1"  "/" goto :syntax 
+          if "%1"  "?" goto :syntax 
+          if "%1"  "/help" goto :syntax 
+          setlocal  ENABLEDELAYEDEXPANSION 
+           :input 
+          set n=%1 
+          if "%n:~0,1%"  "/" ( 
+              for /l %%i in (0,1,%n:~1%) do set var=!var! %%i:. 
+              set m=%* 
+               set m=!m:%n% =!) else ( 
+                           for /l %%i in (0,1,10) do set var=!var! %%i:. 
+                           set m=%* 
+           ) 
+           :head 
+           (echo.^<head^> 
+           echo.^<title^>列表目录下最新目录名TOP10^</title^> 
+           echo.^<meta http-equiv="Content-Type" content="text/html^; 
+           charset=gb2312" ^/^> 
+           echo.^<style type="text/css"^> 
+           echo.^<!-- 
+           echo.a:active { text-decoration: none ; color: red ; font-size: 12pt 
+           } 
+           echo.a:visited { text-decoration: none ; color: green ; font-size: 
+           12pt } 
+           echo.a:link { text-decoration: none ; font-size: 12pt } 
+           echo.--^> 
+           echo.^</style^> 
+           echo.^</head^> 
+           echo.^<h1^>        列表目录下最新目录名TOP10                     ^</h1^>    
+           echo.  written by hitme 2005.9.3 
+           echo.^</br^>)>list.htm 
+           :list 
+           for /f "delims=" %%i in ('dir "!m!\" /ad/b/tc/o-d^|more +0 
+                                              ') do ( 
+                       (echo.----------------------------------- 
+                        echo.^</br^> 
+                        echo.^<a href="!m!\%%i"^>"!m!\%%i"^</a^> 
+                        echo.^</br^> 
+                        echo.^</br^>)>>list.htm 
+                       for /f "tokens=1-5* delims=: " %%a in ('dir "!m!\%%i" 
+           /ad/tc/o-d^|more +5^|findstr /v /c:"<DIR>          ."^|findstr /n 
+           "."^|findstr /r /b "!var!" 
+                                     ') do ( 
+                               if "%%f" neq ""    ( 
+                               >>list.htm echo.^<a href="!m!\%%i\%%f"^>%%a: 
+          %%b %%c:%%d    %%f^</a^> 
+                              >>list.htm echo.^</br^>) 
+                      ) 
+           ) 
+           start list.htm 
+           endlocal 
+           goto:eof 
+           :syntax 
+           cls 
+           echo. 
+           echo.T_ls.cmd 
+           echo. 
+           echo.written by hitme    2005.9.3 
+           echo. 
+           echo.用法: 
+           echo.    t_ls /top数量 目录名 
+           echo. 
+           echo.例如: 
+           echo.    t_ls c:windows 
+           echo.    t_ls /20 c: 
+           echo. 
+           T_ls-1.rar 
+27.  
+           renx.rar 
+28.  
+           今天格了盘，忘了备绿色/准绿色程序的快截方式，目录进进出出实在烦 
+           explorer搜索*.exe，右键拖出快捷方式，受到非入口exe的干扰，迷眼睛啊 
+           想办法呀，想办法呀，cmd滤一下 
+           两个策略: 
+          1,枚举路径，如本层路径下存在有exe文件，则不深入到下一层 
+          2,滤出上次访问时间最新的exe文件,就当它是入口吧，眼睛是我们宝贵的辩识 
+          力量 
+          偶然发现的好处: 
+          1.发掘出了几个压箱底的东东 
+          2.如本身有较好的分类，稍改下cmd，也能实现lnk的自动分类 
+          @echo off 
+          echo. 
+          echo. 
+          echo.批量跑出程序的快捷方式.cmd by hitme 2005.5.11 
+          echo. 
+          echo.稍等... 
+          :P1 
+          ::*********************************************************** 
+          ::#列表路径 
+          ::#滤镜1:路径下存在有exe文件 
+          ::#滤镜1:枚举路径，如本层路径下存在有exe文件，则不深入到下一层 
+          ::*********************************************************** 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /f "delims=" %%i in ('dir /s/b *.exe ^| findstr /v /i 
+          "shortcut\.exe$"') do ( 
+          find "%%~dpi" tmp.txt>nul || ( 
+                echo %%~dpi | find "!n!">nul || ( 
+                         echo %%~dpi>>tmp.txt 
+                         set n=%%~dpi 
+                         ) 
+                   ) 
+          ) 
+          endlocal 
+          :P2 
+          ::*********************************************************** 
+          ::#以P1路径列表为原料，继续加工 
+          ::#过滤上次访问时间最新的exe文件 
+          ::*********************************************************** 
+          for /f "delims=" %%i in (tmp.txt) do ( 
+                           dir /ta "%%i*.exe" | sort /r | findstr /n "." | 
+           findstr /r "^1:">>tmp1.txt 
+           ) 
+           :P3 
+           ::*********************************************************** 
+           ::#同行合并P1,P2=>list.txt 
+           ::*********************************************************** 
+           set /a N1=0 
+           for /f %%i in (tmp.txt) do set /a N1+=1 
+           for /l %%a in (1,1,%N1%) do ( 
+           for /f "tokens=1* delims=:" %%i in ('findstr /n "." tmp.txt 
+           ^|findstr /r "^%%a:"') do set dir=%%j 
+           for /f "tokens=3*" %%i in ('findstr /n "." tmp1.txt ^|findstr /r 
+           "^%%a:"') do set filename=%%j 
+           setlocal ENABLEDELAYEDEXPANSION 
+           echo !dir!!filename! 
+           echo !dir!!filename!>>list.txt 
+           endlocal 
+           ) 
+           :shortcut 
+           ::*********************************************************** 
+           ::#依据list.txt路径列表，创建link 
+           ::*********************************************************** 
+           pause 
+           for /f "delims=" %%i in (list.txt) do ( 
+           shortcut -d %%~dpi "%%i" 
+           ) 
+           :clean 
+           ::*********************************************************** 
+           ::#打扫卫生 
+           ::*********************************************************** 
+           del tmp*.txt list.txt 2>nul 
+           creat_shortcut.rar 
+29. n 
+           copy自yesterday.vbs 
+           搞不明白如何将vbs变量传递给cmd变量，算了，用 
+           for...('cscript.exe..)..来取了 
+           用法:cmd下 
+           del_day 5 
+           删除文件修改时间为5天前的文件，测试，删除操作务必谨慎 
+           @echo off 
+           >t_day.vbs  echo ' Yesterday.vbs,  Version 1.01 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Written by Rob van der Woude 
+           >>t_day.vbs echo ' http://www.robvanderwoude.com 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Calculate yesterday's date 
+           >>t_day.vbs echo    dtmYesterday = DateAdd("d",-%1,Date) 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's year 
+           >>t_day.vbs echo    strYear      = DatePart("yyyy",dtmYesterday) 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's month, add leading zero if 
+           necessary 
+           >>t_day.vbs echo    If DatePart("m",dtmYesterday) ^< 10 Then 
+           >>t_day.vbs echo    strMonth = 0 ^& DatePart("m",dtmYesterday) 
+           >>t_day.vbs echo    Else 
+           >>t_day.vbs echo    strMonth = DatePart("m",dtmYesterday)           
+           >>t_day.vbs echo    End If 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's day, add leading zero if 
+           necessary  
+           >>t_day.vbs echo    If DatePart("d",dtmYesterday) ^< 10 Then 
+           >>t_day.vbs echo   strDay = 0 ^& DatePart("d",dtmYesterday)        
+           >>t_day.vbs echo    Else 
+           >>t_day.vbs echo   strDay = DatePart("d",dtmYesterday)            
+           >>t_day.vbs echo    End If 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Format output for yesterday 
+           >>t_day.vbs echo   strYest = strYear ^& strMonth ^& strDay 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' echo 
+           >>t_day.vbs echo Wscript.echo( strYest ) 
+           @echo on 
+           for /f "delims=" %%i in ('cscript.exe //nologo t_day.vbs') do set 
+           t_day=%%i 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /r %%i in (*.*) do set c_day=%%~ti && if 
+           "!c_day:~0,2!!c_day:~3,2!!c_day:~6,2!" lss "%t_day:~2,6%" del /q 
+           "%%i" 
+           endlocal 
+           cls 
+           @echo  
+           @echo 删除完毕. 
+           @echo  
+30. “” 
+           以明星写真为例；http://www.imagegarden.net/material/index.php?s 
+           保存为.cmd运行，albumid从595到2210 
+           @echo off 
+           set /a _n_=595 
+           :loop 
+           curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -o 
+           tmp.txt 
+           http://www.imagegarden.net/viewimage.php?s=^&cataid=4^&albumid=2202^ 
+           &imageid=8^&type=jpeg 
+           for /f "tokens=4 delims  &" %%i in ('findstr 
+           "cataid=4&albumid=2202&imageid=8&type=jpeg" tmp.txt') do ( 
+           set _session_=%%i 
+           ) 
+           set /a _n_=%_n_%+1 
+           if %_n_%  2210 goto :clean 
+           md %_n_% 
+           del /q *.jpg 2>nul 
+           :dl 
+           for /l %%a in (1,1,9) do ( 
+           curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -o 
+           %_n_%_00%%a.jpg 
+           http://www.imagegarden.net/image_a.php?imagesession=%_session_%^&cat 
+           aid=4^&albumid=%_n_%^&imageid=%%a^&type=jpeg 
+           for %%i in (%_n_%_*.jpg) do ( 
+           if %%~zi  11527 (goto :loop) else move *.jpg %_n_% 
+           ) 
+           ) 
+           for /l %%a in (10,1,99) do ( 
+           curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -o 
+           %_n_%_0%%a.jpg 
+           http://www.imagegarden.net/image_a.php?imagesession=%_session_%^&cat 
+           aid=4^&albumid=%_n_%^&imageid=%%a^&type=jpeg 
+           for %%i in (%_n_%_*.jpg) do ( 
+           if %%~zi  11527 (goto :loop) else move *.jpg %_n_% 
+           ) 
+           ) 
+           for /l %%a in (100,1,999) do ( 
+           curl -A "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.0)" -o 
+           %_n_%_%%a.jpg 
+           http://www.imagegarden.net/image_a.php?imagesession=%_session_%^&cat 
+           aid=4^&albumid=%_n_%^&imageid=%%a^&type=jpeg 
+           for %%i in (%_n_%_*.jpg) do ( 
+           if %%~zi  11527 (goto :loop) else move *.jpg %_n_% 
+           ) 
+           ) 
+           :clean 
+           for /r %%i in (.) do rd /q "%%i" 
+           del /q *.jpg 
+           del /q tmp.txt 
+           dl-1.rar 
+31.  
+           对象: 
+           http://www.sophoto.cn/photopost/showgallery.php?si=&perpage=24&sort 
+           1&cat=501&ppuser 
+           目标:得到图片url,方便flashget批量下载 
+          简单看下页面:连接有分大中小图,规模为12*41张左右 
+          思路: 
+          curl抓取41个缩略页面，分析出缩略图url 
+           由于图片命名具有规律,缩掠与大图的区别在于结尾 
+          thumb.gif -thumb.jpg =缩略图 
+          .gif .jpg =大图 
+          med.jpg =中图 
+          这下更简单了,抓取时,替换部分url内容即可 
+          保存为.cmd运行 
+          需要curl 
+          @echo off 
+          curl -o #1.htm 
+          http://www.sophoto.cn/photopost/showgallery.php?cat=501^&si=^&page=[ 
+          1-41]^&sort=1^&perpage=12^&password=0^&ppuser=^&what=^&name=^& 
+          setlocal  ENABLEDELAYEDEXPANSION 
+          for /f "tokens=9 delims  " %%i in ('findstr /r 
+          "http://www\.sophoto\.cn/photopost/data/" *.htm') do ( 
+          set n=%%i 
+          set n=!n:-thumb.gif" alt=.gif! 
+          set n=!n:-thumb.jpg" alt=.jpg! 
+          set n=!n:-thumb.jpeg" alt=.jpeg! 
+          set n=!n:"=! 
+          echo !n! >>list.txt 
+          ) 
+          endlocal 
+          del *.htm 
+          start list.txt 
+          list.txt 
+32.  
+          下载www.sky-fire.com的100多部漫画 
+          毛估有几十万张的漫画图片 
+          需要curl 
+33.  
+          述求：批量下载http://www.wulffmorgenthaler.com/中的每日图片 
+          图片都是这个格式 
+          http://www.wulffmorgenthaler.com/log/xxxxxxxxx.gif 
+          开工： 
+          1.找文件名规律，gif文件名有两位随机位，碰壁 
+          2.查看htm文件 
+          ，http://www.wulffmorgenthaler.com/thestrip.asp?cDay=09&cMonth=05&cY 
+          ear=2005，带年月日，有规律真好 
+          3.列表年月日，备用 
+          4.出动curl,下载htm,分析htm,下载gif 
+          5.收工 
+          保存为get_gif.cmd运行，自行修改红色部分，现表示下载前10天的gif文件 
+          需要curl 
+          @echo off 
+          ::/ * list date */ 
+           set /a n=0 
+           :loop 
+           set /a n+=1 
+           >t_day.vbs  echo ' Yesterday.vbs,  Version 1.01 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Written by Rob van der Woude 
+           >>t_day.vbs echo ' http://www.robvanderwoude.com 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Calculate yesterday's date 
+           >>t_day.vbs echo    dtmYesterday = DateAdd("d",-%n%,Date)       
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's year 
+           >>t_day.vbs echo    strYear      = DatePart("yyyy",dtmYesterday) 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's month, add leading zero if 
+           necessary 
+           >>t_day.vbs echo    If DatePart("m",dtmYesterday) ^< 10 Then 
+           >>t_day.vbs echo    strMonth = 0 ^& DatePart("m",dtmYesterday) 
+           >>t_day.vbs echo    Else 
+           >>t_day.vbs echo    strMonth = DatePart("m",dtmYesterday)           
+           >>t_day.vbs echo    End If 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Get yesterday's day, add leading zero if 
+           necessary  
+           >>t_day.vbs echo    If DatePart("d",dtmYesterday) ^< 10 Then 
+           >>t_day.vbs echo   strDay = 0 ^& DatePart("d",dtmYesterday)        
+           >>t_day.vbs echo    Else 
+           >>t_day.vbs echo   strDay = DatePart("d",dtmYesterday)            
+           >>t_day.vbs echo    End If 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' Format output for yesterday 
+           >>t_day.vbs echo   strYest = strYear ^& strMonth ^& strDay 
+           >>t_day.vbs echo ' 
+           >>t_day.vbs echo ' echo 
+           >>t_day.vbs echo Wscript.echo( strYest )   
+           for /f "delims=" %%i in ('cscript.exe //nologo t_day.vbs') do echo 
+           %%i>>tmp.txt 
+           if %n% neq 10 goto :loop 
+            ::/ * get htm&gif * / 
+           for /f "delims=" %%i in (tmp.txt) do ( 
+           setlocal ENABLEDELAYEDEXPANSION 
+           set n=%%i 
+           curl -o !n!.htm 
+           http://www.wulffmorgenthaler.com/thestrip.asp?cDay=!n:~- 
+           2!^&cMonth=!n:~4,2!^&cYear=!n:~0,4! 
+           for /f "tokens=4 delims  " %%j in ('findstr "log" *.htm') do ( 
+           set m=%%j 
+           curl -o !m:~5,-5! http://www.wulffmorgenthaler.com/!m:~1,-5! 
+           ) 
+           del *.htm 
+           endlocal 
+           ) 
+           ::/ * clean * / 
+           del tmp.txt 
+           get_gif.rar 
+34.  
+           7.9更新，支持分次下载 
+           http://automobile.2405.com/ 
+           这里面的汽车图片不错.想办法把它全部下载下来 
+           测试下,保存为dl.cmd运行 
+           需要curl 
+           @echo off 
+           setlocal  ENABLEDELAYEDEXPANSION 
+           for /f "tokens=2 delims  " %%i in ('curl 
+           http://automobile.2405.com/index.html ^|findstr 
+           "automotive_catalog"') do ( 
+           set n=%%i 
+           curl http://automobile.2405.com/!n:~1,-7! |findstr 
+           "automobile_gallery" >tmp.txt 
+           for /f "tokens=2 delims  " %%a in (tmp.txt) do ( 
+           set m=%%a 
+           curl http://automobile.2405.com/!m:~4,-7!/index.html |findstr "jpg" 
+           >tmp1.txt 
+          set x=!n:~1,-7!!m:~4,-7! 
+          set x=!x:/=\! 
+          md !x! 2>nul 
+          for /f "tokens=2 delims  " %%b in (tmp1.txt) do ( 
+               set l=%%b 
+           if not exist "!x!\!l:~1,-10!" curl -o "!x!\!l:~1,-10!" 
+          http://automobile.2405.com/!m:~4,-7!!l:~1,-10! 
+          ) 
+          ) 
+          ) 
+          endlocal 
+          del tmp*.txt 
+          dl.rar 
+35. txt 
+          有时候不太方便先cut&copy去别处，再del，又想要一点点自动化感觉的 
+          cmd下 
+          for /f "delims=/" %i in ('dir /b/s *.*') do dir /b/s *.txt | find 
+          "%i" || del "%i" 
+          需保留下数种类型？ 
+          例：保留txt rar 
+          for /f "delims=/" %i in ('dir /b/s *.*') do dir /b/s *.txt *.rar| 
+          find "%i" || del "%i" 
+36.  
+          功能：挂接网络中某主机（例如:192.168.1.99)的全部共享为网络驱动器 
+          用法:cmd下运行mntshare /? 
+          net view \\ip的输出太过bt 
+          共享名过长时列表错行，共享名含空格又造成for抓取困难(字段间隔非跳格键 
+          ,而是空格) 
+          就是要搞翻它。。。 
+          出个嗖招：利用了类型Disk字段定位，把文本行翻过来，替换，倒回去。。 
+          呵呵，坚持，坚持就是胜利,测试下 
+          顺便感慨下。。。裸奔cmd的文本替换能力太肉了.. 
+          想想还是吃饱了撑的， xp以后的系统都带自动扫描了，给2000顶一顶好了 
+          @echo off 
+          echo.主机%1共享挂接中......... 
+          del tmp.txt 2>nul 
+          if "%1"  "" goto :syntax 
+          if "%1"  "/?" goto :syntax 
+          if "%1"  "/" goto :syntax 
+          if "%1"  "?" goto :syntax 
+          if "%1"  "/help" goto :syntax 
+          setlocal ENABLEDELAYEDEXPANSION 
+          for /f "delims=" %%i in ('net view \\%1 ^|more +7') do ( 
+          set n=%%i 
+          set r_n 
+          for /l %%a in (1,1,40) do ( 
+          if "!n!"  "" set n 
+          set n1=!n:~0,1! 
+          set n=!n:~1! 
+          set r_n=!n1!!r_n! 
+          ) 
+          set r_n=!r_n:*ksiD=! 
+          echo !r_n!>>tmp.txt 
+          ) 
+          for /f "tokens=*" %%j in (tmp.txt) do ( 
+          set m=%%j 
+          set r_m 
+          for /l %%b in (1,1,40) do ( 
+           if "!m!"  "" net use * "\\%1\!r_m!" /persistent:yes 2>nul >nul 
+           set m1=!m:~0,1! 
+           set m=!m:~1! 
+           set r_m=!m1!!r_m! 
+           ) 
+           ) 
+           endlocal 
+           cls 
+           echo. 
+           echo.挂接主机%1共享完成。 
+           echo. 
+           net use |more +5 
+           pause 
+           del tmp.txt 2>nul 
+           explorer /e 
+           :syntax 
+           cls 
+           echo. 
+           echo.mntshare.cmd  挂接网络共享cmd脚本 
+           echo. 
+           echo.written by hitme    2005.8.16 
+           echo. 
+           echo.用法: 
+           echo.mntshare ip或者主机名 
+           echo. 
+           echo.例如: 
+           echo.mntshare 192.168.1.99 
+           echo.mntshare mycomputer 
+           echo. 
+           echo.删除挂接请使用 net use * /delete 
+           echo. 
+           pause 
+           mntshare.rar 
+37. () 
+          闲来无聊，瞎搞个简易网络信息搜集 
+          现包括 
+          1.IP与Mac Address对应表 
+          2.IP与Hostname对应表 
+          3.IP与Workgroup对应表 
+          4.查询WHO是主控域浏览器? 
+          全部基于nbtstat命令，闹着玩 
+          @echo off 
+          setlocal 
+          :menu 
+          cls 
+          mode con:cols=80 lines=25 
+          title  网络信息搜集(简易) 
+          color f2 
+          echo. 
+          echo.*********************** 
+          echo.       网络信息搜集(简易) 
+          echo.*********************** 
+          echo.1.IP与Mac Address对应表 
+          echo. 
+          echo.2.IP与Hostname对应表 
+          echo. 
+          echo.3.IP与Workgroup对应表 
+          echo. 
+          echo. 
+          echo.4.查询WHO是主控域浏览器? 
+          echo. 
+          echo. 
+          echo.x.退出 
+          echo.--------------------------------------------------------------- 
+          --- 
+          :input 
+          set /p x=请选择项目号: 
+           if /i "%x%"  "x" goto :end 
+           echo. 
+           set /p y=请输入IP范围(例如:192.168.1.1-254): 
+           for /f "tokens=1-5 delims=.-" %%a in ("%y%") do ( 
+           set ip=%%a.%%b.%%c 
+           set n1=%%d 
+           set n2=%%e 
+           ) 
+           if "%x%"  "1" goto :mac 
+           if "%x%"  "2" goto :hostname 
+           if "%x%"  "3" goto :group 
+           if "%x%"  "4" goto :msbrowse 
+           endlocal 
+           ::------------------------------------------------------------------ 
+           ----------- 
+           :mac 
+           setlocal 
+           cls 
+           mode con:cols=40 lines=40 
+           color f4 
+           title IP与Mac Address对应表 
+           echo.IP ^<=^> MAC Address's Table 
+           echo. 
+           ( 
+           echo.IP ^<=^> MAC Address's Table 
+           echo. 
+           ) >mac.txt 
+           for /l %%i in (%n1%,1,%n2%) do ( 
+           ping -n 1 -w 1 %ip%.%%i |find "Reply" >nul 2>nul && ( 
+           for /f "tokens=2 delims  " %%a in ('nbtstat -a "%ip%"."%%i"^|findstr 
+           /c:"MAC Address"') do ( 
+           echo.%ip%.%%i%%a 
+           echo.%ip%.%%i%%a>>mac.txt 
+           ) 
+           ) 
+           ) 
+           findstr /n "." mac.txt |findstr /r "^3:" && start mac.txt 
+           endlocal 
+           goto :menu 
+           ::------------------------------------------------------------------ 
+           ---------- 
+           :hostname 
+           setlocal 
+           cls 
+           mode con:cols=40 lines=40 
+           color f5 
+           title Ip与Hostname对应表 
+           echo.IP ^<=^> Host_name's Table 
+           echo. 
+           ( 
+           echo.IP ^<=^> Host_name's Table 
+           echo. 
+           ) >hostname.txt 
+           for /l %%i in (%n1%,1,%n2%) do ( 
+           ping -n 1 -w 1 %ip%.%%i |find "Reply" >nul 2>nul && ( 
+           for /f  %%b in ('nbtstat -a "%ip%"."%%i"^|findstr /r /c:"\<20\> 
+           UNIQUE"') do ( 
+           echo.%ip%.%%i%%b 
+           echo.%ip%.%%i%%b>>hostname.txt 
+           ) 
+           ) 
+           ) 
+           findstr /n "." hostname.txt |findstr /r "^3:" && start hostname.txt 
+           endlocal 
+           goto :menu 
+           ::------------------------------------------------------------------ 
+           ------------ 
+           :group 
+           setlocal 
+           cls 
+           mode con:cols=40 lines=40 
+           color f1 
+           title IP与Workgroup对应表 
+           echo.IP ^<=^>Group Name's Table 
+           echo. 
+           ( 
+           echo.IP ^<=^>Group Name's Table 
+           echo. 
+           ) >group.txt 
+           for /l %%i in (%n1%,1,%n2%) do ( 
+           ping -n 1 -w 1 %ip%.%%i |find "Reply" >nul 2>nul && ( 
+           for /f  %%c in ('nbtstat -a "%ip%"."%%i"^|findstr /r /c:"\<00\> 
+           GROUP"') do ( 
+           echo.%ip%.%%i%%c 
+           echo.%ip%.%%i%%c>>group.txt 
+           ) 
+           ) 
+           ) 
+           findstr /n "." group.txt |findstr /r "^3:" && start group.txt 
+           endlocal 
+           goto :menu 
+           :msbrowse 
+           cls 
+           title 查询WHO是主控域浏览器? 
+           echo.查询中......... 
+           for /l %%i in (%n1%,1,%n2%) do ( 
+           ping -n 1 -w 1 %ip%.%%i |find "Reply" >nul 2>nul && ( 
+           nbtstat -a %ip%.%%i|findstr "__MSBROWSE__" 2>nul >nul && ( 
+           echo.主控域浏览器是:%ip%.%%i 
+           pause 
+           goto :menu 
+           ) 
+           ) 
+           ) 
+           cls 
+           echo.未找到......汗 & pause & goto:menu 
+           :end 
+                cls 
+                echo. 
+                echo.written by hitme 2005.08.18 
+                pause 
+                goto :eof 
+                net_Tab.rar 
+38. cmd 
+39.  
+                闲来无聊，瞎搞一个，测试 
+                功能：统计每个单词在文本中出现的次数 
+                用法: 
+                cmd下 
+                word_num 文件名 
+                统计结果样式： 
+                0152 fixed 
+                0108 added 
+                0094 in 
+                0091 to 
+                0070 will 
+                0069 not 
+                0062 problem 
+                0059 the 
+                0056 bar 
+                0054 support 
+                0054 at 
+                0053 and 
+                0050 for 
+                0047 menu 
+           0046 tab 
+           0042 when 
+           0041 new 
+           0040 option 
+           0040 changed 
+           0038 myie2 
+           0037 plugin 
+           0036 favorite 
+           0035 toolbar 
+           0035 on 
+           代码 
+           @echo off 
+           cls 
+           echo. 
+           echo.----------------------------- 
+           echo....统计中.....请少等... 
+           echo.----------------------------- 
+           echo. 
+           if "%*"  "" goto :syntax 
+           if "%*"  "/?" goto :syntax 
+           if "%*"  "/" goto :syntax 
+           if "%*"  "?" goto :syntax 
+           if /i "%*"  "/help" goto :syntax 
+           :: /* 拆解文本为每行一单词 */ 
+           setlocal ENABLEDELAYEDEXPANSION 
+           del end.txt tmp*.txt 2>nul 
+           set /a m=0 
+           :loop 
+           set /a m+=1 
+           for /f "tokens=%m% delims=.,:;/[]()!'@=\<> " %%i in (%*) do ( 
+           set n=%%i 
+           set n=!n:"=! 
+           echo.1 !n!>>tmp.txt 
+           ) 
+           if "%m%"  "200" goto:add 
+           goto:loop 
+           endlocal 
+           :add 
+           :: /* 分类汇总 */ 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f "tokens=1,2" %%i in ('sort tmp.txt^|findstr /r "^1\ [a-z][A- 
+           Z]"') do ( 
+           if /i "!y!"  "%%j" ( 
+           set /a x+=1) else (if "!x!" neq "" ( 
+           if !x! lss 10 (echo.000!x! !y!>>tmp1.txt) else ( 
+           if !x! lss 100 (echo.00!x! !y!>>tmp1.txt) else ( 
+           if !x! lss 1000 (echo.0!x! !y!>>tmp1.txt)))) 
+           set y=%%j 
+           set x=%%i) 
+           ) 
+           if !x! lss 10 (echo.000!x! !y!>>tmp1.txt) else ( 
+           if !x! lss 100 (echo.00!x! !y!>>tmp1.txt) else ( 
+           if !x! lss 1000 (echo.0!x! !y!>>tmp1.txt))) 
+           endlocal 
+           sort /r tmp1.txt>tmp2.txt 
+           :ex 
+           :: /* 大写转小写 */ 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f "delims=" %%i in (tmp2.txt) do ( 
+           set ex=%%i 
+           set ex=!ex:A=a! 
+           set ex=!ex:B=b! 
+           set ex=!ex:C=c! 
+           set ex=!ex:D=d! 
+           set ex=!ex:E=e! 
+           set ex=!ex:F=f! 
+           set ex=!ex:G=g! 
+           set ex=!ex:H=h! 
+           set ex=!ex:I=i! 
+           set ex=!ex:J=j! 
+           set ex=!ex:K=k! 
+           set ex=!ex:L=l! 
+           set ex=!ex:M=m! 
+           set ex=!ex:N=n! 
+           set ex=!ex:O=o! 
+           set ex=!ex:P=p! 
+           set ex=!ex:Q=q! 
+           set ex=!ex:R=r! 
+           set ex=!ex:S=s! 
+           set ex=!ex:T=t! 
+           set ex=!ex:U=u! 
+           set ex=!ex:V=v! 
+           set ex=!ex:W=w! 
+           set ex=!ex:X=x! 
+           set ex=!ex:Y=y! 
+           set ex=!ex:Z=z! 
+           echo.!ex!>>end.txt 
+           ) 
+           del tmp*.txt 
+           start end.txt 
+           :syntax 
+           cls 
+           echo. 
+           echo.word_num.cmd 
+           echo. 
+           echo.written by hitme 2005.9.2 
+           echo.用法： 
+           echo.word_num 文件名 
+           echo. 
+           echo.例如: 
+           echo.word_num License.txt 
+           echo. 
+                                                   统计中文字的，用法同顶楼，想 
+           办法搞成竖排一列,试试 
+           代码: 
+           @echo off 
+           setlocal ENABLEDELAYEDEXPANSION 
+           for /f "delims=" %%i in (%1) do ( 
+                       set n=%%i    
+                       echo.!n!>tmp.txt 
+                       echo.x>>tmp.txt 
+                       for /f "tokens=1 delims=:" %%a in ('findstr /o "x" 
+           tmp.txt') do set lenth=%%a 
+                       for /l %%a in (0,1,!lenth!) do ( 
+                               set m=!n:~%%a,1! 
+                               if "!m!" neq "" echo.1 !m!>>tmp1.txt 
+                       ) 
+           ) 
+            :add 
+           for /f "tokens=1,2" %%i in ('sort tmp1.txt') do ( 
+                       if "!y!"  "%%j" ( 
+                               set /a x+=1) else (    if "!x!" neq "" ( 
+                                           if !x! lss 10 (echo.000!x! 
+            !y!>>tmp2.txt) else ( 
+                                           if !x! lss 100 (echo.00!x! 
+            !y!>>tmp2.txt) else ( 
+                                           if !x! lss 1000 (echo.0!x! 
+            !y!>>tmp2.txt)))) 
+                                           set y=%%j 
+                                           set x=%%i) 
+           ) 
+           if !x! lss 10 (echo.000!x! !y!>>tmp2.txt) else ( 
+           if !x! lss 100 (echo.00!x! !y!>>tmp2.txt) else ( 
+           if !x! lss 1000 (echo.0!x! !y!>>tmp2.txt))) 
+           endlocal 
+           sort /r tmp2.txt>end.txt 
+           del tmp*.txt 
+           start end.txt 
+          word_num.rar 
+40. sample 
+          设源文件为text.txt 
+          欲替换problem为hitme,最简单的替换 
+          代码: 
+           setlocal  ENABLEDELAYEDEXPANSION 
+          for /f "delims=" %%i in (text.txt) do set n=%%i && set 
+          m=!n:problem=hitme! && echo !m! >>replace.txt 
+           endlocal 
+           start replace.txt 
+          att-2.rar 
+41. usb& 
+          请谨慎使用 
+          devcon挺好使的，就为推荐它 
+          @echo off 
+          for /f %%i in ('devcon findall ^=usb ^| find ":"') do devcon remove 
+           "@%%i" 
+          for /f %%i in ('devcon findall usb* ^| find ":"') do devcon remove 
+           "@%%i" 
+          devcon rescan 
+          renew_usb.rar 

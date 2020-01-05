@@ -1,0 +1,273 @@
+﻿来源：http://www.cn-dos.net/forum/viewthread.php?tid=21167&fpage=1&highlight=findstr
+
+                        willsort
+                        版主 
+
+                              To All:
+
+                                    
+                              问题缘起于bsijl一篇关于findstr错误过滤的主题[1]，当时因为无法找到原因，所以只能推测 
+                              /g 开关存在某些问题。
+
+                                    近日，因为编写一个debuger代码，再次使用了 findstr/g 
+                              ，结果遇到了同样的问题[2]。经过仔细的测试[3]后，发现是 findstr 
+                              特殊的命令行分析机制所引起的问题。略述如下：
+
+                                    
+                              1、findstr不同于早期的find，它对参数的排列有一定的要求，即遵循开关（可省略）、字符串（使用/c开关时省略）、文件名（可通配、可多个、有输入流时需省略）的顺序。
+
+                                    
+2、开关可以使用引号，所以不能直接以与开关相同的关键字进行搜索；文件名含空格时必须用引号。
+
+                                    3、搜索关键字的情况和表现就比较复杂，分述如下：
+                                    
+                              3-1、无论是否使用开关/l或/r以及是否使用引号，关键字中的\都会成为转义字符，所以\\将成为\，\"将使引号失去字符串界定作用；
+                                    
+                              3-2、搜索关键字可加或不加引号，当加引号时其中的\可能会再次转义。使用开关/l和/r时的转义结果可能会不同：当使用/r时，所以"\\\\"将成为单个\，"\\"将使关键字为空；当使用/l或均不使用时，"\\\\"和"\\"与单个\等价。
+                                    3-3、如果关键字以单个\结尾，且无引号，则不会被转义；
+
+                                    而 
+                              findstr/g出现的问题，应该与上述内容有关，但其内在机理仍无法透彻理解。不知各位有何高见？
+
+                              [1]批处理删除XP输入法问题！请dos高手解决
+                              http://www.cn-dos.net/forum/search.php?searchid=24472
+
+                              [2]Test of findstr/v/g
+
+
+                                  Quote:
+                                E:\Batch\Test>set > envar.out
+
+                                E:\Batch\Test>findstr /v /g:envar.out envar.out
+                                LOGONSERVER=\\Test
+                                ProgramFiles=C:\Program Files
+
+                                E:\Batch\Test>findstr /v /i /g:envar.out 
+                                envar.out
+                                LOGONSERVER=\\Test
+
+
+
+                              [3]Test of findstr
+                                CODE:  [Copy to clipboard]
+
+
+                                :: Test of findstr
+                                :: Will Sort - 2006-06-10 - CMDWinXP
+                                @echo off
+                                cls&echo ---- "set>_tfs1.tmp & findstr /v 
+                                /g:_tfs1.tmp _tfs1.tmp"
+                                set>_tfs1.tmp & findstr /v /g:_tfs1.tmp 
+_tfs1.tmp
+                                pause
+
+                                echo ---- "findstr /v /i /g:_tfs1.tmp _tfs1.tmp"
+                                findstr /v /i /g:_tfs1.tmp _tfs1.tmp
+                                pause
+
+                                echo ---- "sort /r _tfs1.tmp > _tfs2.tmp & 
+                                findstr /v /g:_tfs1.tmp _tfs2.tmp"
+                                sort /r _tfs1.tmp > _tfs2.tmp & findstr /v 
+                                /g:_tfs1.tmp _tfs2.tmp
+                                pause
+
+                                echo ---- "set|findstr /v /g:_tfs1.tmp"
+                                set|findstr /v /g:_tfs1.tmp
+                                pause
+
+                                cls&echo ---- "dir C:\ /w > _tfs2.tmp & findstr 
+                                /v /g:_tfs2.tmp _tfs2.tmp"
+                                dir C:\ /w > _tfs2.tmp & findstr /v /g:_tfs2.tmp 
+                                _tfs2.tmp
+                                pause
+
+                                echo ---- "echo :\ > _tfs2.tmp & findstr /v 
+                                /g:_tfs2.tmp _tfs2.tmp"
+                                echo :\ > _tfs2.tmp & findstr /v /g:_tfs2.tmp 
+                                _tfs2.tmp
+                                pause
+
+                                cls&echo ---- "findstr /g:_tfs1.tmp 
+                                _tfs1.tmp>_tfs2.tmp & fc _tfs1.tmp _tfs2.tmp"
+                                findstr /g:_tfs1.tmp _tfs1.tmp>_tfs2.tmp & fc 
+                                _tfs1.tmp _tfs2.tmp
+                                pause
+
+                                cls&echo ---- "set|findstr /r "\\\\  \\\\""
+                                set|findstr /r "\\\\  \\\\"
+                                pause
+
+                                echo ---- "set|findstr /l "\\\\  \\\\""
+                                set|findstr /l "\\\\  \\\\"
+                                pause
+
+                                cls&echo ---- "echo _tfs1_tmp > _tfs1.tmp & 
+                                findstr "/l" "_tfs1.tmp" "_tfs1.tmp""
+                                echo _tfs1_tmp >> _tfs1.tmp & findstr 
+                                "_tfs1.tmp" "_tfs1.tmp"
+                                pause
+                                del _tfs?.tmp
+                              [ Last edited by willsort on 2006-6-11 at 18:38 ]
+
+
+
+
+                        Climbing
+                        金牌会员 
+
+                      
+                          『第 2 楼』:  
+
+                              在我的XP上这个结果如何解释？
+
+                              d:\work>findstr /v /g:envar.out envar.out
+                              FINDSTR: 搜索字符串太长。
+
+                              d:\work>findstr /v /g:envar.out envar.out
+                              FINDSTR: 搜索字符串太长。
+
+                              d:\work>findstr /v /g:envar.out
+                              FINDSTR: 搜索字符串太长。
+
+
+                        无奈何
+                        版主 
+
+                       『第 3 楼』:  
+
+                              在我的 XP 下和 willsort 兄 3、的描述相同。这个恼人的结果不知道能不能确定是 
+                              FINDSTR 的 BUG ，请朋友们多试一下其它系统的情况。看来关键字中含有 “\” 
+                              字符应该多加小心了。
+
+
+                        3742668
+                        版主 
+
+                        状态 离线 『第 4 楼』:  
+
+                              唔，似乎只有当\后面的字符为非字母和非数字的时候才会出错。感觉microsoft准备把findstr做成cmd下的正则表达式工具似的，但是又没有考虑到与其他参数之间的兼容性，导致最后的结果是画虎不成反类犬。
+                              另外在某些时候，findstr的查找字符串中包含中文时，需要加上/i参数才能避免错误，具体环境以及代码已忘，或许findstr除了正则表达式方面的bug外还存在unicode与ascii转换的bug。
+
+
+                        willsort
+                        版主 
+
+                        状态 离线 『第 5 楼』:  
+
+                              Re Ups:
+
+                                  另外一个问题：
+
+                                  因为开关也允许引号，所以无法以 "/l" 或 "/r" 
+                              等与开关相同的文本串作为关键字匹配，下面的句式将会出错：
+                                      echo /l /r > test
+                                      findstr /l "/r" test
+
+                                  不过，可以使用开关 /c 来强制指定关键字：
+                                      findstr /l /c:"/r" test
+                                      findstr /l /c:/r test
+
+                                  还有一个方法，就是上文提到的 \ 了：
+                                      findstr /l \/r test
+                                     
+                                  此外，这个 \ 还可以让我们的关键字中包含引号：
+                                      echo /l /r >test
+                                      echo "/r" >> test
+                                      findstr /l \"/r\" test
+
+                                  最后，修订和增补顶楼3-2中的一些描述：
+                                      3-2、开关/r和开关/l相同，其后的关键字均可使用或不使用引号；使用引号时:
+                                      3-2-1、"\"和"\\\"等价于引号和其后各个串所各自代表的多个关键字；
+                                      
+                              3-2-2、"\\\\\"和"\\\\\\\"等价于引号加\组成的关键字和其他多个关键字；
+                                      3-2-3、"\\\\\\\\\"等价于引号加\\组成的关键字和其他多个关键字；
+                                      3-2-4、"\ ","\\","\\\ ","\\\\\ 
+                              ","\\\\\\","\\\\\\\ "等价于空；
+                                      3-2-5、"\\ ","\\\\"等价于一个\；
+                                      3-2-6、"\\\\ ","\\\\\\\\"等价于两个\；
+                                      3-2-7、"\\\\\\ "等价于三个\；
+                                      3-2-8、"\\\\\\\\ "等价于四个\；
+
+                                  以上数据由以下方法测得，测试文件见[1][2]，当不使用/r开关与使用开关/l相同，；
+                                      type test1.txt | findstr /r "test_key" 
+                              test2.xt
+
+
+                              [1] Test text of findstr - "test1.txt"
+
+
+                                  Quote:
+                                /l /r
+                                "/l" 
+                                " test1
+                                \" test1
+                                \\" test1
+                                \\\" test1
+                                \\\\" test1
+                                \ test1
+                                \\ test1
+                                \\\ test1
+                                \\\\ test1
+
+
+
+                              [2] Test text of findstr - "test2.txt"
+
+
+                                  Quote:
+                                " test2
+                                \" test2
+                                \\" test2
+                                \\\" test2
+                                \\\\" test2
+                                \ test2
+                                \\ test2
+                                \\\ test2
+                                \\\\ test2
+
+
+
+                              [ Last edited by willsort on 2006-6-11 at 18:25 ]
+
+
+
+                        220110
+                        版主 
+
+
+                        状态 离线 『第 6 楼』:  
+
+
+
+
+                                  Quote:
+                                        3-2、开关/r和开关/l相同，其后的关键字均可使用或不使用引号；使用引号时:
+                                        3-2-1、"\"和"\\\"等价于引号和其后各个串所各自代表的多个关键字；
+                                        
+                                3-2-2、"\\\\\"和"\\\\\\\"等价于引号加\组成的关键字和其他多个关键字；
+                                        3-2-3、"\\\\\\\\\"等价于引号加\\组成的关键字和其他多个关键字；
+                                        3-2-4、"\ ","\\","\\\ ","\\\\\ 
+                                ","\\\\\\","\\\\\\\ "等价于空；
+                                        3-2-5、"\\ ","\\\\"等价于一个\；
+                                        3-2-6、"\\\\ ","\\\\\\\\"等价于两个\；
+                                        3-2-7、"\\\\\\ "等价于三个\；
+                                        3-2-8、"\\\\\\\\ "等价于四个\；
+
+
+
+                              我早前也发现这规律存在路径名上，只是没深入研究，没敢贴上来．
+                              我是从＂dir .\＂，  ＂ dir ..\＂ 开始，大家不妨测试下．
+
+
+                        willsort
+                        版主 
+
+                        状态 离线 『第 7 楼』:  
+
+                              Re 220110:
+
+                                    UNC 路径名中 \ 的解析与 findstr 
+                              关键字是不同的，它只有界定目录的作用，而没有转义字符的作用。
+
+
+另外，findstr /v ^%var%$ test.txt 语句中，如果test.txt最后一行就是要匹配的%var%，且该行不为空，则不能过滤最后一行的内容，似乎是分行标志识别出了错

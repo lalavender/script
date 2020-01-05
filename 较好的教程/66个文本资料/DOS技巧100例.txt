@@ -1,0 +1,352 @@
+
+DOS技巧100例
+
+来源：http://www.cn-dos.net/forum/viewthread.php?tid=23999&fpage=0&highlight=&page=1
+tianzizhi
+2006-10-20 18:36
+
+1、*.*的简写
+  *.*可以用．代替，例如，删除当前目录中的全部文件∶
+  DEL.
+  2、返回父目录即上级目录
+  CD..
+  3、把目录文件的列表存入文本文件中
+  DIR>filename
+  4、查看当前目录下任何属性的文件
+  方法一∶DIR,
+  方法二∶DIR/A
+  5、取消当前目录下所有文件的所有属性(实际上只能查看属性而不能取消-jm注)
+  ATTRIB，
+  若在C盘根目录下执行此命令，再用DIR来查看，可以看到IO.SYS、MSDOS.SYS等隐含文件
+  6、显示当前目录下的所有子目录名
+  DIR/AD
+  7、连续显示多个文件的内容
+  COPY *.* CON 
+  8、分屏显示文件内容
+  方法一∶MORE<filename
+  方法二∶TYPE filename|more
+  9、改变磁盘文件的注册时间
+  方法一∶COPY filename＋NUL
+  方法二∶COPY filename＋,,
+  10、如何屏蔽DOS行的输出信息?
+  方法是将屏幕输出重定向到DOS空设备NUL，例如∶
+  COPY MYPROG.EXE A:>NUL
+  11、在DOS状态下直接显示用D方式编辑的WPS文件内容
+  COPY filename.wps CON/B
+  12、向文本文件中追加数据
+  方法一∶COPY filename＋CON
+  方法二∶TYPE CON>>filename
+  输入完毕后按F6或Ctrl＋Z键结束。
+  13、键盘指法练习或汉字输入练习的简易屏幕
+  COPY CON NUL
+  14、直接打印键盘输入的内容
+  方法一∶COPY CON PRN
+  方法二∶MORE>PRN
+  方法三∶SORT>PRN
+  输入完毕后按F6或Ctrl＋Z键。
+  15、DOS下直接编辑生成文件
+  在没有任何编辑软件(如EDLIN、EDIT等)的情况下，可临时用以下六种方法从键盘编辑生成文件，当文件内容输入完毕后，按F6键或按Ctrl＋Z键存盘退出∶
+  方法一∶COPY CON filename
+  方法二∶TYPE CON>filename
+  方法三∶MORE>filename
+  方法四∶SORT>filename
+  方法五∶FIND"XXX"/V/N>filename
+  方法六∶SORT|FIND"XXX"/V/N>filename
+  方法四、五、六均有特殊用处，读者不妨一试。
+  16、零字节文件的生成
+  方法∶TYPE NUL>filename
+  上述方法常用于处理需保密的磁盘文件，起到删除文件内容的作用，内容被删除后一般不可恢复。
+  17、对零字节文件的拷贝，不能用COPY命令，只能用XCOPY命令。
+  例如∶XCOPY filename1 filename2 
+  18、目录中的所有文件和子目录的复制
+  XCOPY 目录名.驱动器号:/S
+  19、如何正确使用COPY 和XCOPY命令?
+　 ●将若干个文件联结成一个文件时，应使用COPY命令。
+　 ●拷贝小于64KB的单个文件，使用COPY命令。拷贝大于64KB的文件，应使用XCOPY命令。
+  ●拷贝多个文件应使用XCOPY命令。
+　 ●拷贝子目录中的内容，应使用XCOPY/S命令。拷贝一批文件到软盘，应使用XCOPY/M命令。
+　   20、什么时候用XCOPY命令的/D开关项? 
+  有时候需要从某个目录中"选出"从某一天开始建立或修改过的文件，并将它们备份，此时可使用XCOPY/D命令。例如，下述命令可以把C∶目录下那些在1996年7月1日以后建立或修改过的文件拷贝到A盘∶ 
+  XCOPY C:*.* A:/D:07－01－96 
+  21、单软驱复制软盘
+  有的PC机只装有一个软驱，这个驱动器既当A盘又当B盘使用，如果要在这样的系统上进行软盘复制，使用下述的XCOPY 命令∶ 
+　　XCOPY A: B:
+　　22.整理软盘中碎块，提高使用效率
+　　一张软盘经过多次建立和删除文件操作后，某些文件记录会以不连续的形式存放在软盘空间中，造成软盘空间产生许多碎块，影响软盘的读写操作性能，严重时可导致读写故障。
+　　解决以上问题可使用COPY命令进行整盘拷贝，则新盘上的文件保持连续存放。
+　　23.将多个文件连续拷入多张软盘。
+　　首先，用ATTRIB命令设置每一文件的文档特性∶
+　　ATTRIB＋A *.*/S
+　　然后使用XCOPY命令，在软盘装满后插入新盘，根据文档特性决定哪些文件需要拷贝，哪些不拷。
+　　XCOPY *.* A∶/S/M/W
+　　24.使用TYPE命令"拷贝"文件
+　　拷贝文件通常使用COPY命令或XCOPY命令，其实，TYPE也有"拷贝"文件的用途∶
+　　TYPE filenamel>filename2
+　　这种方法对于拷贝隐含文件非常有效。例如∶TYPE IO.SYS>A∶IO.SYS
+　　25.以小写方式显示文件或目录
+　　DIR/L
+　　26.只显示文件名与子目录名，不显示文件大小和生成时间等信息
+　　DIR/B
+　　27.使DIR总是按文件名的字母顺序来显示文件
+　　在AUTOEXEC BAT中加入下述命令即可∶
+　　SET DIRCMD=/O
+　　28.列当天创建的文件目录
+　　若想知道当天(如1996年10月21日)建立了多少文件，可用下述命令列出∶
+　　DIR|FIND"10 21 1996"
+　　29.若不希望别人使用DIR命令进行目录文件列表，有什么方法呢?
+　　方法一∶DOSKEY DIR=You can not use DIR!
+　　方法二∶在AUTOEXEC BAT中加入命令行∶SET DIRCMD=0
+　　此命令的功能是在用DIR命令来显示文件时，只显示"File not found"，能起到暂时保密的作用。若想显示文件及目录，只有指定具体的文件名或路径。
+　　方法三∶SET DIRCMD=DIR>NUL
+　　此命令执行后再使用DIR命令，将输出没有文件的信息，也颇具迷惑性。
+　　30.出所有目录中的文件
+    CHKDSK/V|MORE
+  31.如何在有多级目录的磁盘上查找文件
+　　方法一∶CHKDSK/V|FIND"文件名"其中文件名必须用大写字母。
+　　方法二∶DIR/S文件名
+  32.实时控制打印机的换行或换页
+　　   ECHO＋>PRN(换行)
+　　   ECHO^L>PRN(换页)
+　　33.使计算机在DOS命令行发出声音
+　　   ECHO ^G
+　　34.DOS命令提问的自动响应
+　　例如∶
+　　 ECHO Y|DEL C∶
+　　 ECHO N|CHKDSK C∶/F
+　　35.使ECHO命令显示空行
+　　ECHO命令后直接跟空格字符时，ECHO将显示当前的信息回显状态(ON或OFF)，而不直接向屏幕回显空行。其实，下面一些非常简单的命令格式都能使ECHO命令显示空行∶
+　　ECHO   ECHO， ECHO； ECHO＋
+　　ECHO[ ECHO] ECHO/ ECHO\par   
+  36.用ECHO命令向交互式DOS命令馈送回车符
+  例如∶
+　　ECHO＋|DATE|FIND"Current date" 
+  ECHO＋|TIME|FIND"Current time"　
+  此技巧可用于AUTOEXEC.BAT中，使每次开机后直接显示当前日期和时间信息，不必按回车键就能继续下去。
+　　37.开机时间黑匣子
+　　有时需要记录每次使用计算机的日期和时间，以便加强用机管理。可以利用上述技巧，只须在AUTOEXEC.BAT文件中加入下列命令∶
+　　ECHO＋|DATE>>ABC
+　　ECHO＋|TIME>>ABC
+　　这样在每次启动计算机后，文件ABC中就自动记录了日期和时间，执行命令TYPE ABC即可查看以往开机日期和时间。
+　　38.自动统计命令或文件的运行时间
+　　下面给出一个计时器TIMETEST.BAT，实现了自动统计命令或文件的运行时间∶
+　　@ECHO OFF
+　　TIME 0
+　　COMMAND /C ％1 ％2 ％3 ％4
+　　ECHO ％1 ％2 ％3 ％4运行时间为∶
+　　ECHO＋|TIME|FIND"time is"
+　　@ECHO ON
+　　例如，测试AUTOEXEC.BAT运行时间∶
+　　C>TIMETEST AUTOEXEC.BAT ┆
+　　AUTOEXEC.BAT运行时间为∶
+　　Current time is 0∶00∶03 49
+　　说明AUTOEXEC.BAT运行了3.49秒。   
+  39.跳过或单步执行CONFIG.SYS和AUTOEXEC.BAT文件
+　　方法一∶启动计算机，屏幕出现Starting MS-DOS…时，按F5键或SHIFT键，DOS便会跳过CONFIG.SYS和AUTOEXEC.BAT两文件，用系统运行的基本环境配置来启动机器。
+　　方法二∶当出现上面的提示后，按F8键，并通过键盘逐一回答Y或N来选择执行命令。
+　　方法三∶在CONFIG.SYS文件的命令中加上"?"号。如DOS?=UMS，这样在执行到该条命令时，便会出现[Y，N]?的选择提示，让你选择是否装入该命令。
+　　40.能否省去DOS启动时等待按F8或F5的两秒时间?
+　　能。方法是在CONFIG SYS文件的头部加上语句SWITCHES=/F，此后同样可以实现以前的功能，方法是在未出现"Starting MS-DOS…"时就按下F8或F5键。
+  41.单步执行批处理文件
+　　COMMAND/Y/C(批处理文件名)
+　　开关/Y告诉DOS在执行每一行前暂停，提示[Y，N]?询问用户是否执行。
+　　42.快速获取DOS命令的帮助信息
+　　方法一∶FAST HELP　命令名
+　　方法二∶命令名/?
+　　方法三∶命令名/H
+　　43.方便地更改子目录名
+　　以下MOVE命令能将C∶目录改名为C∶∶
+　　MOVE　C∶　C∶
+　　44.什么时候使用MOVE命令移动文件?
+　　MOVE命令的最大特点是可以在一个命令行里列出多个要移的文件，文件之间可用"，"号相隔。例如，将当前目录中所有可执行文件均移进目录中∶
+　　MOVE *.COM，*.EXE，*.BAT
+　　45.用MOVE命令对子目录进行简单加密或解密
+　　加密∶如将C∶目录利用半个汉字进行简单加密，可执行命令∶
+　　MOVE C∶　C(半个汉字字符)
+　　解密∶反之，可用MOVE命令结合通配符*或?，将不可识别的目录名改成其它名字，达到解密目的。
+　　46.快速进入深层子目录
+　　可用SUBST命令设置驱动器标识符，取代深层次子目录路径，使得进入深层次子目录十分方便。例如，下述命令可以将子目录C∶模拟成M盘∶
+　　SUBST　M∶　C∶
+　　这样，在任何目录下，只要将当前驱动器变成M，即可进入PRG子目录。
+　　47.如何取消SUBST设置的盘符?
+　　例如，要取消上例中的M盘，只须执行命令SUBST　M∶/D即可。
+　　48.建立并进入新目录的MD命令
+　　DOS中的MD命令只能建立子目录，建好后再用CD命令进入，其实可以用∶
+  DOSKEY MD=MD ＄1 ＄T CD ＄1
+对MD命令进行重新定义，此后使用MD时，建立目录和进入目录同步完成。
+　　49.排除法文件列表
+　　DIR命令中支持通配符*和?来代替其它字符，但却没有提供相应的排除字符的功能，而利用FIND命令中的/V参数，则能方便地实现排除法列表。下述命令能将除去.BAK文件和子目录以外的所有文件列出∶
+　　DIR|FIND/V"BAK"|FIND/V"<DIR>"
+　　50.>和>>的区别
+　　DIR>DIRLIST∶如果DIRLIST文件存在，将清除其文件内容，并将新内容输入文件中。
+　　DIR>>DIRLIST∶如果DIRLIST文件存在，将输出数据附加到这个文件末尾。
+　　在DIRLIST文件不存在时，两者是等价的。
+　　51.快速添加搜索路径
+　　PATH=％PATH％；％1
+　　52.对数据文件及由字处理程序生成的文本文件等不可执行文件，建立自动搜索路径。
+　　APPEND命令能将一组指定的目录添加进当前目录的逻辑扩展，从而不用指定路径就能打开这组文件。APPEND后可以放多个目录，只要用"；"隔开即可，例如∶
+　　APPEND C∶；C∶；C∶；C∶；
+　　53.将目录名隐藏起来
+　　由于ATTRIB命令可改变一个目录的属性，所以利用该命令可将目录名隐藏起来。例如，将目录C∶隐藏起来∶
+　　ATTRIB ＋H C∶
+　　54.快速删除目录树
+　　用DELTREE命令可快速地删除指定目录，而不管目录中有多少子目录和目录及文件为何种属性。例如∶DELTREE C∶
+　　55.防止误删除文件
+　　DEL命令是一个危险的命令，可以用下述命令对其进行重新定义，使得在删除文件时有确认提示∶
+　　DOSKEY　DEL=DEL　＄1/P
+　　56.如果误删除了某些文件，有什么办法及时地将它们恢复?
+　　UNDELETE命令可以用来恢复删除文件，以下命令能将当前目录中的被删文件恢复出来∶
+　　UNDELETE *.*/ALL
+　　此命令恢复出来的文件名的第一个字符变成了＃，可用REN命令更改成原来的文件名。
+　　57.删除多个文件名无共同特征的文件时，由于难用通配符，只能逐个删除，比较麻烦。有没有其他方便的方法?
+　　有。使用DEL *.*/P命令，系统会逐个列出指定目录的所有文件，询问用户是否删除，对欲删除文件回答Y，否则回答N。
+　　58.加密文件名一法
+　　在要加密的文件名最后加上ASCII字符255。方法是输入文件名后按下ALT键，然后输入255。这样，用DIR命令列出该文件时，并不显示这个字符，即从文件名看不出发生了任何变化，起到了一定的加密作用。
+　　59.回忆用过的命令
+　　执行DOSKEY命令后，用户所输入的命令便被存储起来，以后若要回忆使用过的命令，可随时用"↑"或"↓"键进行前后逐条查找。
+　　60.禁止非法访问某个驱动器
+　　在AUTOEXEC.BAT文件中加入下述两条命令，可以禁止非法访问D盘，当输入D∶时，屏幕即关闭，只有知道密码ZM的人才能进入D盘∶
+　　DOSKEY D∶=ECHO OFF
+　　DOSKEY ZM=D∶
+　　61.防止别人误将C盘格式化
+　　为了保护C盘，防止别人格式化，可用DOSKEY对FORMAT命令进行重新定义，例如∶
+　　DOSDEY FORMAT=You can not format C∶!
+　　这样，别人在使用FORMAT时将出现Yor can not format C∶!的提示，从而使C盘得到保护。若自己想用FORMAT时，再用如下命令恢复∶
+　　DOSKEY FORMAT=
+　　62.检查屏幕状态，获得有关屏幕显示字符和行数的报告
+  MODE CON
+  63.设置屏幕每行显示字符数和每屏的行数
+　　例如∶
+　　MODE CON COLS=80　LINES=25
+　　64.提高键盘的响应速度
+　　MODE CON∶RATE=32　DELAY=1
+　　65.不喜欢系统启动时Num Lock键的缺省设置怎么办?
+　　在CONFIG SYS文件中加进NUMLOCK命令，根据你的爱好指定系统启动时NUMLOCK键的状态∶
+　　NUMLOCK=ON(或OFF)
+　　66.简单的键盘锁
+　　在你使用计算机时，如果只离开一会，又不想关机，为了不让别人随意使用，可编制一个简单的键盘锁LOCK BAT程序(内容如下)∶
+　　@ECHO　OFF
+　　CLS
+　　CHOICE/C:*/N
+　　运行之后，形同死机，"*"号就是键盘锁的钥匙，不知道的人无法破译。
+　　67.文件的选择显示
+　　假设有MY1 TXT、MY2 TXT、…、MY10.TXT共10个文件，现欲显示其中的MY2.TXT、MY3.TXT、MY6.TXT和MY9.TXT 4个文件，可用如下命令很方便地实现∶
+  FOR ％A IN(2369)DO TYPE MY％A.TXT
+　　68.删除误拷贝文件
+　　当用COPY A∶*.*命令把A盘上所有文件拷贝到硬盘某子目录下时，却不慎误拷贝到硬盘根目录下，如误拷贝的文件数量很多，且文件名没有任何特征，这时如要删除这些文件，通常做法是用PCTOOLS工具软件进行选择删除，比较麻烦。使用FOR命令就简单多了∶
+　　A>FOR ％A IN(*.*)DO DEL C∶％A
+　　69.由于FIND命令不能接受通配符，若希望在若干个文本文件中寻找含有某个字符串插，就只能对每个文件依次使用FIND命令，显然很费功夫，没有捷径吗?
+  有。使用FOR命令与FIND命令配合，格式为∶
+  FOR％A IN(文件组)DO FIND"string"％A
+  70.FOR命令不能嵌套，有没有办法实现FOR循环嵌套呢?
+　　有。可以把COMMAND.COM作为第一层循环里的命令，让它再执行一个FOR循环命令。例如，下述命令可以在屏幕上显示12行"Welcome you":FOR ％A IN(123)DO COMMAND/C FOR ％B IN(1234)DO ECHO Welcome you
+　　71.双冒号∶∶在注释行中的作用
+  在DOS批处理文件开头，经常使用REM注释命令加一个程序头。例如，假设有一个名为TEST.BAT的批处理文件，它以一个文本文件名为输入参数，若在开头说明其用法时，使用了一个采用<和>和括号的注释行，即∶
+　　REM TEST<filename>
+　　程序执行此命令时，DOS将显示"File not found"信息，因为它以为filename是一个重定向输入操作的源文件，它在当前目录中找不到。如何解决这个问题?
+　　很简单，只须将REM改为双冒号"∶∶"，即∶
+　　∶∶TEST<filename>
+　　72.批处理中的IF ERRORLEVEL
+  在批处理文件里使用IF ERRORLEVEL命令时要小心，因为DOS认为任何大于或等于设定值的出口状态值都是等效的。通常应按从大到小的次序测试出口状态值，例如∶
+　　IF ERRORLEVEL 2 ECHO TWO
+　　IF ERRORLEVEL 1 ECHO ONE
+　　IF ERRORLEVEL 0 ECHO ZERO
+　　73.能不能按从小到大的次序测试出口状态值?
+　　能。但应结合IF NOT的形式进行判断，例如72例中的命令应改为∶
+　　IF ERRORLEVEL 0 IF NOT ERRORLEVEL 1 ECHO ZERO
+　　IF ERRORLEVEL 1 IF NOT ERRORLEVEL 2 ECHO ONE
+　　IF ERRORLEVEL 2 IF NOT ERRORLEVEL 3 ECHO TWO
+　　74.批处理文件中使用@符禁止命令显示在屏幕上
+　　由于DOS是在各个命令执行前就将它们显示到屏幕上的，因此，即使你将ECHO命令置为OFF，它本身也会出现在屏幕上。要抑制它的显示，可在ECHO命令行前加@符∶@ ECHO OFF
+　　75.统计源程序的行数
+　　假设源程序名为ZM.PRG，下述FIND命令可方便地统计它共有多少行∶
+　　FIND/V/C"　"ZM.PRG
+　　76.对文本文件进行排序
+　　SORT命令常用来对一些基于文本行的文件进行排序显示。例如，按姓名的开头字母显示一个含有电话号码的清单文件。命令格式∶
+　　SORT[/R][/＋n]<filename1>filename2
+　　其中，/R表示反向排序，/＋n表示从第几行开始排序，filename1为源文件名，filename2为排序后的文件名。
+　　77.用PROMPT设置有意义的提示符
+　　PROMPT命令用于设置新的DOS系统提示符。例如∶
+　　PROMPT ＄P＄G　取当前驱动器名及目录作为提示符
+　　PROMPT ＄D＄G　取当前系统日期作为提示符。
+　　78.如何设定屏幕颜色?
+　　假设ANSI.SYS已被安装在内存中，以下命令可把屏幕设置成白底红字∶
+　　PROMPT ＄E[31；47m
+　　79.在屏幕上选定的位置显示日期和时间信息
+　　把ANSI SYS的屏幕和光标控制功能与PROMPT的设定DOS命令提示符功能结合起来，可以在屏幕上选定的位置显示特殊的信息。例如，在AUTOEXEC BAT中加入下述命令行，可将日期和时间信息移到屏幕的右下方∶
+　　PROMPT ＄E[S ＄E[25;52H ＄D＄T ＄E[u ＄P＄G
+  80.用F2键编辑上次命令
+  用F1或F3功能键可复制上次命令，类似地F2键能得到部分上次命令，当按下F2键时，DOS就将上次命令内容拷贝到按F2键后键入的字符(不含)为止。
+  例如，键入了以下命令∶
+  C>DIR.COM<enter> 
+  按F2键及M键，可以得到∶
+  C>DIR
+  这时再按INS插入键，输入R，再按F3键复制上次命令剩余部分，得到正确的命令∶
+  C>DIR.COM
+  81、用F4键编辑上次命令
+  当按下F4键时，DOS从按F4键后按的字母开始复制上次命令。例如，上次命令为∶
+  C>DIR[enter] 
+  按下F4键，再输入F，然后再按F3，DOS就会显示FORMAT命令∶
+  C>FORMAT
+  82、用SHELL命令改变环境空间的大小
+  将环境变量空间增加到1KB，可在CONFIG.SYS文件中加进命令行∶
+  SHELL=C∶.COM/P/E∶1024
+  83、在批处理文件中引用环境变量
+  批处理文件可以引用系统上已定义的环境变量。具体方法是在环境变量名的前后各放一个百分号"％"。例如，要在批处理文件中显示环境变量PATH的内容，可加进命令行∶
+  ECHO ％PATH％ 
+  84、查看单个环境变量
+  如果你经常使用环境变量，当用SET命令显示当前所有已分配的环境变量时，列表就可能很长，屏幕可能很杂乱。为方便起见，可用下面的批处理文件VIEWENV.BAT在命令行直接显示单个环境变量∶
+  SET|FIND/I "％1"
+  例如，要察看COMSPEC的内容，只须执行∶
+  VIEWENV COMSPEC
+  85、制作DOS系统盘
+  方法一∶FORMAT A∶/S
+  方法二∶SYS A∶
+  86、定期整理硬盘
+  具体步骤∶
+  ·删除硬盘中不必要的文件
+  ·运行CHKDSK/F
+  ·运行DEFRAG
+  87、了解内存的类型
+  ·常规内存∶0～640KB
+  ·上位内存区(UMA)∶640KB～1MB
+  ·扩展内存∶自1MB起向上延伸
+  ·高内存区(HMA)∶1MB以上的稍小于64KB的扩展内存区
+  ·扩充内存
+  88、将DOS移到高内存区
+  为使用户有较大的可用基本内存，可以在CONFIG.SYS文件中加入下述命令，加载HIMEM.SYS，将DOS移入高内存区(HMA)∶
+  DEVICE=C∶.SYS
+  DOS=HIGH
+  89、将设备驱动程序和内存驻留程序装入上位内存(UMB)
+  在CONFIG.SYS文件中加进命令∶
+  DEVICE=C∶.EXE NOEMS
+  DOS=UMB
+  90、将程序装入高内存区
+  将程序装入HMA的方法是在命令行上加一个/U开关，例如∶
+  MOUSE/U
+  91、上位内存的使用
+  为将程序驻留上位内存，使用LOADHIGH(或LH)<程序名>即或，例如∶
+  LH MOUSE
+  92、如何显示某个特定程序占用内存的情况?
+  MEM/M module
+  其中，module表示特定程序文件名，不要带扩展名。
+  93、使用Memmaker自动优化内存
+  执行MEMMAKER/BATCH命令，MEMMAKER就自动为CONFIG.SYS和AUTOEXEC.BAT文件做最优的设置，此后，执行MEM/C/P来观察内存的分配情况，你会发现主存变大了。
+  94、若不满意MEMMAKER的优化设置，应该怎么办?
+  很简单，只须执行MEMMAKER/UNDO即可恢复你原来的配置。
+  95、磁盘高速缓冲存储器SMARTDRV的使用
+  为建立一个具有256K(默认值)的磁盘高速缓存，可在AUTOEXEC.BAT文件中加入命令行∶
+  C∶
+  由于SMARTDRV是建立在扩展内存中，所以还必须在CONFIG.SYS文件中加入命令行∶
+  DEVICE=C∶.SYS
+  96、当你关闭计算机或重新启动时，希望确定所有在高速缓存的信息均已写入硬盘时，应在系统提示符下键入命令∶
+  SMARTDRV/C
+  97、跳过SCANDISK的磁介质扫描
+  运行SCANDISK时，磁介质扫描要消耗很长时间，其实，使用SCANDISK/CHECKONLY便可跳过它。
+  98、LOADFIX命令的正确使用
+  在优化过程中，有少数程序不能在640KB常规内存的低64KB内正确运行。此时，可使用LOADFIX命令让可执行程序(如ZMPROG.EXE)在低64KB以上的内存中运行，方法是在要运行的应用程序前加上LOADFIX∶
+LOADFIX ZMPROG
+  99、何时使用虚拟盘(也称RAM盘)?
+  RAM盘能显着提高磁盘文件的存取速度，但它在断电或重启动时会丢失数据。因此，使用RAM盘时要特别小心。在没有硬盘的系统上，RAM盘值得一用；在需要存放较大的临时文件或复制程序时，也可以使用；当你的系统上配有CD-ROM时，在开始工作前，可将CD-ROM盘上的文件与数据复制进RAM盘，能够显着提高效率。
+  100、虚拟盘的安装
+  DOS提供的RAMDRIVE.SYS是一个虚拟盘驱动程序，你可以将它安装进内存，让它使用扩展内存或扩充内存，生成指定大小的RAM盘。例如，在CONFIG.SYS中加进下述命令，可在扩展内存中生成一个1MB的RAM盘∶
+  DEVICE=C∶.SYS 1024/E 

