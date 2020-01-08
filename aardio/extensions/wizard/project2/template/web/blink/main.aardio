@@ -1,0 +1,88 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio工程25";right=1250;bottom=704;border="none")
+winform.add(
+bk={cls="bk";left=0;top=0;right=1251;bottom=31;bgcolor=11841964;dl=1;dr=1;dt=1;forecolor=5392444;linearGradient=0;z=2};
+bk2={cls="bk";text="aria2下载工具( aardio + aria2 + miniblink + ariaNg)";left=18;top=7;right=306;bottom=25;z=3};
+custom={cls="custom";text="自定义控件";left=0;top=28;right=1251;bottom=706;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=1};
+plusHelp={cls="plus";text="点这里查看源码";left=356;top=6;right=538;bottom=25;color=16711680;dt=1;notify=1;z=4}
+)
+/*}}*/
+
+import process.aria2;
+var aria2 = process.aria2();
+aria2.startServer();
+
+//关闭窗口前关闭aria2
+winform.onClose = function(){
+    winform.show(false);//先隐藏窗口，别让用户觉得卡
+	aria2.stop();
+}
+
+import web.blink.portable;
+import web.blink.form;
+var wb = web.blink.form(winform.custom);
+
+//导出允许javascript调用的aardio函数
+import crypt.bin
+wb.external = {
+	getDefaultRpcSecret = function(){	
+		return crypt.bin.encodeBase64(aria2.rpcToken);
+	} 
+	getDefaultRpcPort = function(){ 
+		return tostring(aria2.rpcPort);
+	}
+};
+
+/*
+下载最新版覆盖到html目录下即可：
+https://github.com/mayswind/AriaNg-DailyBuild/archive/master.zip
+以下代码自动修改aria-ng-*.min.js的默认配置为调用aardio函数获取
+*/
+if( ..io.exist("/html/js") ){
+	import fsys;
+	fsys.enum( "/html/js", "aria-ng-*.min.js",
+ 		function(dir,filename,fullpath,findData){ 
+ 			if(filename){ 
+            	var s = string.load(fullpath)
+            	s  = string.replace(s,`constant\("ariaNgDefaultOptions".+?%\{\}`,function(ariaNgDefaultOptions){
+            		ariaNgDefaultOptions = string.replace(ariaNgDefaultOptions,`rpcPort\:"6800"`,`rpcPort:external.getDefaultRpcPort()`);
+            		ariaNgDefaultOptions = string.replace(ariaNgDefaultOptions,`secret\:""`,`secret:external.getDefaultRpcSecret()`);
+            		ariaNgDefaultOptions = string.replace(ariaNgDefaultOptions,`language\:"en"`,`language:"zh_Hans"`);
+            		return ariaNgDefaultOptions;
+            	});
+            	string.save(fullpath,s)
+ 			} 
+ 		}  
+	);
+}
+
+//在默认浏览器中弹出新窗口
+import process;
+wb.onCreateView = function(url,navType,wndFeatures){
+    process.openUrl(url) 
+}
+wb.enableNewWindow (true);
+
+//创建嵌入HTTP服务器
+import wsock.tcp.simpleHttpServer;
+wb.go(wsock.tcp.simpleHttpServer.startUrl("/html/index.html"));
+
+//添加窗口标题栏、边框、阴影等
+
+winform.plusHelp.skin(
+    color = { 
+        hover = 0xFFFF0000; //鼠标移上去的颜色
+        active = 0xFF00FF00; //鼠标按下去的颜色
+    }
+)
+winform.plusHelp.oncommand = function(id,event){
+	import process;
+	process.openUrl("http://www.aardio.com")
+}
+
+import win.ui.simpleWindow;
+win.ui.simpleWindow(winform);
+
+winform.show() 
+win.loopMessage();

@@ -1,0 +1,6 @@
+
+{File}:D:\software\aardio\extensions\ide.aardio
+{Line}:#186
+{Error}:注册进程群组时遇到错误
+系统找不到指定的路径。
+ ERROR CODE:3 ->{mutex=false;mmap=true;name="{5D345FB2-C8CC-4EA6-B762-FCB2A40CE799}.aardio.ide[9028]"}

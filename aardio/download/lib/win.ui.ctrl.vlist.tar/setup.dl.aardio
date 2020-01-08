@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\win\ui\ctrl\");
+fsys.copy( "\vlist.aardio","~\lib\win\ui\ctrl\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("win.ui.ctrl.vlist扩展库已安装成功!","aardio- win.ui.ctrl.vlist扩展库安装程序")

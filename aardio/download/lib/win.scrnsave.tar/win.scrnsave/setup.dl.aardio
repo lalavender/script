@@ -1,0 +1,11 @@
+ 
+import fsys;
+
+fsys.copy( "/scrnsave/","~\lib\win\" );  
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("屏幕保护程序支持库已安装成功","aardio - win.scrnsave支持库安装程序",1000)
+

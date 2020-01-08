@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\thunder\");
+fsys.copy( "\downEngine","~\lib\thunder\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("thunder.downEngine扩展库已安装成功!","aardio- thunder.downEngine扩展库安装程序")

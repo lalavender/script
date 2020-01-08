@@ -1,0 +1,9 @@
+import ide;
+import fsys;
+import win; 
+ 
+fsys.copy( "/rawInput.aardio","~/lib/win/" ); 
+ 
+ide.refreshStdLib() 
+win.msgboxTimeout("win.rawInput扩展库已安装成功","aardio - win.rawInput扩展库安装程序",1000)
+

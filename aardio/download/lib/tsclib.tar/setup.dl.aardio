@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\");
+fsys.copy( "\tsclib","~\lib\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("tsclib扩展库已安装成功!","aardio- tsclib扩展库安装程序")

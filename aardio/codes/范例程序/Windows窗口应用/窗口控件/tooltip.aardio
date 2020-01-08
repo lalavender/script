@@ -1,0 +1,27 @@
+//提示控件
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="控件提示 - 鼠标悬停在超链接上试试";right=492;bottom=254;bgcolor=4448391;max=false)
+winform.add(
+plus={cls="plus";text="http://www.aau.cn";left=122;top=79;right=340;bottom=107;color=15793151;font=LOGFONT(h=-24);notify=1;z=1}
+)
+/*}}*/
+
+winform.plus.skin(
+	color = {  
+		hover = 0xFFFF0000; //鼠标移上去的颜色
+		active = 0xFF00FF00; //鼠标按下去的颜色
+	}
+)
+
+import win.ui.tooltip; 
+var tooltipCtrl = win.ui.tooltip( winform );//在窗口上创建tooltip控件 
+var tiPlus = tooltipCtrl.addTool(winform.plus,"这是一个超链接" )
+
+import process;
+winform.plus.oncommand = function( id,event ){ 
+    process.openUrl("http://www.aardio.com");//打开网页
+} 
+
+winform.show() 
+win.loopMessage(); 

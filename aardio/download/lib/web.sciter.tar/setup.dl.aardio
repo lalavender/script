@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\web\");
+fsys.copy( "\sciter","~\lib\web\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("web.sciter扩展库已安装成功!","aardio- web.sciter扩展库安装程序")

@@ -1,0 +1,11 @@
+ 
+import fsys;
+
+fsys.copy( "/newLisp/","~\lib\" );  
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("newLisp扩展库已安装成功","aardio - newLisp扩展库安装程序",1000)
+

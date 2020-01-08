@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="swaggerEditor" libEmbed="true" icon="app.ico" ui="win" output="swaggerEditor.exe" CompanyName="单位名称" FileDescription="swaggerEditor" LegalCopyright="Copyright (C) 单位名称 2019" ProductName="swaggerEditor" InternalName="swaggerEditor" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="\Publish\" dstrip="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="Js渲染进程" path="res" embed="true">
+		<file name="example.yaml" path="res\example.yaml" comment="res\example.yaml"/>
+		<file name="favicon.ico" path="res\favicon.ico" comment="res\favicon.ico"/>
+		<file name="snippet.ctrl-insert.txt" path="res\snippet.ctrl-insert.txt" comment="res\snippet.ctrl-insert.txt"/>
+		<file name="snippets.swagger.txt" path="res\snippets.swagger.txt" comment="res\snippets.swagger.txt"/>
+		<folder name="editor" path="res\editor" comment="res\editor">
+			<file name="index.html" path="res\editor\index.html" comment="res\editor\index.html"/>
+			<folder name="dist" path="res\editor\dist" comment="res\editor\dist">
+				<file name="favicon-16x16.png" path="res\editor\dist\favicon-16x16.png" comment="res\editor\dist\favicon-16x16.png"/>
+				<file name="favicon-32x32.png" path="res\editor\dist\favicon-32x32.png" comment="res\editor\dist\favicon-32x32.png"/>
+				<file name="swagger-editor-bundle.js" path="res\editor\dist\swagger-editor-bundle.js" comment="res\editor\dist\swagger-editor-bundle.js"/>
+				<file name="swagger-editor-standalone-preset.js" path="res\editor\dist\swagger-editor-standalone-preset.js" comment="res\editor\dist\swagger-editor-standalone-preset.js"/>
+				<file name="swagger-editor.css" path="res\editor\dist\swagger-editor.css" comment="res\editor\dist\swagger-editor.css"/>
+				<file name="swagger-editor.js" path="res\editor\dist\swagger-editor.js" comment="res\editor\dist\swagger-editor.js"/>
+				<file name="validation.worker.js" path="res\editor\dist\validation.worker.js" comment="res\editor\dist\validation.worker.js"/>
+				<file name="validator.worker.js" path="res\editor\dist\validator.worker.js" comment="res\editor\dist\validator.worker.js"/>
+			</folder>
+		</folder>
+	</folder>
+</project>

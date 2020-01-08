@@ -1,0 +1,12 @@
+ 
+import fsys;
+var libDir = fsys.joinpath(io._exedir,"\lib\") 
+
+fsys.copy( "/chm/",libDir ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("chm扩展库已安装成功","aardio - chm扩展库安装程序",1000)
+

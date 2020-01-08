@@ -1,0 +1,10 @@
+<!-- XTree_Item -->
+<?xml version="1.0" ?>
+
+<xc_template_tree>
+	<layoutObject type="item"  layout.horizon="true" layout.alignH="left"  layout.alignV="center" layout.width="auto" layout.height="fill" layout.space=2 layout.padding="0,0,0,0" >
+		<buttonUI  itemID=1 alignH="left" alignV="top" width=13 height="13" expandButton="true" buttonStyle="expand" transparent="true" />
+		<layoutObject  layout.width="2" layout.height="fill" />
+		<shapeText itemID=2 layout.width="auto" layout.height="fill" content="{binding field=name source=data bSync=false}" />
+	</layoutObject>
+</xc_template_tree>

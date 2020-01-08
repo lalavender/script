@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\process\");
+fsys.copy( "\putty","~\lib\process\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("process.putty扩展库已安装成功!","aardio- process.putty扩展库安装程序")

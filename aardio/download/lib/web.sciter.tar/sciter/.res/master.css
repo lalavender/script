@@ -1,0 +1,32 @@
+img:incomplete{ 
+	background:url(res:gif/activity.gif) no-repeat 50% 50%; 
+}
+#drag-selection-box{
+	position: absolute;
+	border: 1px #CCCCCC80 dotted;
+	background: #CCCCCC80;
+}
+
+input[cls],object[cls],widget[cls]{
+	behavior:custom;
+}
+
+menu.context>li[command="edit:undo"]>label {  
+    assigned!: self:value = "撤销";  
+}  
+          
+menu.context>li[command="edit:cut"]>label {  
+    assigned!: self:value = "剪切";  
+}  
+          
+menu.context>li[command="edit:copy"]>label {  
+    assigned!: self:value = "复制";  
+}  
+          
+menu.context>li[command="edit:paste"]>label {  
+    assigned!: self:value = "粘贴";  
+}  
+          
+menu.context>li[command="edit:selectall"]>label {  
+    assigned!: self:value = "全选";  
+}  

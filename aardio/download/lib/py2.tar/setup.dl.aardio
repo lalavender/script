@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\");
+fsys.copy( "\py2","~\lib\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("py2扩展库已安装成功!","aardio- py2扩展库安装程序")

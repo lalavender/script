@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\raw\");
+fsys.copy( "\activationContext.aardio","~\lib\raw\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("raw.activationContext扩展库已安装成功!","aardio- raw.activationContext扩展库安装程序")

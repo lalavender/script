@@ -1,0 +1,47 @@
+﻿
+
+namespace zbar{
+
+	class scanner{
+	 	ctor(){
+	 		this.imageScanner = _dll.CreateImageScanner(); 
+	 		..table.gc(this,"delete");
+	 		
+	 	}
+	 	config = function(cfgstr){
+	 		_dll.ScannerConfig(this.imageScanner,cfgstr : "" );
+	 	}
+		scan = function(raw,width,height,callback){
+			callback = ..raw.tocdecl(callback,"void(string type,string data)"); 
+			_dll.Scan(this.imageScanner,raw,width,height,"GREY",callback);
+		}
+		delete = function(){
+			if(this.imageScanner){
+				_dll.DeleteImageScanner(this.imageScanner);
+	 			this.imageScanner = null;
+			}
+		}
+	}
+	
+	namespace scanner{
+		..raw.loadDll("~\lib\zbar\.res\libiconv-2.dll");
+		..raw.loadDll("~\lib\zbar\.res\libzbar-0.dll");
+		_dll = ..raw.loadDll("~\lib\zbar\.res\scan_image.dll",,"cdecl");
+		
+	}
+}
+
+
+
+/**intellisense()
+zbar = 条码、二维码识别
+zbar.scanner = 条码、二维码识别
+zbar.scanner() = 创建图像识别器\n!zbarscanner.
+!zbarscanner.config('qrcode->enable') = 配置识别器支持二维码识别\n其他参数请参考zbar文档
+!zbarscanner.config('ean13->enable') = 配置识别器支持EAN13条码识别\n其他参数请参考zbar文档
+!zbarscanner.config('ean8->enable') = 配置识别器支持EAN8条码识别\n其他参数请参考zbar文档
+!zbarscanner.config('enable') = 配置识别器支持所有编码识别\n其他参数请参考zbar文档
+!zbarscanner.config('disable') = 配置识别器禁用所有编码识别\n其他参数请参考zbar文档
+!zbarscanner.scan(图像数据,宽度,高度,回调函数) = @.scan(__/*图像数据*/,width,height,function(typeName,data){\n	\n})
+!zbarscanner.delete() = 释放对象,该函数在内存回收时会自动被调用
+end intellisense**/

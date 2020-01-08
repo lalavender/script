@@ -1,0 +1,26 @@
+//简单提示框
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="简单提示框演示";right=759;bottom=469;bgcolor=8421504)
+winform.add(
+plus={cls="plus";text="显示简单提示框";left=451;top=378;right=576;bottom=403;font=LOGFONT(h=-15);notify=1;z=1}
+)
+/*}}*/
+
+import win.dlg.message;
+var msgDlg = win.dlg.message(winform); 
+
+winform.plus.skin(msgDlg.buttonStyle)
+winform.plus.oncommand = function(id,event){
+	if( msgDlg.ask("你觉得这个简单提示框好用吗")  ){
+		win.delay(700);
+	  	msgDlg.smile("谢谢！")
+	}
+	else {
+		win.delay(700);
+		msgDlg.frown('很遗憾你会这么想,但是\nwin.dlg.message提供了很多自定义外观样式的选项\n您可以根据自己的喜好进行调整')
+	}	
+}
+
+winform.show() 
+win.loopMessage();

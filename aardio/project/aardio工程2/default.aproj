@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="aardio工程2" libEmbed="true" icon="..." ui="win" output="aardio工程2.exe" CompanyName="单位名称" FileDescription="aardio工程2" LegalCopyright="Copyright (C) 单位名称 2019" ProductName="aardio工程2" InternalName="aardio工程2" FileVersion="0.0.0.1" ProductVersion="0.0.0.1" publishDir="/dist/" dstrip="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="Js渲染进程" path="res" embed="true" local="false">
+		<file name="index.aardio" path="res\index.aardio" comment="res\index.aardio"/>
+	</folder>
+	<folder name="Js主进程" path="electron.app" comment="目录" embed="false" local="false"/>
+</project>

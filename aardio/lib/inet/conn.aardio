@@ -1,0 +1,59 @@
+//conn 网卡连接
+import inet;
+namespace inet.conn;
+
+class INTERNET_PER_CONN_OPTION {
+    INT option; 
+    union value = {
+		INT dwValue;
+		ustring pszValue;
+		struct ftValue =::FILETIME() 
+    }
+} 
+ 
+class INTERNET_PER_CONN_OPTION_LIST {
+    INT size;
+    ustring connection;
+    INT optionCount;
+    INT optionError; 
+    pointer pOptions;
+} 
+
+setProxy = function(conn,proxy,proxyBypass="<local>"){ 
+    list = INTERNET_PER_CONN_OPTION_LIST();
+    list.size = ..raw.sizeof( list );
+    if(#conn)list.connection = conn;  
+    
+	var tOptions =..raw.toarray( { 
+		INTERNET_PER_CONN_OPTION(); 
+		INTERNET_PER_CONN_OPTION(); 
+		INTERNET_PER_CONN_OPTION(); 
+	}) 
+	var array = tOptions.array;
+    array[1].option = 1/*_INTERNET_PER_CONN_FLAGS*/;
+    if( #proxy){
+    	list.optionCount = 3; 
+    	array[1].value.dwValue = 2/*_PROXY_TYPE_PROXY*/;
+    	array[2].option = 2/*_INTERNET_PER_CONN_PROXY_SERVER*/;
+    	array[2].value.pszValue = proxy;//"http://proxy:80";
+   		array[3].option = 3/*_INTERNET_PER_CONN_PROXY_BYPASS*/;
+    	array[3].value.pszValue = proxyBypass;
+    }
+	else {
+		list.optionCount = 1;
+		array[1].value.dwValue = 1/*_PROXY_TYPE_DIRECT*/;
+	} 
+	list.pOptions = ..raw.buffer( tOptions  );
+	 
+    var bReturn = ::InternetSetOption( ,0x4B/*_INTERNET_OPTION_PER_CONNECTION_OPTION*/,list,..raw.sizeof(list) );
+    ::InternetSetOptionPtr( , 39/*_INTERNET_OPTION_SETTINGS_CHANGED*/, , 0);
+    ::InternetSetOptionPtr( , 37/*_INTERNET_OPTION_REFRESH*/ , , 0);
+ 	return bReturn; 
+ };
+ 
+/**intellisense(inet.conn)
+setProxy() = 默认连接不使用代理
+setProxy("连接名") = 指定连接不使用代理
+setProxy( ,"HTTP://主机地址:端口号") = 为默认连接设置代理
+setProxy("连接名","HTTP://主机地址:端口号" ) = 为指定连接设置代理
+end intellisense**/

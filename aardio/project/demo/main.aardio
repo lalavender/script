@@ -1,0 +1,26 @@
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="抓取网页源码";right=491;bottom=337;parent=...)
+mainForm.add(
+button={cls="button";text="点我抓取";left=319;top=298;right=437;bottom=330;db=1;dr=1;z=1};
+edit={cls="edit";left=12;top=12;right=479;bottom=287;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2}
+)
+/*}}*/
+
+mainForm.button.oncommand = function(id,event){
+
+	var html = win.invoke(
+		function(){
+			import myTools;//线程函数一定要在线程内部导入需要使用的库
+			return myTools.getHtml("http://www.aau.cn");//调用用户库函数抓取网页源码 
+		} 
+	)
+	mainForm.edit.text = html; //使用文本框显示网页源码
+}
+
+mainForm.edit.oncommand = function(id,event){
+	
+}
+
+mainForm.show() 
+win.loopMessage();

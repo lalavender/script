@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\soImage\");
+fsys.copy( "\directX","~\lib\soImage\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("soImage.directX扩展库已安装成功!","aardio- soImage.directX扩展库安装程序")

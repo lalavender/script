@@ -1,0 +1,17 @@
+import ide;
+import fsys;
+var projectPath = ide.getProjectPath(); 
+var projectFileName = io.splitpath(projectPath).name; 
+var builder = fsys.joinpath(ide.getProjectDir(),".build\" + projectFileName + ".init.aardio"); 
+if( io.exist( builder ) ){   
+	var tHnd = thread.create(builder)
+	if(tHnd){
+		thread.waitOne(tHnd);
+		raw.closehandle(tHnd);
+	}
+} 
+else {
+	import fsys;
+	fsys.createParentDir(builder)
+	string.save(builder,'//发布前触发\nimport ide;') 
+} 

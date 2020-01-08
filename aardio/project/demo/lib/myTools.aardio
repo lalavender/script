@@ -1,0 +1,21 @@
+﻿import inet.http; //导入需要使用的标准库
+
+//定义名字空间
+namespace myTools{
+
+	//定义函数
+	getHtml = function( 网址参数 ){
+	
+		//创建一个http对象
+		var http = ..inet.http(); //访问外部名字空间要加上两点
+		
+		//var关键字将对象定义为局部变量(禁止在函数外部使用以避免冲突)
+		var 网页源码 = http.get( 网址参数 ); //下载网页
+	
+		return 网页源码; //返回网页源码
+	}
+}
+
+/**intellisense(myTools)
+getHtml(.(网址) = 抓取并返回网页源码,参数指定要抓取的网址
+end intellisense**/

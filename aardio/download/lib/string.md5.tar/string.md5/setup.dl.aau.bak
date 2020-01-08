@@ -1,0 +1,12 @@
+ 
+import fsys;
+var libDir = fsys.joinpath(io._exedir,"\lib\string") 
+
+fsys.copy( "/md5.aau",libDir ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("string.md5库已安装成功","aardio - string.md5扩展库安装程序",1000)
+

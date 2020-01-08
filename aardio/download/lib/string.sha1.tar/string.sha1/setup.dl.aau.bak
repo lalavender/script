@@ -1,0 +1,12 @@
+ 
+import fsys;
+var libDir = fsys.joinpath(io._exedir,"\lib\string") 
+
+fsys.copy( "/sha1.aau",libDir ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("string.sha1库已安装成功","aardio - string.sha1扩展库安装程序",1000)
+

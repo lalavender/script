@@ -1,0 +1,7 @@
+import chrome.driver;
+var driver = chrome.driver();
+var browser = driver.startBrowser();
+browser.go("http://www.baidu.com")
+var ele = browser.querySelector("#input");
+ele.setValue( "ChromeDriver" )
+browser.querySelector("#search-button").click();

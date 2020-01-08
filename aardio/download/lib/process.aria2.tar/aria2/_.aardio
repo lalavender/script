@@ -1,0 +1,112 @@
+﻿import fsys;
+import process.popen;
+import wsock;
+import web.socket.jsonClient;
+
+namespace process;
+
+class aria2{
+	ctor(){
+		this.downloadDir = "/downloads/aria2";
+		this.rpcPort = ..wsock.getFreePort();
+		this.rpcToken = ..string.random(10);
+	}; 
+	startServer = function(...){
+		if(this.rpcUrl){
+			return this.rpcUrl; 
+		}
+		
+		var args ={"--quiet";"--rpc-allow-origin-all";"--enable-rpc";...}
+		if( this.rpcListenAll ){
+			..table.push(args,"--rpc-listen-all");
+		}
+		
+		..table.push(args,`--dir="` + ..io.createDir(this.downloadDir) + '"' );
+		..table.push(args,`--rpc-listen-port=` + this.rpcPort);
+
+		if(this.rpcToken){
+			..table.push(args,`--rpc-secret=` + this.rpcToken);
+		}
+		
+		if(this.rpcMaxRequestSize){
+			..table.push(args,`rpc-max-request-size=` + this.rpcMaxRequestSize);
+		}
+		
+		if(this.arguments){
+			table.append(args,this.arguments);
+		}
+		
+		this.server = ..process.popen(aria2path,args)
+		this.server.codepage = 65001;
+		this.rpcUrl = "ws://127.0.0.1:" + this.rpcPort + "/jsonrpc";
+		return this.rpcUrl;
+	};
+	addArguments = function(...){
+		if( !this.arguments )this.arguments ={};
+		if( type(...) == type.table ) ..table.append(this.arguments,...)
+		else ..table.push( this.arguments,... );
+	};
+	startClient = function(){
+		if(this.ws) {
+			return this.ws;
+		}
+		
+		if(!this.startServer() ) return null,"启动aria服务进程失败";
+		var ws = ..web.socket.jsonClient();
+		ws.rpc.url = this.rpcUrl;
+		
+		if(this.rpcToken){
+			ws.rpc.beforeRequest = function(reqData){
+    			..table.insert(reqData.params,"token:" + this.rpcToken);
+    			return reqData;
+			}
+		}
+		
+		this.ws = ws;
+		return this.ws;
+	};
+	stop = function(){
+		if(!this.server) return;
+		
+		var ws = this.startClient();
+		if(!ws) return;
+		
+		ws.connect(this.rpcUrl);
+		if( ws.rpc.waitForConnected(,2000) ){
+			ws.aria2.shutdown();
+			this.rpcUrl = null;
+			this.ws = null;
+			this.server.close();
+		}
+		else {
+			this.server.process.terminate();
+			this.server.close();
+		}
+	};
+}
+
+namespace aria2{
+    aria2path = ..fsys.appdata("/aardio/std/aria2/1.34/aria2c.exe"
+    	,$"~\lib\process\aria2\.res\aria2c.exe")
+}
+
+/**intellisense()
+process.aria2 = 用于创建aria2服务进程
+process.aria2() = 创建aria2对象\n!stdprocessaria2.
+end intellisense**/
+
+/**intellisense(!stdprocessaria2)
+addArguments(__) = 使用一个或多个参数指定aria2启动参数,应在startRpcUrl之前调用
+startServer() = 启动aria2服务服务进程\n可选使用一个或多个参数指定aria2启动参数
+startClient() = 启动并返回json-rpc客户端\n成功返回web.socket.jsonClient对象,\n如果服务端未启动,则启用服务进程\n!stdwebsocketjsonClient.
+rpcMaxRequestSize = 最大请求数\n如果自定义此属性，将在调用startServer函数时生效
+rpcToken = RPC密钥\n如果自定义此属性，将在调用startServer函数时生效
+rpcUrl = RPC地址\n如果自定义此属性，将在调用startServer函数时生效
+rpcPort = RPC端口\n不指定时自动分配空闲端口\n如果自定义此属性，将在调用startServer函数时生效
+rpcListenAll = 是否允许外部网络使用RPC调用aria2接口,默认为false\n如果自定义此属性，将在调用startServer函数时生效
+downloadDir = 自定义下载目录,默认为"/downloads/aria2"\n如果自定义此属性，将在调用startServer函数时生效
+server = 服务进程\n!process_popen.
+stop() = 关闭aria2
+end intellisense**/
+
+ 

@@ -1,0 +1,8 @@
+import fsys; 
+fsys.copy( "\aniBackground.aau","~\lib\win\ui\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("win.ui.aniBackground扩展库已安装成功!","aardio - win.ui.aniBackground扩展库安装程序")

@@ -1,0 +1,35 @@
+ 
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="工程向导 - winform";right=1031;bottom=712;bgcolor=16777215;border="dialog frame")
+winform.add()
+/*}}*/
+
+import web.form; 
+var wb = web.form( winform,5/*_UIFLAG_DIALOG*/|0x4/*_UIFLAG_NO3DBORDER*/ | 0x8/*_UIFLAG_SCROLL_NO*/,,,true);
+wb.html = /**
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8"> 
+</head>
+<body>
+调用系统安装的chrome浏览器创建应用程序,在 chrome中可以方便的调用 aardio函数。<br>
+不需要再携带巨大的运行库，在网页Javascript中可以非常方便的调用系统接口，访问本地文件。<br><br>
+
+支持兼容Chrome启动参数的Chrome内核浏览器<br>
+支持CEF3浏览器组件，不需要了解CEF3复杂的接口就可以直接让网页与本地代码交互。<br><br>
+
+可以方便的一键生成体积较小的单个EXE文件。<br>
+可以支持chrome浏览器的全部功能。<br>
+</body>
+</html>
+**/
+
+winform.getTemplatePath = function(){
+	return io.fullpath("/template/web/chrome-app/") 
+}
+
+winform.show() 
+win.loopMessage();
+return winform;

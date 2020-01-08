@@ -1,0 +1,34 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="aria下载器" libEmbed="true" icon="..." ui="win" output="aria下载器.exe" CompanyName="单位名称" FileDescription="aria下载器" LegalCopyright="Copyright (C) 单位名称 2018" ProductName="aria下载器" InternalName="aria下载器" FileVersion="0.0.0.09" ProductVersion="0.0.0.09" publishDir="/dist/" dstrip="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="false"/>
+	<folder name="html" path="html" comment="目录" embed="true">
+		<file name="index.html" path="html\index.html" comment="html\index.html"/>
+		<file name="LICENSE" path="html\LICENSE" comment="html\LICENSE"/>
+		<folder name="css" path="html\css" comment="html\css">
+			<file name="aria-ng-2a46099f8c.min.css" path="html\css\aria-ng-2a46099f8c.min.css" comment="html\css\aria-ng-2a46099f8c.min.css"/>
+			<file name="bootstrap-3.4.1.min.css" path="html\css\bootstrap-3.4.1.min.css" comment="html\css\bootstrap-3.4.1.min.css"/>
+			<file name="plugins-acd93e5a25.min.css" path="html\css\plugins-acd93e5a25.min.css" comment="html\css\plugins-acd93e5a25.min.css"/>
+		</folder>
+		<folder name="fonts" path="html\fonts" comment="html\fonts">
+			<file name="fontawesome-webfont.eot" path="html\fonts\fontawesome-webfont.eot" comment="html\fonts\fontawesome-webfont.eot"/>
+			<file name="fontawesome-webfont.svg" path="html\fonts\fontawesome-webfont.svg" comment="html\fonts\fontawesome-webfont.svg"/>
+			<file name="fontawesome-webfont.ttf" path="html\fonts\fontawesome-webfont.ttf" comment="html\fonts\fontawesome-webfont.ttf"/>
+			<file name="fontawesome-webfont.woff" path="html\fonts\fontawesome-webfont.woff" comment="html\fonts\fontawesome-webfont.woff"/>
+			<file name="fontawesome-webfont.woff2" path="html\fonts\fontawesome-webfont.woff2" comment="html\fonts\fontawesome-webfont.woff2"/>
+		</folder>
+		<folder name="js" path="html\js" comment="html\js">
+			<file name="angular-packages-1.6.10.min.js" path="html\js\angular-packages-1.6.10.min.js" comment="html\js\angular-packages-1.6.10.min.js"/>
+			<file name="aria-ng-902a524d58.min.js" path="html\js\aria-ng-902a524d58.min.js" comment="html\js\aria-ng-902a524d58.min.js"/>
+			<file name="bootstrap-3.4.1.min.js" path="html\js\bootstrap-3.4.1.min.js" comment="html\js\bootstrap-3.4.1.min.js"/>
+			<file name="echarts-common-3.8.5.min.js" path="html\js\echarts-common-3.8.5.min.js" comment="html\js\echarts-common-3.8.5.min.js"/>
+			<file name="jquery-3.3.1.min.js" path="html\js\jquery-3.3.1.min.js" comment="html\js\jquery-3.3.1.min.js"/>
+			<file name="moment-with-locales-2.24.0.min.js" path="html\js\moment-with-locales-2.24.0.min.js" comment="html\js\moment-with-locales-2.24.0.min.js"/>
+			<file name="plugins-01928ba731.min.js" path="html\js\plugins-01928ba731.min.js" comment="html\js\plugins-01928ba731.min.js"/>
+		</folder>
+		<folder name="langs" path="html\langs" comment="html\langs">
+			<file name="zh_Hans.txt" path="html\langs\zh_Hans.txt" comment="html\langs\zh_Hans.txt"/>
+			<file name="zh_Hant.txt" path="html\langs\zh_Hant.txt" comment="html\langs\zh_Hant.txt"/>
+		</folder>
+	</folder>
+</project>

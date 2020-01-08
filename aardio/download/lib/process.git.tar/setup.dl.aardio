@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\process\");
+fsys.copy( "\git","~\lib\process\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("process.git扩展库已安装成功!","aardio- process.git扩展库安装程序")

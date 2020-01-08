@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="gb2312" ?>
+<!--炫彩界面库-窗口布局文件-->
+<windowUI center="true" content="炫彩界面库 - 我的窗口名" dragWindow="true" height="590" layoutBottom="0" layoutLeft="0" layoutRight="0" layoutTop="0" left="20" showT="true" top="20" transparentFlag="shaped" width="301">
+    <layoutObject layout.alignH="left" layout.alignV="top" layout.flag="XC_LAYOUT_BODY" layout.height="fill" layout.horizon="true" layout.padding="0,0,0,0" layout.space="0" layout.width="fill" nameT="背景图片" showT="true">
+        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.padding="10,10,10,10" layout.width="fill" nameT="背景图片" showT="true" expandT="false">
+            <shapePicture height="100" id="22" image="@ID_IMAGE_SKIN1" layout.height="fill" layout.width="fill" left="110" showT="true" top="205" width="100" />
+        </layoutObject>
+        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.width="fill" nameT="阴影边框" showT="true" expandT="false">
+            <shapePicture height="288" image="@ID_IMAGE_ShadowBorder" layout.height="fill" layout.width="fill" left="0" showT="true" top="0" width="219" />
+        </layoutObject>
+        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="false" layout.padding="9,9,9,9" layout.space="0" layout.width="fill" nameT="内容布局" showT="true">
+            <layoutObject layout.alignH="left" layout.alignV="top" layout.height="140" layout.horizon="false" layout.space="0" layout.width="fill" showT="true" expandT="false">
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height="30" layout.horizon="true" layout.space="0" layout.width="fill" showT="true">
+                    <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.padding="8,3,0,0" layout.space="0" layout.width="100" showT="true">
+                        <shapePicture height="18" image="@ID_IMAGE_qqlogoclassic" left="53" showT="true" top="32" width="42" />
+                    </layoutObject>
+                    <layoutObject layout.alignH="right" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.padding="0,0,0,0" layout.space="0" layout.width=":1" showT="true">
+                        <buttonUI bkInfoM="{3:1(272)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_medalwall_normal);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_MedalWall_Hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_MedalWall_Down);}" bkInfoM_state="272(200*200),288(200*200),320(200*200)" buttonType="button" enableFocus="false" height="27" left="172" showT="true" toolTip="勋章" top="32" transparent="true" width="30" />
+                        <buttonUI bkInfoM="{3:1(272)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_min_normal);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_min_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_min_down);}" bkInfoM_state="272(200*200),288(200*200),320(200*200)" buttonType="min" enableFocus="false" height="27" left="172" showT="true" toolTip="最小化" top="32" transparent="true" width="30" />
+                        <buttonUI bkInfoM="{3:1(272)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_close_normal);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_close_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_sysbtn_close_down);}" bkInfoM_state="272(200*200),288(200*200),320(200*200)" buttonType="close" enableFocus="false" height="27" left="125" showT="true" toolTip="关闭" top="31" transparent="true" width="30" />
+                    </layoutObject>
+                </layoutObject>
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height="80" layout.horizon="true" layout.padding="5,8,5,0" layout.width="fill" showT="true">
+                    <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.padding="3,0,0,0" layout.space="0" layout.width="65" showT="true">
+                        <shapePicture height="60" image="@ID_IMAGE_avatar" left="63" showT="true" top="89" width="60" />
+                    </layoutObject>
+                    <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="false" layout.padding="0,0,0,0" layout.space="0" layout.width=":1" showT="true">
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="22" layout.horizon="true" layout.space="5" layout.width="fill" showT="true">
+                            <shapeText content="梦飞" layout.height="20" layout.width="auto" left="123" showT="true" top="52" />
+                            <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" content="在线" enableFocus="false" height="20" left="0" showT="true" top="0" transparent="true" width="35" />
+                            <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="20" imageIcon="@ID_IMAGE_SuperVIP_LIGHT" left="171" showT="true" top="62" transparent="true" width="36" />
+                        </layoutObject>
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="22" layout.horizon="true" layout.width="fill" showT="true">
+                            <shapeText content="我的个性签名,我的个性签名" layout.height="20" layout.width="auto" left="106" showT="true" top="78" />
+                        </layoutObject>
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height=":1" layout.horizon="true" layout.width="fill" showT="true">
+                            <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.space="2" layout.width=":1" showT="true">
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="22" imageIcon="@ID_IMAGE_vip0" left="98" offsetIconY="3" showT="true" toolTip="超级会员" top="108" transparent="true" width="22" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="22" imageIcon="@ID_IMAGE_icon" left="179" offsetIconY="2" showT="true" toolTip="农场" top="110" transparent="true" width="22" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="22" imageIcon="@ID_IMAGE_menu_help" left="179" offsetIconY="2" showT="true" toolTip="帮助" top="110" transparent="true" width="22" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="22" imageIcon="@ID_IMAGE_QQZone" left="179" offsetIconY="2" showT="true" toolTip="空间" top="110" transparent="true" width="22" />
+                            </layoutObject>
+                            <layoutObject layout.alignH="right" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.width="80" showT="true">
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="20" imageIcon="@ID_IMAGE_btn_skin_normal" left="216" showT="true" toolTip="更改外观" top="110" transparent="true" width="20" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="20" imageIcon="@ID_IMAGE_messagebox16" left="273" showT="true" toolTip="打开消息盒子" top="112" transparent="true" width="20" />
+                            </layoutObject>
+                        </layoutObject>
+                    </layoutObject>
+                </layoutObject>
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height=":1" layout.horizon="true" layout.padding="0,0,0,0" layout.width="fill" showT="true">
+                    <elementUI alpha="128" enableFocus="false" height="100" layout.height="fill" layout.width="fill" left="89" showT="true" top="130" width="100">
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.padding="5,2,5,2" layout.space="2" layout.width="fill" showT="true">
+                            <richEditUI content="搜索:联系人,讨论组,群,企业" height="20" layout.height="fill" layout.width="fill" left="43" padding.top="6" showT="true" top="10" transparent="true" width="100" />
+                        </layoutObject>
+                    </elementUI>
+                </layoutObject>
+            </layoutObject>
+            <layoutObject layout.alignH="left" layout.alignV="top" layout.height="35" layout.horizon="true" layout.padding="1,0,1,0" layout.space="0" layout.width="fill" showT="true" expandT="false">
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.space="0" layout.width=":1" showT="true">
+                    <buttonUI alpha="220" bkInfoM="{99:1.9.9;5:2(15)20(1)21(3)26(0)22(-657931)23(255);3:2(15)4(@ID_IMAGE_icon_contacts_selected);5:2(15)20(1)21(3)26(0)22(-1)23(255);3:2(15)4(@ID_IMAGE_icon_contacts_normal);5:2(15)20(1)21(3)26(0)22(-1)23(255);3:2(15)4(@ID_IMAGE_icon_contacts_hover);5:2(15)20(1)21(3)26(0)22(-1)23(255);3:2(15)4(@ID_IMAGE_icon_contacts_selected);98:128(0,1)272(2,3)288(4,5)320(6,7);}" bkInfoM_state="128(200*200),272(200*200),288(200*200),320(200*200)" buttonStyle="button" buttonType="radio" check="true" enableFocus="false" groupID="1" height="35" id="111" layout.height="fill" layout.width="fill" left="10" showT="true" top="149" width="102" />
+                </layoutObject>
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.width=":1" showT="true">
+                    <buttonUI alpha="220" bkInfoM="{1:1(128)2(15)3(0,0,0,0)5(-1)6(255);3:1(128)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_group_selected);1:1(272)2(15)3(0,0,0,0)5(-1)6(255);3:1(272)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_group_normal);1:1(288)2(15)3(0,0,0,0)5(-1)6(255);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_group_hover);1:1(320)2(15)3(0,0,0,0)5(-1)6(255);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_group_selected);}" bkInfoM_state="128(200*200),272(200*200),288(200*200),320(200*200)" buttonStyle="button" buttonType="radio" enableFocus="false" groupID="1" height="35" id="112" layout.height="fill" layout.width="fill" left="112" showT="true" top="149" width="102" />
+                </layoutObject>
+                <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="true" layout.space="0" layout.width=":1" showT="true">
+                    <buttonUI alpha="220" bkInfoM="{1:1(128)2(15)3(0,0,0,0)5(-1)6(255);3:1(128)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_last_selected);1:1(320)2(15)3(0,0,0,0)5(-1)6(255);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_last_selected);1:1(272)2(15)3(0,0,0,0)5(-1)6(255);3:1(272)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_last_normal);1:1(288)2(15)3(0,0,0,0)5(-1)6(255);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_icon_last_hover);}" bkInfoM_state="128(200*200),320(200*200),272(200*200),288(200*200)" buttonStyle="button" buttonType="radio" enableFocus="false" groupID="1" height="25" id="113" layout.height="fill" layout.width="fill" left="240" showT="true" top="170" width="60" />
+                </layoutObject>
+            </layoutObject>
+            <layoutObject layout.alignH="left" layout.alignV="top" layout.height=":1" layout.horizon="true" layout.padding="1,0,1,0" layout.space="0" layout.width="fill" showT="true" expandT="false">
+                <treeUI alpha="200" bkInfoM="{1:1(16)2(15)3(0,0,0,0)5(-1)6(255);}" bkInfoM_state="16(200*200)" drawFocus="false" height="337" id="101" layout.height="fill" layout.width="fill" left="10" showT="true" top="184" width="307" />
+            </layoutObject>
+            <layoutObject layout.alignH="left" layout.alignV="top" layout.height="60" layout.horizon="true" layout.width="fill" showT="true" expandT="false">
+                <elementUI alpha="100" enableFocus="false" height="0" layout.height="fill" layout.width="fill" left="0" showT="true" top="0" width="0">
+                    <layoutObject layout.alignH="left" layout.alignV="top" layout.height="fill" layout.horizon="false" layout.padding="5,0,5,0" layout.space="0" layout.width="fill" showT="true">
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height="30" layout.horizon="true" layout.width="fill" showT="true">
+                            <layoutObject id="221" layout.alignH="left" layout.alignV="center" layout.height="fill" layout.horizon="true" layout.space="5" layout.width=":1" showT="true">
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="24" id="222" imageIcon="@ID_IMAGE_VASFlagEnable" left="34" showT="true" toolTip="朋友网" top="21" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);}" bkInfoM_state="320(200*200),288(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_main_musicbtn20_music" left="97" showT="true" toolTip="QQ音乐" top="21" transparent="true" width="24" />
+                            </layoutObject>
+                            <layoutObject layout.alignH="right" layout.alignV="center" layout.height="fill" layout.horizon="true" layout.width="60" showT="true">
+                                <buttonUI bkInfoM="{3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);}" bkInfoM_state="320(200*200),288(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_mainmenu_allservices" left="249" showT="true" toolTip="打开应用中心" top="9" transparent="true" width="24" />
+                            </layoutObject>
+                        </layoutObject>
+                        <layoutObject layout.alignH="left" layout.alignV="top" layout.height=":1" layout.horizon="true" layout.space="0" layout.width="fill" showT="true">
+                            <layoutObject layout.alignH="left" layout.alignV="center" layout.height="fill" layout.horizon="true" layout.space="5" layout.width=":1" showT="true">
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_menu_btn_normal" left="38" showT="true" toolTip="主菜单" top="50" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);}" bkInfoM_state="320(200*200),288(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_tools_hover" left="109" showT="true" toolTip="打开系统设置" top="51" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_filemanager_hover" left="63" showT="true" toolTip="打开文件助手" top="44" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);}" bkInfoM_state="320(200*200),288(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_message_highlight" left="158" showT="true" toolTip="打开消息管理器" top="46" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);}" bkInfoM_state="320(200*200),288(200*200)" enableFocus="false" height="24" imageIcon="@ID_IMAGE_myCollection_mainpanel_hover" left="142" showT="true" toolTip="打开我的收藏" top="48" transparent="true" width="24" />
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" content="查找" enableFocus="false" height="24" imageIcon="@ID_IMAGE_find_hover" left="168" offsetIconX="2" offsetIconY="2" offsetX="-3" offsetY="1" showT="true" toolTip="找人,找群,找服务" top="49" transparent="true" width="55" />
+                            </layoutObject>
+                            <layoutObject layout.alignH="right" layout.alignV="center" layout.height="fill" layout.horizon="true" layout.width="70" showT="true">
+                                <buttonUI bkInfoM="{3:1(288)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_hover);3:1(320)2(15)3(0,0,0,0)4(@ID_IMAGE_btn_home_down);}" bkInfoM_state="288(200*200),320(200*200)" content="应用宝" enableFocus="false" height="24" imageIcon="@ID_IMAGE_PopTipsTestIcon" left="0" offsetIconX="2" offsetIconY="1" offsetX="-2" offsetY="1" showT="true" toolTip="打开应用宝" top="0" transparent="true" width="65" />
+                            </layoutObject>
+                        </layoutObject>
+                    </layoutObject>
+                </elementUI>
+            </layoutObject>
+        </layoutObject>
+    </layoutObject>
+</windowUI>

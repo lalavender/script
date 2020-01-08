@@ -1,0 +1,13 @@
+import ide;
+import fsys;
+import win; 
+
+var libDir = ..io.fullpath("~\lib\") 
+fsys.copy( "/odisasm/",libDir ); 
+
+import ide;
+ide.refreshUserLib()
+
+import win;
+win.msgboxTimeout("odisasm库已安装成功","aardio - odisasm扩展库安装程序",1000)
+

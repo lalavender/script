@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\sevenZip\");
+fsys.copy( "\cmd","~\lib\sevenZip\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("sevenZip.cmd扩展库已安装成功!","aardio- sevenZip.cmd扩展库安装程序")

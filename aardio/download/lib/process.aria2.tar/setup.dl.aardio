@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\process\");
+fsys.copy( "\aria2","~\lib\process\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("process.aria2扩展库已安装成功!","aardio- process.aria2扩展库安装程序")

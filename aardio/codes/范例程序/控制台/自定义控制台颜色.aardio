@@ -1,0 +1,14 @@
+//自定义控制台颜色
+
+import console;
+console.open();
+console.setTitle("自定义控制台颜色") 
+
+for(i=0;0xF;1){
+	//console.setTextAttribute( ((0xF-i)<<4) | i ) //只改字体背景
+	execute("color " + string.format("%x%x",0xF-i, i)) 
+    console.log("来来我是一个菠菜") 
+    sleep(100) 
+} 
+ 
+console.pause();

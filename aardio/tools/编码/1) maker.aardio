@@ -1,0 +1,249 @@
+//升级包制作工具
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio - 升级包制作工具";right=703;bottom=471;parent=...)
+winform.add(
+btnCode={cls="button";text="查看自动更新代码示例";left=240;top=408;right=432;bottom=448;clip=1;db=1;dl=1;z=9};
+btnGen={cls="button";text="生成升级包";left=448;top=408;right=640;bottom=448;clip=1;db=1;dr=1;z=6};
+editAppDir={cls="edit";left=168;top=32;right=664;bottom=64;clip=1;dl=1;dr=1;dt=1;edge=1;readonly=1;z=5};
+editDescription={cls="edit";left=168;top=112;right=664;bottom=328;clip=1;db=1;dl=1;dr=1;dt=1;edge=1;multiline=1;z=2};
+editOutput={cls="edit";text="/.update-files/";left=168;top=344;right=584;bottom=376;clip=1;db=1;dl=1;dr=1;edge=1;z=8};
+editProgress={cls="edit";left=18;top=18;right=685;bottom=395;clip=1;db=1;dl=1;dr=1;dt=1;edge=1;hide=1;multiline=1;z=1};
+editUpdateUrl={cls="edit";text="http://update.aardio.com/api/v1";left=168;top=72;right=664;bottom=104;clip=1;dl=1;dr=1;dt=1;edge=1;z=10};
+static={cls="static";text="本地应用程序目录:";left=24;top=40;right=160;bottom=64;align="right";clip=1;dl=1;dt=1;transparent=1;z=3};
+static2={cls="static";text="升级包下载网址(根目录):";left=-14;top=80;right=160;bottom=104;align="right";clip=1;dl=1;dt=1;transparent=1;z=4};
+static3={cls="static";text="输出目录:";left=24;top=352;right=160;bottom=376;align="right";clip=1;db=1;dl=1;transparent=1;z=7}
+)
+/*}}*/
+
+import ide;
+var pubDir = ide.getProjectProperty("publishDir");
+var appDir = ide.getProjectDir();
+if( #pubDir && appDir ){
+	if( io.localpath(pubDir) ) pubDir = io.joinpath(appDir,pubDir);
+	winform.editAppDir.text = pubDir;
+	winform.editAppDir.appendText();
+	
+	var cfg = string.load( io.joinpath(appDir,".build/update-maker.table") );
+	if(#cfg){
+		cfg = eval(cfg);
+		winform.editUpdateUrl.text = cfg.editUpdateUrl;
+	};
+}
+else {
+	winform.msgboxErr("请先创建或打开aardio工程!");
+	return;
+}
+
+if(!..io.exist(ide.getPublishPath())){
+	winform.msgboxErr("请先发布工程并生成EXE文件!");
+	return;
+}
+
+winform.editProgress.threadCallable();
+winform.btnGen.oncommand = function(id,event){
+	
+	winform.btnGen.disabled = true;
+	win.ui.waitCursor(true);
+	
+	var appDir = ide.getProjectDir();
+	if(#appDir){
+		var cfg = {
+			editUpdateUrl = winform.editUpdateUrl.text;
+		};
+		string.save(io.joinpath(appDir,".build/update-maker.table") ,table.tostring(cfg) )
+	}
+
+	win.invoke( 
+		function(winform,appDir,updateUrl,output,description){
+			import fsys;
+			import fsys.update.maker;
+			
+			var maker = fsys.update.maker();
+			maker.url = #updateUrl ? updateUrl : null;
+			maker.outDir =  output;
+			maker.appDir = appDir;  
+			maker.description = description
+			fsys.createDir(maker.outDir);
+			
+			winform.editProgress.text = "";
+			winform.editProgress.hide = false;
+			winform.editProgress.print("开始生成......");
+			
+			maker.onFile = function(path,size){
+			    winform.editProgress.printf("压缩文件 %s 大小 %s",path,..math.size64(size).format() );
+			}
+			var ok,err = maker.compress();
+			if(!ok){
+				if( err ) winform.msgboxErr(err);
+				else {
+					winform.msgboxErr("生成升级包是遇到错误");
+				}
+				
+				return;
+			} 
+			else {
+				if( winform.msgboxTest("升级包已创建成功,是否打开输出目录?") ){
+					import process;
+					process.explore_select( io.joinpath(output,"version.txt"));
+				}
+			}
+			
+			winform.editProgress.hide = true;
+				
+		}
+		,winform
+		,winform.editAppDir.text
+		,winform.editUpdateUrl.text
+		,winform.editOutput.text
+		,winform.editDescription.text
+	)
+	
+	winform.btnGen.disabled = false;
+	win.ui.waitCursor(false);
+}
+
+winform.btnCode.oncommand = function(id,event){
+    var updateUrl = winform.editUpdateUrl.text;
+    if(!#updateUrl){
+    	updateUrl = "http://update.aardio.com/api/v1"
+    }
+	var code  = string.replace(updateSampleCode,"@${UPDATEURL}",updateUrl);
+	ide.openCode( code );
+}
+
+updateSampleCode = /**
+/*检测新版本示例{{*/
+import fsys.update.dlMgr; 
+var dlMgr = fsys.update.dlMgr("${UPDATEURL}/version.txt","/download/update-files")
+
+dlMgr.onError = function(err,filename){
+    //错误信息 err,错误文件名 filename 这里可以不用做任何处理,因为出错了就是没有升级包了
+}
+
+dlMgr.onConfirmDownload = function(isUpdated,appVersion,latestVersion,description){ 
+
+    if( ! isUpdated ){
+        //已经是最新版本了
+    }
+    else {
+        //检测到最新版本，版本号 latestVersion
+    };
+    
+    return false; //暂不下载
+} 
+
+dlMgr.create(); 
+/*}}*/
+
+
+/*下载升级包示例{{*/
+import fsys.update.dlMgr; 
+var dlMgr = fsys.update.dlMgr("${UPDATEURL}/version.txt","/download/update-files")
+
+dlMgr.onError = function(err,filename){
+    //错误信息 err,错误文件名 filename
+}
+
+dlMgr.onConfirmDownload = function(isUpdated,appVersion,latestVersion,description){  
+    return true; //如果有更新直接下载
+} 
+
+dlMgr.onDownloadBegin = function(totalSize,fileTotal){  
+    //开始下载,升级包总大小为 totalSize 
+}
+
+dlMgr.onDownloadReceive = function(sizePs,downSize,fileCount){ 
+    //正在下载,下载的大小为 downSize, sizePs为每秒下载速度, fileCount为已下载文件数
+}
+
+dlMgr.onEnd = function(updater,saveDir,appDir,mainPath){ 
+    //下载完成，这里可以决定是不是启动更新程序（也可以先退出这个函数，并记录下接收到到参数）
+    
+    //下面启动自动更新程序，最好是用setTimeout函数异步启动（先退出当前下载过程）
+    mainForm.setTimeout( 
+        function(){
+            import process; 
+            var prcs,err = process( updater,{
+                "/update";
+                "/src";saveDir;
+                "/dst";appDir;
+                "/main";mainPath;
+                "/oldmain"; ..io._exepath
+            },{ creationFlag = 0x8/*_DETACHED_PROCESS*/; waitInputTimeout = 0 }
+            )  	
+        }
+    )	
+}
+
+dlMgr.create();
+/*}}*/
+
+/*
+下面是自动更新程序 main.aardio中的代码。
+我们把软件的主EXE称为 main，而把用来执行自动更新的exe称为 updater
+通常 main和updater 可以合并到一个exe文件中，使用命令行参数来区别，如下：
+*/
+
+
+    if(  _ARGV.update ) { 
+        
+        //oldmain是指当前正在运行的旧版本应用程序
+        import process.file;
+        var oldmain = _ARGV.oldmain;
+        if( oldmain ){
+            if( process.file.test(oldmain) ){
+                //这里可以修改或增加代码，提醒用户退出旧版本程序，或强行关闭等等
+                process.file.terminate(oldmain);
+            }  
+        } 
+        
+        import fsys.update.app;	 
+        
+        //_ARGV["src"]是已经下载好的升级包，_ARGV["dst"]是等待更新的软件安装目录
+        var updater,err = fsys.update.app( _ARGV.src, _ARGV.dst);
+        updater.onError = function(err,filename){
+            //更新遇到错误,err是错误信息,filename是错误文件
+        }
+        
+        updater.onCopyBegin = function(total){
+            //这里是开始更新时触发的事件,total为文件总数,可设为进度条的最大值
+        }
+        
+        updater.onCopyFile = function(path,count){ 
+            //path是当前正在更新的文件路径,count是当前进度
+        }
+         
+        updater.onCopyFailed = function(path){
+            //path这里是更新时遇到错误的文件，例如文件正在占用状态等等
+            //可以在这里给用户提示处理错误，此函数返回true会重试并继续更新,返回false退出更新
+        }
+        
+        updater.onProcessFailed = function(paths){
+             //paths是一个数组，是当前更新目录下仍然在运行的执行文件(例如EXE)
+             //可以在这里给用户提示处理错误，此函数返回true会重试并继续更新,返回false退出更新
+        }
+        
+        updater.onEnd = function(path){
+             if( /*用户没有取消更新*/  ){
+             
+                 import process; 
+                 process.execute( _ARGV.main,"/updated" );//启动新版本主程序
+             }
+             
+             //自动更新已完成,这里通常应该立即退出更新进程
+             ..win.quitMessage();
+        }
+        
+        //开始自动更新
+        updater.apply();
+        
+    }
+**/
+
+winform.editUpdateUrl.setCueBannerText("可选输入升级包所在目录网址")
+
+winform.enableDpiScaling();
+winform.show();
+
+win.loopMessage();

@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\win\ui\");
+fsys.copy( "\lcdClock","~\lib\win\ui\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("win.ui.lcdClock扩展库已安装成功!","aardio- win.ui.lcdClock扩展库安装程序")

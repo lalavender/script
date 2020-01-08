@@ -1,0 +1,50 @@
+﻿import win.reg;
+import fsys.version;
+
+namespace chrome;
+
+class path{
+	ctor(){
+		if(_WINE){
+			if(..io.exist("//opt/google/chrome/google-chrome") ){
+				return "//opt/google/chrome/google-chrome";
+			}
+		}
+		
+		var path;
+		
+		var browsers ={
+			"chrome.exe";
+			"msedge.exe";
+			"2345Explorer.exe"; 
+			"360chrome.exe";
+		}
+		 
+		for i,filename in ..table.eachIndex(browsers){
+			var reg = ..win.reg("HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\" + filename)
+			if(reg){
+				path  = reg.queryValue("");
+				reg.close();
+			};
+			
+			if( !#path ) {
+			
+				var reg = ..win.reg("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\App Paths\" + filename)
+				if(reg){
+					path  = reg.queryValue("");
+					reg.close();
+				};
+			}
+			
+			if( #path ) {
+				break;
+			}
+		}
+		
+		return path;
+	};
+}
+
+/**intellisense()
+chrome.path() = 用于获取chrome安装路径\n支持chrome兼容的edge,2345,360等浏览器
+end intellisense**/

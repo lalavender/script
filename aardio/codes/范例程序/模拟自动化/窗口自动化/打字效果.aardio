@@ -1,0 +1,14 @@
+import process;
+import winex;
+
+var input = function( str ){
+	var ustr = string.toUnicode(str);
+	for(i=1;#ustr/2){
+		winex.say(ustr[[i]]);
+		sleep(200)
+	}
+	
+}
+
+process.executeWaitInput("notepad.exe");
+input( "这样就可以实现打字效果了." )

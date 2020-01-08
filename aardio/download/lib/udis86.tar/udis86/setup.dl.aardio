@@ -1,0 +1,11 @@
+ 
+import fsys;
+ 
+fsys.copy( "/udis86","~/lib/" );   
+
+import ide;
+ide.refreshStdLib(); 
+
+import win;
+win.msgboxTimeout("udis86反汇编扩展库已安装成功","aardio - udis86反汇编扩展库安装程序",1000)
+

@@ -1,0 +1,27 @@
+import chm;
+import fsys.dlg;
+import console;
+
+console.log("正在反编译,请选择CHM文件") 
+var chmPath = fsys.dlg.open("CHM帮助文件|*.chm||");
+if(!chmPath) return;
+
+//反编译CHM
+chm.decompile(chmPath,"\chm-src\"); 
+
+//创建CHM编译器
+var compiler = chm.compiler( "\chm-src\index.hhp" );
+
+//启用全文搜索,CHM的全文搜索很好用,但可惜网上很多CHM编译时没有启用该选项
+compiler.fullTextSearch = "Yes"; 
+
+//显示编译进度
+compiler.onProgress = function( str ){
+	console.log( str )
+	return true;
+}
+ 
+compiler.compile()
+
+console.log("编译已完成,稍候正在打开目录")
+process.explore("\chm-src\")

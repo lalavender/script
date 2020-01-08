@@ -1,0 +1,16 @@
+Python2.7官方版必须安装VC9运行库，因为VC9使用WinSxS加载技术不便于绿色打包,
+所以这里引用的是基于VC10编译的Python2.7版本,并精简了删除了部分模块，如果需要其他的模块，请到这里下载：http://p-nand-q.com/python/2015.07.12-Python2710-x32.7z 
+下载后删除 *.pdb, *_d.dll, *_d.pyd 这些用于调试的文件，把需要添加的模块放到 ~\lib\py\.res 下面的对应目录下。
+
+Python的Lib下面的模块使用下面的aardio代码编译为EXE,
+然后将该EXE移动到aardio根目录下运行编译python标准库
+
+io.open()
+import fsys;
+import py;
+
+fsys.setCurDir("~\lib\py\.res\Lib");
+py.run( "-OO","compileall.py","-f",".");
+
+删除所有 py,pyc
+删除 curses(linux)，test，idlelib， plat-...

@@ -1,0 +1,9 @@
+import fsys;
+ 
+fsys.copy("/htmllite", "~\lib\win\ui\ctrl\");
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("htmllite控件已安装成功", "aardio - htmllite控件安装程序", 1000);

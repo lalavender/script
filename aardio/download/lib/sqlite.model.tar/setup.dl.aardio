@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\sqlite\");
+fsys.copy( "\model.aardio","~\lib\sqlite\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("sqlite.model扩展库已安装成功!","aardio- sqlite.model扩展库安装程序")

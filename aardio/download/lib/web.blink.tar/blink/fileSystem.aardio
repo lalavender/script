@@ -1,0 +1,81 @@
+//fileSystem 嵌入文件系统
+
+import web.blink;
+namespace web.blink.fileSystem;
+	
+var filesys = {};
+
+_fopen = ..thread.tocdecl( function(path){
+   
+   	//只有路径前面加:: miniblink才会传入相对路径
+    if(path[1]==':'# && path[2]==':'#){
+        path = ..string.right(path,-3);
+    };
+    
+    var str =  ..string.load(path);
+	if(!#str) return 0;
+	
+	var file = {
+		INT pos = 0;
+		ptr data = ..raw.realloc(#str,,str);
+	}
+	
+	return ..raw.realloc( ..raw.sizeof(file),,file); 
+},"addr(string path)");
+
+_fclose = ..thread.tocdecl( function(pfile){ 
+    if(!pfile) return; 
+    var file = ..raw.convert(pfile,{INT pos;ptr data});
+	if(!file.data) return;
+	
+	..raw.realloc(0,file.data);
+	..raw.realloc(0,pfile);
+},"void(ptr pfile)");
+
+_fsize = ..thread.tocdecl( function(file){
+	if(file.data) return ..raw.sizeof(file.data);
+},"INT({INT pos;ptr data} file)");
+
+_fread = ..thread.tocdecl( function(pfile,buffer,size){
+    if(!pfile) return; 
+    var file = ..raw.convert(pfile,{INT pos;ptr data});
+	if(!file.data) return;
+	if(!size) return; 
+	if(size<0) return;
+	
+	var s = ..raw.tostring( file.data,file.pos+1, file.pos + size);
+	file.pos = file.pos + #s;
+	
+	..raw.copy(pfile,file);
+	..raw.copy(buffer,s,#s); 
+	return #s;
+},"int(ptr pfile,ptr buffer,int size)");
+
+_fseek = ..thread.tocdecl( function(pfile,offset,origin){
+	f(!pfile) return; 
+    var file = ..raw.convert(pfile,{INT pos;ptr data});
+	if(!file.data) return;
+	
+	var pos;
+	if( origin == 0 )
+		pos = offset;
+	elseif( origin = 1 )
+		pos = file.pos + offset;
+	else 
+		pos = ..raw.sizeof(file.data) + offset;
+		
+	if( pos >..raw.sizeof(file.data) ) return -1;
+	file.pos = pos;
+	
+	..raw.copy(pfile,file);
+	return 0;
+},"int(ptr pfile,int offset,int origin)");
+
+var wke = ..web.blink._dll;
+wke.wkeSetFileSystem(_fopen, _fclose, _fsize, _fread, _fseek);
+
+/**intellisense()
+web.blink.fileSystem = 导入此模块以后web.blink即可支持嵌入资源文件\n使用 wsock.tcp.simpleHttpServer 也可以内存加载html或aardio模板
+end intellisense**/
+
+

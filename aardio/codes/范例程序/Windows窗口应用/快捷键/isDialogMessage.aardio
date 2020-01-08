@@ -1,0 +1,41 @@
+//ESC、Enter
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="对话框默认快捷键 ESC、Enter等";right=759;bottom=469)
+winform.add(
+btnEnter={cls="button";text="确定(按Enter)";left=512;top=267;right=687;bottom=325;z=1};
+btnEsc={cls="button";text="取消（按ESC）";left=510;top=180;right=685;bottom=238;z=2};
+edit={cls="edit";left=22;top=27;right=469;bottom=427;edge=1;hidesel=1;multiline=1;z=3}
+)
+/*}}*/
+
+//在对话框上按回车会触发Z序为1的控件命令
+winform.btnEnter.oncommand = function(id,event){
+	winform.edit.print("你按了Enter");	
+}
+
+//在对话框上按ESC会触发Z序为2的控件命令
+winform.btnEsc.oncommand = function(id,event){
+	winform.edit.print("你按了ESC");
+	winform.close();
+}
+
+//检测对话框消息并确定如何响应快捷键
+winform.isDialogMessage = function(hwnd,msg){
+	if( msg.message == 0x100/*_WM_KEYDOWN*/){
+		
+		if(  msg.wParam == 0xD/*_VK_RETURN*/ ){ 
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		}
+		
+		if( msg.wParam == 0x1B/*_VK_ESC*/ ){
+			//return true;//告诉消息处理函数这是一个快捷键,阻止按键消息继续分发
+		} 
+	}
+	
+	//检测并响应默认快捷键
+	return win.isDialogMessage(hwnd,msg);
+}
+
+winform.show() 
+win.loopMessage();

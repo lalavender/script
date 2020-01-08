@@ -1,0 +1,42 @@
+﻿import console;
+import web.rest.jsonClient;
+
+var http = web.rest.jsonClient();
+
+//打开https://www.jsonstore.io免费获取自动分配的API地址
+var jsonstore = http.api(
+"https://www.jsonstore.io/e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5");
+
+//增，以POST方法请求网址 https://www.jsonstore.io/e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5/user/1
+var result = jsonstore.user[1].post(
+	name = "jon.snow";
+	age = 31;
+)
+
+//改，以PUT方法请求网址 https://www.jsonstore.io/e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5/user/1/age
+var result = jsonstore.user[1].age.put(32);
+
+//查
+var result = jsonstore.user[1].get();
+
+//删
+var result = jsonstore.user[1].delete();
+console.dump(result,http.lastRequestUrl);
+
+//也可以在网址中使用大括号指定占位符
+var jsonstore = http.api("https://www.jsonstore.io/{id}/{name}");
+
+//API对象的成员名会被自动按顺序替换为URL占位符（忽略占位符的名字）
+var result = jsonstore["e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5"].user.get()
+//以GET方法请求网址 https://www.jsonstore.io/e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5/user
+
+//也可以用一个表指定多个占位符的替换值
+var data ={
+	id = "e5fd2bdf0e6b3ba3fe4aa61eebd11740cf2fe10e7fad1b5d2fb77c876498baf5";
+	name = "user";
+}
+var result = jsonstore[ data ] .get()
+
+console.dump(result)
+console.pause()
+

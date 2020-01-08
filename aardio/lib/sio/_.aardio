@@ -1,0 +1,502 @@
+﻿//串口通讯库
+namespace sio; 
+
+class port{
+	ctor( portNumber ){
+		if( portNumber ){
+			if( type(portNumber) == type.string ){
+				portNumber = ..string.match(portNumber,"\d+");
+				if(portNumber) portNumber = tonumber(portNumber,10);
+				else {
+					error("参数错误",2)
+				}
+
+				var e = ::Pcomm.sio_open(portNumber);
+				if( e ) return null,errorMessage[e],e;
+				this.portNumber = portNumber;
+			}
+			else {
+				var e = ::Pcomm.sio_open(portNumber);
+				this.portNumber = portNumber;
+			}
+		}
+	};
+	open = function(portNumber){
+		portNumber = portNumber || this.portNumber; 
+		if(portNumber){
+			this.portNumber = portNumber;
+			var e = ::Pcomm.sio_open(portNumber);
+			if( e ) return null,errorMessage[e],e;
+			return true;
+		}
+	}
+	close = function(){
+		if( this.portNumber ){
+			var e =  ::Pcomm.sio_close(this.portNumber);
+			if( e ) return null,errorMessage[e];
+			this.portNumber = null;
+		}
+		return true;
+	};
+	ioctl = function(baud,wordLength,stopBits,parity){
+		if( baud === null ) baud = 9600;
+		if( baud > 0x13 ) baud = baudRateIndex[baud];
+		
+		if( wordLength === 5 ) wordLength = 0;
+		elseif( wordLength === 6 ) wordLength = 1;
+		elseif( wordLength === 7 ) wordLength = 2;
+		else wordLength = 3;
+		
+		if(stopBits && ( stopBits > 1 ) ) stopBits = 4;
+		else stopBits = 0;
+		
+		if(parity){
+			parity = parityMode[parity];
+			 if(parity === null) error("校验位参数错误 ",2)
+		}
+		else {
+			parity = 0;
+		}
+		
+		var e =  ::Pcomm.sio_ioctl(this.portNumber,baud,wordLength | stopBits | parity);
+		if( e ) return null,errorMessage[e];
+		return true;
+	};
+	getMode = function(buf,len){
+		var wordLength,stopBits,parity;
+		var mode = ::Pcomm.sio_getmode(this.portNumber)
+		if( mode < 0 ) return null,errorMessage[mode];
+		 
+		select( mode & 2#100 ){
+    		case 0x00 stopBits = 1;
+    		case 0x04 stopBits = 2;
+    	}
+    	select( mode & 2#011 ){
+    		case 0x00 wordLength = 5;
+    		case 0x01 wordLength = 6;
+        	case 0x02 wordLength = 7;
+        	case 0x03 wordLength = 8;
+    	}
+    	select( mode & 2#111000 ){
+    		case 0x18 parity = "even";
+    		case 0x08 parity = "odd";
+        	case 0x38 parity = "spc";
+        	case 0x28 parity = "mrk";
+        	else parity = "none"
+    	}
+    	return wordLength,stopBits,parity;
+	};
+	getBaudRate  = function(){
+		var baud = ::Pcomm.sio_getbaud(this.portNumber)
+		if( baud < 0 ) return null,errorMessage[baud];
+		return baud;
+	};
+	setBaudRate  = function(speed){
+		var e = ::Pcomm.sio_baud(this.portNumber,speed)
+		if( e < 0 ) return null,errorMessage[e];
+		return true;
+	};
+	flush = function(input,output){
+		var func = 1;
+		if( input && output ) func = 2;
+		elseif( input ) func = 0; 
+		
+		var e =  ::Pcomm.sio_flush(this.portNumber,func);
+		if( e ) return null,errorMessage[e];
+		return true;	
+	}
+	lctrl = function(dtr,rts){
+		var mode = 0;
+		if(dtr) mode = mode | 1;
+		if(rts) mode = mode | 2;
+		var e =  ::Pcomm.sio_lctrl(this.portNumber,mode);
+		if( e ) return null,errorMessage[e];
+		return true;	
+	};
+	getch = function(){
+		var ch = ::Pcomm.sio_getch(this.portNumber)
+		if( ch < 0 ) return null,errorMessage[ch];
+		return ch;
+	};
+	readBuffer = function(buf,len){ 
+		if( buf === null ) error("请在参数@1中指定buffer对象",2); 
+		if( len === null )len = #buf;
+		var len = ::Pcomm.sio_read(this.portNumber,buf,len)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	read = function(len){
+		var buf;
+		if( len === null ){
+			len = ::Pcomm.sio_iqueue(this.portNumber)
+			if( len < 0 ) return null,errorMessage[len];
+			if(!len) return;
+			
+			buf = ..raw.buffer(len);
+			this.buffer = buf;
+			this.bufferLength = len;
+		}
+		else{
+			if( len <= this.bufferLength  ){
+				buf = this.buffer;
+			}
+			else{
+				buf = ..raw.buffer(len);
+				this.buffer = buf;
+				this.bufferLength = len;
+			}
+		}
+		
+		var len = ::Pcomm.sio_read(this.portNumber,buf,len)
+		if( len < 0 ) return null,errorMessage[len];
+		return ..string.left(buf,len);
+	};
+	readHex = function(len){
+		var str,err = this.read(len);
+		if( str ) return ..string.hex(str," ");
+		return str,err; 
+	};
+	iqueue = function(){
+		var len = ::Pcomm.sio_iqueue(this.portNumber)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	oqueue = function(){
+		var len = ::Pcomm.sio_oqueue(this.portNumber)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	putch = function(term){
+		var len = ::Pcomm.sio_putch(this.portNumber,term)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	write = function(buf,len){
+		if( len === null ) len = #buf;
+		var len = ::Pcomm.sio_write(this.portNumber,buf,len)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	writeHex = function(hex){
+		var str = ..string.unhex(hex," "); 
+		var len = ::Pcomm.sio_write(this.portNumber,str,#str)
+		if( len < 0 ) return null,errorMessage[len];
+		return len;
+	};
+	getLineStatus = function(buf,len){
+		var ls = ::Pcomm.sio_lstatus(this.portNumber)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	termIrqThread = function(code,func,ownerObject){
+		this.termIrqThreadCallback = ..thread.tostdcall(func,"int(int port)",ownerObject : this)
+		var ls = ::Pcomm.sio_term_irq(this.portNumber,this.termIrqThreadCallback,code)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	termCntIrqThread = function(code,func,ownerObject){
+		this.termCntIrqThreadCallback = ..thread.tostdcall(func,"int(int port)",ownerObject : this)
+		var ls = ::Pcomm.sio_cnt_irq(this.portNumber,this.termCntIrqThreadCallback,code)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	modemIrqThread  = function(code,func,ownerObject){
+		this.modemIrqThreadCallback = ..thread.tostdcall(func,"int(int port)",ownerObject : this)
+		var ls = ::Pcomm.sio_modem_irq(this.portNumber,this.modemIrqThreadCallback,code)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	breakIrqThread = function(code,func,ownerObject){
+		func = ..thread.tostdcall(func,"int(int port)",ownerObject : this)
+		var ls = ::Pcomm.sio_break_irq(this.portNumber,func,code)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	txEmptyIrqThread  = function(code,func,ownerObject){
+		this.txEmptyIrqThreadCallback = ..thread.tostdcall(func,"int(int port)",ownerObject : this)
+		var ls = ::Pcomm.sio_Tx_empty_irq(this.portNumber,this.txEmptyIrqThreadCallback,code)
+		if( ls < 0 ) return null,errorMessage[ls];
+		return ls;
+	};
+	getReadTimeouts = function(){
+		var total = {INT value};
+		var interval = {INT value};
+		var e = ::Pcomm.sio_GetReadTimeouts(this.portNumber,total,interval)
+		if( e < 0 ) return null,errorMessage[e];
+		return total.value,interval.value;
+	};
+	setReadTimeouts  = function(total,interval){
+		var e = ::Pcomm.sio_SetReadTimeouts(this.portNumber,total,interval)
+		if( e < 0 ) return null,errorMessage[e];
+		return true;
+	};
+	abortRead  = function(){
+		var e = ::Pcomm.sio_AbortRead(this.portNumber)
+		if( e < 0 ) return null,errorMessage[e];
+		return true;
+	};
+	getWriteTimeouts = function(){
+		var total = {INT value};
+		var interval = {INT value};
+		var e = ::Pcomm.sio_GetWriteTimeouts(this.portNumber,total,interval)
+		if( e < 0 ) return null,errorMessage[e];
+		return total.value,interval.value;
+	};
+	setWriteTimeouts  = function(total,interval){
+		var e = ::Pcomm. sio_SetWriteTimeouts(this.portNumber,total,interval)
+		if( e < 0 ) return null,errorMessage[e];
+		return true;
+	};
+	abortWrite  = function(){
+		var e = ::Pcomm.sio_AbortWrite(this.portNumber)
+		if( e < 0 ) return null,errorMessage[e];
+		return true;
+	};
+	dataStatus  = function(){
+		var e = ::Pcomm.sio_data_status(this.portNumber)
+		if( e < 0 ) return e,errorMessage[e];
+		return e;
+	};
+	setFlow  = function(cts,rts,tx,rx){
+		var m = 0;
+		if(cts) m = m | 2#1
+		if(rts) m = m | 2#10
+		if(tx) m = m | 2#100
+		if(rx) m = m | 2#1000
+		
+		var e = ::Pcomm.sio_flowctrl(this.portNumber)
+		if( e < 0 ) return e,errorMessage[e];
+		return e;
+	};
+	getFlow  = function(){
+		var cts,rts,tx,rx;
+		var f = ::Pcomm.sio_getflow(this.portNumber)
+		if( f < 0 ) return e,errorMessage[f];
+		
+		if(f&2#1) cts = true;
+		if(f & 2#10) rts = true;
+		if(f & 2#100) tx = true;
+		if(f & 2#1000) rx = true;
+		return;
+	};
+	transmitAscii = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtASCIITx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveAscii = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtASCIIRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	}; 
+	transmitKermit = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtKermitTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveKermit = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtKermitRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	}; 
+	transmitYmodem = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtYmodemTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveYmodem = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtYmodemRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	transmitZmodem = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtZmodemTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveZmodem = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtZmodemRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	transmitXmodem1kCrc = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtXmodem1KCRCTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveXmodem1kCrc = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.Xmodem1KCRCRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	transmitXmodemCheckSum = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtXmodemCheckSumTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveXmodemCheckSum = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.FtXmodemCheckSumRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	transmitXmodemCrc = function(fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtXmodemCRCTx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),func,key);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	receiveXmodemCrc = function(secTimeout,fname,func,key){
+		if(func) func = ..raw.tostdcall(func,"int(int length,int bufferSize,ptr buffer,int totalLength)");
+		var e = ::Pcomm.sio_FtXmodemCRCRx(this.portNumber,..string.fromto(..io.fullpath(fname),65001,0),key,secTimeout);
+		if( e < 0 ) return e,errorMessage[e];
+		return e;	
+	};
+	@{
+		_serialize = function(kernelCall){
+			return "global.import('sio') : sio.port( " + tonumber(this.portNumber) + ")";
+		}
+	}
+}
+
+namespace port{
+
+	::Pcomm = ..raw.loadDll($"~/lib/sio/.res/Pcomm.dll","Pcomm.dll");
+	
+	errorMessage = {
+		[0/*_SIO_OK*/]	= "ok";
+		[-1/*_SIO_BADPORT*/] = "no such port or port not opened";
+		[-2/*_SIO_OUTCONTROL*/] = "can't control the board";
+		[-4/*_SIO_NODATA*/] = "no data to read or no buffer to write";
+		[-5/*_SIO_OPENFAIL*/] = "no such port or port has be opened";
+		[-6/*_SIO_RTS_BY_HW*/] = " RTS can't set because H/W flowctrl";
+		[-7/*_SIO_BADPARM*/] = "bad parameter";
+		[-8/*_SIO_WIN32FAIL*/] = "call win32 function fail, please call lasterr() to get the error code";
+		[-9/*_SIO_BOARDNOTSUPPORT*/] = "Does not support this board";
+		[-10/*_SIO_FAIL*/] = "PComm function run result fail";
+		[-11/*_SIO_ABORTWRITE*/] = "write has blocked, and user abort write";
+		[-12/*_SIO_WRITETIMEOUT*/] = "write timeoue has happened";
+	}
+	
+	baudRateIndex = {
+		[50] = 0;
+		[75] = 1;
+		[110] = 2;
+		[134] = 3;
+		[150] = 4;
+		[300] = 5;
+		[600] = 6;
+		[1200] = 7;
+		[1800] = 8;
+		[2400] = 9;
+		[4800] = 0xA;
+		[7200] = 0xB;
+		[9600] = 0xC;
+		[19200] = 0xD;
+		[38400] = 0xE;
+		[57600] = 0xF;
+		[115200] = 0x10;
+		[230400] = 0x11;
+		[460800] = 0x12;
+		[921600] = 0x13;
+	}
+
+	parityMode = {
+		even = 0x18;
+		odd = 0x08;
+		spc = 0x38;
+		mrk = 0x28;
+		none = 0x00;
+	}
+}
+
+baudRates = function(){
+	return ..table.map(port.baudRateIndex,function(v,k,result){
+		result[v] = k
+	})
+}
+
+eachBaudRate = function(){
+	var b = {};
+	for(k,v in port.baudRateIndex){b[v] = k};
+	var i = -1;
+	return function(){
+		i = i + 1;
+		return b[i];
+	}
+}
+
+
+/**intellisense()
+sio =  基于PComm的串口通信
+sio.port(.("COM1") = 打开串口,成功返回对象,\n参数如果是字符串,打开端口失败返回null,错误信息,错误代码,成功返回对象,\n参数如果是数值,打开端口失败仍然会返回对象，可用于绑定已经打开的端口,\n不指定参数直接返回对象,可以在后面使用open函数打开端口
+sio.port() = !stdsioport.
+sio.eachBaudRate() = @for baud in sio.eachBaudRate(){
+	
+}
+sio.baudRates() = 返回所有可用波特率数组
+end intellisense**/
+
+/**intellisense(!stdsioport)
+open(__) = 修改端口号并打开端口，成功返回true，\n失败返回null,错误信息,错误代码
+close() = 关闭串口\n这个函数不会被析构函数自动调用,\n应在确认不再使用时调用此函数关闭串口
+getch() = 读取一个字节码\n失败返回null,错误信息
+putch() = 发送一个节节码\n成功返回长度,失败返回null,错误信息
+read() = 读取数据,可选指定读取缓冲区长度\n成功返回数据,失败返回null,错误信息\n如果没有指定长度且没有接收到数据返回null
+readBuffer(.(缓冲区,读取长度) = 读取数据到buffer缓冲区,读取长度可省略\n成功返回读取长度,失败返回null,错误信息
+readHex() = 读取数据并以十六进制编码显示\n成功返回数据,失败返回null,错误信息
+write(.(数据,长度) = 写入数据\n不指定长度时自动获取数据长度\n成功返回写入长度,失败返回null,错误信息
+writeHex(.(数据) = 写入十六进制编码数据
+getBaudRate() = 返回串口波特率\n失败返回null,错误信息
+setBaudRate(.(波特率) = 设置串口波特率\n失败返回null,错误信息
+getMode() = 返回串口的工作模式\n返回值为三个，分别为:数据位,停止位,校验位\n失败返回null,错误信息
+ioctl(.(波特率,数据位,停止位,校验位) = 设置串口的工作模式\n波特率为数值,省略时使用默认值9600\n数据位为数值,可选值为5,6,7,8,省略时默认值为8\n停止位可选值为1,2,不指定时默认为1\n校验位使用字符串值指定,可选值为"even","odd","spc","mrk",可省略以设置空校验位
+flush(.(接收缓冲区,发送缓冲区) = 清除接收、发送缓冲区\n对应参数为true清除该缓冲区\n无参数时清除接收缓冲区
+lctrl(.(dtr,rts) = 设置串口RTS/DTS,参数使用布尔值
+iqueue()  = 返回输入缓冲区字符长度\n失败返回null,错误信息
+oqueue()  = 返回发送缓冲区中剩余的数据长度
+getLineStatus() = 获取串口的CTS, DST, DCD, RI线的状态
+setFlow(.(CTS硬流控,RTS硬流控,TX软流控,RX软流控) = 串口流控
+getFlow() = 返回4个值,分别表示CTS硬流控,RTS硬流控,TX软流控,RX软流控是否开启
+dataStatus() = 检查接收数据时是否遇到错误\n0表示无错误,小于0表示函数执行错误,大于0时各二进制位作用:\nbit 0 on - parity error\nbit 1 on - framing error\nbit 2 on - overrun error\nbit 3 on - overflow error
+abortRead() = 强制中止read,getch等读数据函数
+getReadTimeouts() = 返回读数据总超时,间隔超时两个值,单位毫秒
+setReadTimeouts(.(总超时,间隔超时) = 设置读数据超时,单位毫秒
+abortWrite() = 强制中止Write,putch等写数据函数
+getWriteTimeouts() = 返回写数据总超时,间隔超时两个值,单位毫秒
+setWriteTimeouts(.(总超时,间隔超时) = 设置写数据超时,单位毫秒
+termIrqThread(指定字节码,回调函数,owner对象) = @.termIrqThread(__/*线程接收到指定字节码时响应事件*/,function(port){\n	var sport = sio.port(port);\n} )
+termCntIrqThread(指定长度,回调函数,owner对象) = @.termCntIrqThread(__/*接收到指定个字节时响应事件*/,function(port){\n	var sport = sio.port(port);\n} )
+modemIrqThread(回调函数,owner对象) = @.modemIrqThread(function(port){\n	var sport = sio.port(port);__/*当硬件线路（CTS, DSR, CD, RI）的电压发生变化时触发时件*/\n} )
+breakIrqThread(回调函数,owner对象) = @.breakIrqThread(function(port){\n	var sport = sio.port(port);__/*接收到中断信号时触发时件*/\n} )
+txEmptyIrqThread(回调函数,owner对象) = @.txEmptyIrqThread(function(port){\n	var sport = sio.port(port);__/*输出缓冲区最后一个字符发送后触发此事件*/\n} )
+transmitAscii(文件路径,进度回调函数)= @.transmitAscii("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:ASCII\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveAscii(超时秒数,文件路径,进度回调函数)= @.transmitAscii("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:ASCII\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n) 
+transmitKermit(文件路径,进度回调函数)= @.transmitKermit("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:Kermit\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveKermit(超时秒数,文件路径,进度回调函数)= @.receiveKermit("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:Kermit\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+transmitYmodem(文件路径,进度回调函数)= @.transmitYmodem("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:Ymodem\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveYmodem(超时秒数,文件路径,进度回调函数)= @.receiveYmodem("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:Ymodem\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+transmitZmodem(文件路径,进度回调函数)= @.transmitZmodem("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:Zmodem\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveZmodem(超时秒数,文件路径,进度回调函数)= @.receiveZmodem("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:Zmodem\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+transmitXmodem1kCrc(文件路径,进度回调函数)= @.transmitXmodem1kCrc("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:XMODEM, 1K block size, 16 bit CRC\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveXmodem1kCrc(超时秒数,文件路径,进度回调函数)= @.receiveXmodem1kCrc("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:XMODEM, 1K block size, 16 bit CRC\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+transmitXmodemCheckSum(文件路径,进度回调函数)= @.transmitXmodemCheckSum("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:XMODEM,CHECKSUM\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveXmodemCheckSum(超时秒数,文件路径,进度回调函数)= @.receiveXmodemCheckSum("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:XMODEM,CHECKSUM\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+transmitXmodemCrc(文件路径,进度回调函数)= @.transmitXmodemCrc("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*传输文件协议:XMODEM, 16 bit CRC\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+receiveXmodemCrc(超时秒数,文件路径,进度回调函数)= @.receiveXmodemCrc("文件路径",\n	function(length,bufferSize,buffer,totalLength){\n		__/*接收文件协议:XMODEM, 16 bit CRC\nlength为当前传输大小,totalLength为总大小,其他参数仅用于调试*/\n	}\n)
+end intellisense**/
+
+/**intellisense(::)
+::Pcomm = !dllmodule.
+end intellisense**/

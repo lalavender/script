@@ -1,0 +1,19 @@
+ 
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text=",web.blink(miniblink，chromium内核) ";right=1031;bottom=712;bgcolor=16777215;border="dialog frame")
+winform.add(
+plus={cls="plus";left=92;top=44;right=971;bottom=561;ah=1;aw=1;background="\forms\images\webkit.jpg";repeat="scale";z=1};
+static={cls="static";text="创建基于web.blink（ miniblink ）的示例工程，
+miniblink是一个精简的 chromium 内核浏览器组件, 使用MIT许可证开源（ https://github.com/weolar/miniblink49 ），
+并且 web.blink 基本兼容 web.kit( wke,webkit )";left=92;top=593;right=971;bottom=697;transparent=1;z=2}
+)
+/*}}*/
+
+winform.getTemplatePath = function(){
+	return io.fullpath("/template/web/blink/") 
+}
+
+winform.show() 
+win.loopMessage();
+return winform;

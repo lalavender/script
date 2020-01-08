@@ -1,0 +1,9 @@
+import fsys; 
+fsys.createDir("~\lib\zlib\");
+fsys.copy( "\swf.aardio","~\lib\zlib\" ); 
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("zlib.swf扩展库已安装成功!","aardio - zlib.swf扩展库安装程序")

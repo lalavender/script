@@ -1,0 +1,166 @@
+//异步HTTP服务器
+import fonts.fontAwesome;
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="异步HTTP服务器";left=10;top=4;right=774;bottom=467)
+winform.add(
+btnBrowser={cls="button";text="...";left=420;top=9;right=455;bottom=36;font=LOGFONT(name='FontAwesome');z=7};
+btnStart={cls="button";text="重启服务";left=631;top=8;right=731;bottom=37;font=LOGFONT(name='FontAwesome');z=6};
+editDocumentRoot={cls="edit";text="/";left=100;top=11;right=419;bottom=36;edge=1;z=3};
+editPort={cls="edit";text="0";left=514;top=12;right=615;bottom=34;edge=1;num=1;z=2};
+static={cls="static";text="端口：";left=460;top=13;right=513;bottom=29;align="right";transparent=1;z=4};
+static2={cls="static";text="网站根目录：";left=19;top=13;right=105;bottom=29;align="right";transparent=1;z=5};
+txtMessage={cls="richedit";left=29;top=72;right=741;bottom=432;db=1;dl=1;dr=1;dt=1;edge=1;link=1;multiline=1;vscroll=1;z=1}
+)
+/*}}*/
+
+import wsock.tcp.asynHttpServer;
+var srvHttp = wsock.tcp.asynHttpServer();
+	
+srvHttp.run( 
+	function(response,request,session){ 
+		response.headers["Access-Control-Allow-Origin"] = "*";
+		response.headers["Access-Control-Allow-Headers"] = "*"
+		
+		if(request.uri=="/upload/"){
+			fileData = request.postFileData()
+			if(fileData){
+				io.createDir(..io.joinpath(srvHttp.documentRoot,"upload"))
+					winform.txtMessage.print(..io.joinpath(srvHttp.documentRoot,"upload"))
+				var fileName = ..io.joinpath(srvHttp.documentRoot,"upload",fileData.filepond.filename) 
+				var ok,err = fileData.filepond.save(fileName); 
+				if(!ok){ response.error(err); }
+				return response.close() 
+			} 		
+		}
+		
+		if(!fsys.isDir(request.path) ) {
+			if( ..io.exist(request.path) 
+				&& (!_STUDIO_INVOKED || request.path!="/main.aardio") )
+				return response.loadcode(request.path)
+			else {
+				request.path = fsys.getParentDir(request.path)
+			}
+		} 
+		
+		response.write(`
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<title>Directory listing for /</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.6.15/browser-polyfill.min.js"></script>
+<script src="https://unpkg.com/filepond-polyfill@1.0.4/dist/filepond-polyfill.min.js"></script>
+<link href="https://unpkg.com/filepond/dist/filepond.min.css" rel="stylesheet">
+<script src="https://unpkg.com/filepond/dist/filepond.min.js"></script> 
+
+<style>
+html {
+	padding:20px 0 0;
+}
+
+body {
+	max-width: 20em;
+	margin: 0 auto;
+}
+</style>
+</head>
+<body> 
+
+<input type="file" class="filepond" name="filepond" multiple>
+<script> 
+if(document.body.style.order === undefined){
+	alert("浏览器版本过低,请使用Chrome或IE11以上版本浏览器打开此页面!")
+}
+
+var inputElement = document.querySelector('input[type="file"]');
+FilePond.create(inputElement);
+FilePond.setOptions({
+	server: '/upload/',
+	labelIdle: '拖放需要上传的文件到这里或者 <span class="filepond--label-action"> 浏览文件 </span>',
+	labelFileProcessing: '上传中...',
+	labelFileProcessingComplete: '上传成功'
+});
+</script> 
+
+<h2>Directory listing for`
+			,request.path,`</h2><hr><ul>`)
+
+		var file,dir = fsys.list(request.path,,"*.*");
+		for(i=1;#dir;1){
+			response.write('<li><a href="'
+				,inet.url.append(request.path,dir[ i ])
+				,'">'+tostring(i)+") ",dir[ i ],'</a><br>\r\n');
+		}
+		
+		for(i=1;#file;1){
+			response.write('<li><a href="'
+				,inet.url.append(request.path,file[ i ])
+				,'">'+tostring(i)+") ",file[ i ],'</a><br>\r\n');
+		
+		}
+		
+		response.write("</ul></body></html>")
+	} 	
+);
+
+var serverInfo = function(){
+	var ip,port = srvHttp.getLocalIp();
+	winform.editPort.text = port;
+	winform.editDocumentRoot.text = io.fullpath(srvHttp.documentRoot)
+	
+	winform.txtMessage.text = 'http服务端已启动: ';
+	winform.txtMessage.print( srvHttp.getUrl(,true) );
+		
+	winform.txtMessage.print( 
+		"
+asynHttpServer可以创建单线程异步模式的服务端，
+可以支持保持连接（Keep Alive），分块传输协议，支持断点续传，支持304缓存，
+支持文件表单上传.支持使用aardio编写的网站，提供的接口兼容IIS/FastCGI下的aardio/web应用。
+可以实现同一个网站在IIS上可以跑，在几句代码就实现的asynHttpServer也可以跑起来。
+并且最方便的是，可以与WebSocket服务端共存共享端口。"
+	); 	
+}
+serverInfo();
+
+winform.btnStart.oncommand = function(id,event){
+	winform.txtMessage.text = "";
+	winform.btnStart.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
+	win.delay(500);
+	
+	var port = tonumber(winform.editPort.text);
+	srvHttp.documentRoot = fsys.isDir(winform.editDocumentRoot.text) ? winform.editDocumentRoot.text;
+	srvHttp.start("0.0.0.0",port);
+	serverInfo();
+	
+	winform.btnStart.disabledText = null;
+}
+
+import win.ui.menu
+winform.txtMessage.enablePopMenu()
+winform.txtMessage.onlink=function(message,href){
+	if( message = 0x202/*_WM_LBUTTONUP*/ ) {
+		import process;
+		process.openUrl(href);
+	}
+}
+
+winform.onDropFiles = function(files){
+	var path = files[1]
+	if(!fsys.isDir(path)){
+		path = fsys.getParentDir(path)
+	}
+	winform.editDocumentRoot.text = path;
+}
+
+import fsys.dlg;
+winform.btnBrowser.oncommand = function(id,event){
+	var dir = fsys.dlg.opendir(,winform)
+	if(dir){
+		winform.editDocumentRoot.text = dir;
+	}
+}
+
+winform.show(); 
+win.loopMessage();

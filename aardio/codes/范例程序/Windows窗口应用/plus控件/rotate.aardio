@@ -1,0 +1,32 @@
+//旋转动画
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="鼠标放到图像上显示动画";right=234;bottom=214;bgcolor=16711680)
+winform.add(
+plus={cls="plus";left=93;top=69;right=143;bottom=119;border={radius=-1};foreRepeat="scale";notify=1;z=1}
+)
+/*}}*/
+
+import inet.http;
+winform.plus.foreground = inet.http().get("https://i.loli.net/2018/04/22/5adc885d7b359.jpg");
+
+winform.plus.onDrawContent = function(graphics,rc,color){ 
+	if(owner.animationState) graphics.rotateRect(rc,owner.animationState);
+}
+ 
+winform.plus.onAnimation = function(state){
+	state = state + 3 + (state/360*10);
+	return state <= 360 ? state;
+}
+
+winform.plus.onStateChange = function(){
+	if( winform.plus.state.hover ){
+		winform.plus.startAnimation(1,0) 
+	}
+	else {
+		winform.plus.stopAnimation()
+	}
+}
+
+winform.show() 
+win.loopMessage();

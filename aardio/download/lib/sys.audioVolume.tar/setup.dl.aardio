@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\sys\");
+fsys.copy( "\audioVolume","~\lib\sys\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("sys.audioVolume扩展库已安装成功!","aardio- sys.audioVolume扩展库安装程序")

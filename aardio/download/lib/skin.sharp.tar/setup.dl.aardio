@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\skin\");
+fsys.copy( "\sharp","~\lib\skin\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("skin.sharp扩展库已安装成功!","aardio- skin.sharp扩展库安装程序")

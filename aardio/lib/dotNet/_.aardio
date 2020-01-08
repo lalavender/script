@@ -1,0 +1,17 @@
+
+namespace dotNet;
+
+try{ 
+	import ..dotNet.clr; 
+}
+catch(e){
+	class clr{
+		ctor( version ){
+			return null,..string.format(".NET runtime %s cannot be loaded",version:"" )
+		}; 
+	}
+}
+
+/**intellisense()
+dotNet = dotNet支持库
+end intellisense**/

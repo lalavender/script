@@ -1,0 +1,118 @@
+.tabs 
+{
+  behavior:tabs; /*指定这是一个选项卡控件*/  
+  flow: horizontal; /*修改默认的垂直布局为横向布局,这样strip就跑左侧去了*/
+  height:100%%;
+  width:100%%;
+  font:system;  
+  
+}
+
+/* 选项卡按钮列表 */
+.tabs > ul.strip 
+{
+  flow: vertical; /*选项卡按钮改成垂直布局*/
+  //list-style:none;
+  margin-bottom:12px;
+  padding: 10px 5px 2px 0px;
+  width:190px; 
+  height: 100%%;
+  margin-top: 90px;
+}
+
+/* 选项卡按钮  */
+.tabs > .strip > [panel] /* 选项卡按钮默认样式 */
+{   
+  color: #fff;
+  font-size:14px;
+  margin: 0;
+  height:28px;
+  width:*;
+  list-style-image:none;
+  padding: 10px 0px 0px 50px;
+  position: relative;
+}
+.tabs > .strip > [panel] img{
+  vertical-align: middle;
+  margin-right: 15px;
+  width: 16px;
+  height: 16px;
+}
+.tabs > .strip > [panel]:hover /* 鼠标悬停选项卡样式*/
+{
+  background-color:#FFFFFF44;
+  //transition:blend;
+}
+.tabs > .strip > [panel]:current  /*当前选项卡样式*/
+{
+  background-color:rgb(251,189,98) rgb(239,159,42)  rgb(239,159,42) rgb(251,189,98);  
+  position:relative;
+}
+.tabs > .strip > [panel]:current:hover /*点击当前选项卡的样式*/
+{
+  background-image:url(theme:tab-item-selected);
+  transition:none;
+}
+
+.tabs > .strip > [panel]:current:first-child,
+.tabs > .strip > [panel]:current:hover:first-child
+{
+  background-image:url(theme:tab-item-leftmost-selected);
+} 
+
+.tabs:focus .strip [panel]:current 
+{
+  background-image:url(theme:tab-item-focused);
+} 
+
+//选项卡页面 - 默认全部隐藏
+.tabs > [name] { display:none; }
+
+//选项卡页面 - 当前选定：展开状态(expanded)
+.tabs > [name]:expanded 
+{ 
+  //background-image:url(theme:tab-panel);
+  background-repeat:stretch;
+  padding:20px;
+  margin:2px;
+  display:block; 
+  height:100%%;
+  width:100%%;//框架必须指定宽度 
+} 
+
+
+//框架页正在打开
+.tabs > iframe[name]:busy { 
+  //foreground-image:url(images/loading.png);
+  foreground-repeat: no-repeat;
+  foreground-position: 2px 2px;
+}
+
+
+//下面指定关闭按钮的样式
+.tabs > .strip > [panel] .close-panel{
+  display:none;
+}
+.tabs > .strip > [panel]:current .close-panel{ 
+  display:block;  
+  position: absolute;
+  top:6px;
+  right:2px;
+  width:12px;
+  height:12px;
+  line-height: 12px;
+  border-radius:12px;
+  font-size: 12px; 
+  font-family:"Marlett"; 
+  color: #7e8c8d; 
+  content:"r";
+}
+.tabs > .strip > [panel]:current .close-panel:hover{ 
+  background:#999;
+  color: #FFF;
+}
+.tabs > .strip > [panel]:current .close-panel:active{ 
+   background:red;
+   color: #FFF;
+}
+

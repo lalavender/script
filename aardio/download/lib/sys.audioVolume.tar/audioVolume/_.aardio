@@ -1,0 +1,49 @@
+﻿import util.metaProperty;
+
+namespace sys;
+
+class audioVolume {
+	ctor(){
+		this.handle = _dll.CreateVolumeCtrlP();
+		..table.gc(this,"delete")
+	};
+	delete = function(){
+		if(this.handle){
+			_dll.DeleteVolumeCtrl(this.handle);
+			this.handle = null;
+		}
+	};
+	@_metaProperty;
+}
+
+namespace audioVolume {
+    
+    _dll = ..raw.loadDll($"~\lib\sys\audioVolume\.res\volumeCtrl2.dll",,"cdecl");
+    _metaProperty = ..util.metaProperty(
+    
+    	volume = {
+    		_get = function(){ 
+    			if(owner.handle) return _dll.GetVolume(owner.handle);
+    		}
+    		_set = function(v){
+    			if(owner.handle)return _dll.SetVolume(owner.handle,v);
+    		} 	
+    	};
+    	
+    	mute = {
+    		_get = function(){ 
+    			if(owner.handle) return _dll.GetMuteB(owner.handle);
+    		}
+    		_set = function(v){
+    			if(owner.handle)return _dll.SetMute(owner.handle,v);
+    		} 	
+    	};
+    )
+}
+
+/**intellisense()
+sys.audioVolume = 系统音量控制
+sys.audioVolume() = 创建音量控制对象\n!stdSysAudioVolume.
+!stdSysAudioVolume.volume = 获取或设置系统音量,\n最小值为0,最大值为1
+!stdSysAudioVolume.mute = 获取或设置是否静音
+end intellisense**/

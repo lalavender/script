@@ -1,0 +1,10 @@
+import fsys; 
+fsys.createDir("~\lib\math\");
+fsys.copy( "\bignum","~\lib\math\" ); 
+
+
+import ide;
+ide.refreshStdLib();
+
+import win;
+win.msgboxTimeout("math.bignum扩展库已安装成功!","aardio- math.bignum扩展库安装程序")

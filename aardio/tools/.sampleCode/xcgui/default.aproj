@@ -1,0 +1,143 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<project ver="10" name="XCGUI范例" libEmbed="true" icon="..." ui="win" output="XCGUI范例.exe" CompanyName="aardio" FileDescription="XCGUI范例" LegalCopyright="Copyright (C) aardio 2017" ProductName="XCGUI范例" InternalName="XCGUI范例" FileVersion="0.0.0.01" ProductVersion="0.0.0.01" publishDir="/Publish/" dstrip="false">
+	<file name="main.aardio" path="main.aardio" comment="main.aardio"/>
+	<folder name="资源文件" path="res" embed="true">
+		<file name="dog.gif" path="res\dog.gif" comment="res\dog.gif"/>
+	</folder>
+	<folder name="控件使用" path="控件使用" comment="目录" embed="true">
+		<file name="button.aardio" path="控件使用\button.aardio" comment="控件使用\button.aardio"/>
+		<file name="comboBox.aardio" path="控件使用\comboBox.aardio" comment="控件使用\comboBox.aardio"/>
+		<file name="edit.aardio" path="控件使用\edit.aardio" comment="控件使用\edit.aardio"/>
+		<file name="list.aardio" path="控件使用\list.aardio" comment="控件使用\list.aardio"/>
+		<file name="listbox.aardio" path="控件使用\listbox.aardio" comment="控件使用\listbox.aardio"/>
+		<file name="listview.aardio" path="控件使用\listview.aardio" comment="控件使用\listview.aardio"/>
+		<file name="radio.aardio" path="控件使用\radio.aardio" comment="控件使用\radio.aardio"/>
+		<file name="treeview.aardio" path="控件使用\treeview.aardio" comment="控件使用\treeview.aardio"/>
+		<folder name="image" path="控件使用\image" comment="控件使用\image">
+			<file name="111.jpg" path="控件使用\image\111.jpg" comment="控件使用\image\111.jpg"/>
+			<file name="button_down.png" path="控件使用\image\button_down.png" comment="控件使用\image\button_down.png"/>
+			<file name="button_hover.png" path="控件使用\image\button_hover.png" comment="控件使用\image\button_hover.png"/>
+			<file name="button_leave.png" path="控件使用\image\button_leave.png" comment="控件使用\image\button_leave.png"/>
+		</folder>
+	</folder>
+	<folder name="自绘" path="自绘" comment="目录" embed="false">
+		<file name="GDI+绘图.aardio" path="自绘\GDI+绘图.aardio" comment="自绘\GDI+绘图.aardio"/>
+	</folder>
+	<folder name="阴影" path="阴影" comment="目录" embed="false">
+		<file name="阴影.aardio" path="阴影\阴影.aardio" comment="阴影\阴影.aardio"/>
+	</folder>
+	<folder name="静态形状控件" path="静态形状控件" comment="目录" embed="false">
+		<file name="gif动画.aardio" path="静态形状控件\gif动画.aardio" comment="静态形状控件\gif动画.aardio"/>
+		<file name="图像.aardio" path="静态形状控件\图像.aardio" comment="静态形状控件\图像.aardio"/>
+	</folder>
+	<folder name="窗口" path="窗口" comment="目录" embed="false">
+		<file name="框架窗口.aardio" path="窗口\框架窗口.aardio" comment="窗口\框架窗口.aardio"/>
+		<file name="模态窗口.aardio" path="窗口\模态窗口.aardio" comment="窗口\模态窗口.aardio"/>
+		<file name="注册事件.aardio" path="窗口\注册事件.aardio" comment="窗口\注册事件.aardio"/>
+	</folder>
+	<folder name="菜单" path="菜单" comment="目录" embed="false">
+		<file name="弹出菜单.aardio" path="菜单\弹出菜单.aardio" comment="菜单\弹出菜单.aardio"/>
+		<file name="菜单条.aardio" path="菜单\菜单条.aardio" comment="菜单\菜单条.aardio"/>
+	</folder>
+	<folder name="布局对象" path="布局对象" comment="目录" embed="false">
+		<file name="layoutObject.aardio" path="布局对象\layoutObject.aardio" comment="布局对象\layoutObject.aardio"/>
+	</folder>
+	<folder name="设计器" path="设计器" comment="目录" embed="false">
+		<file name="炫彩设计器.aardio" path="设计器\炫彩设计器.aardio" comment="设计器\炫彩设计器.aardio"/>
+		<folder name="xml" path="设计器\xml" comment="设计器\xml">
+			<file name="layout.xml" path="设计器\xml\layout.xml" comment="设计器\xml\layout.xml"/>
+			<file name="layout3.xml" path="设计器\xml\layout3.xml" comment="设计器\xml\layout3.xml"/>
+			<file name="layoutTest2.xml" path="设计器\xml\layoutTest2.xml" comment="设计器\xml\layoutTest2.xml"/>
+			<file name="layout_QQ.xml" path="设计器\xml\layout_QQ.xml" comment="设计器\xml\layout_QQ.xml"/>
+			<file name="layout_QQ新版.xml" path="设计器\xml\layout_QQ新版.xml" comment="设计器\xml\layout_QQ新版.xml"/>
+			<file name="layout_QQ旧版.xml" path="设计器\xml\layout_QQ旧版.xml" comment="设计器\xml\layout_QQ旧版.xml"/>
+			<file name="resource.res" path="设计器\xml\resource.res" comment="设计器\xml\resource.res"/>
+			<file name="style.css" path="设计器\xml\style.css" comment="设计器\xml\style.css"/>
+			<folder name="image" path="设计器\xml\image" comment="设计器\xml\image">
+				<file name="0.png" path="设计器\xml\image\0.png" comment="设计器\xml\image\0.png"/>
+				<file name="90.png" path="设计器\xml\image\90.png" comment="设计器\xml\image\90.png"/>
+				<file name="ArrowBottomHover.png" path="设计器\xml\image\ArrowBottomHover.png" comment="设计器\xml\image\ArrowBottomHover.png"/>
+				<file name="ArrowBottomNormal.png" path="设计器\xml\image\ArrowBottomNormal.png" comment="设计器\xml\image\ArrowBottomNormal.png"/>
+				<file name="ArrowTopHover.png" path="设计器\xml\image\ArrowTopHover.png" comment="设计器\xml\image\ArrowTopHover.png"/>
+				<file name="ArrowTopNormal.png" path="设计器\xml\image\ArrowTopNormal.png" comment="设计器\xml\image\ArrowTopNormal.png"/>
+				<file name="avatar.png" path="设计器\xml\image\avatar.png" comment="设计器\xml\image\avatar.png"/>
+				<file name="btn_home_down.png" path="设计器\xml\image\btn_home_down.png" comment="设计器\xml\image\btn_home_down.png"/>
+				<file name="btn_home_hover.png" path="设计器\xml\image\btn_home_hover.png" comment="设计器\xml\image\btn_home_hover.png"/>
+				<file name="btn_medalwall_dark.png" path="设计器\xml\image\btn_medalwall_dark.png" comment="设计器\xml\image\btn_medalwall_dark.png"/>
+				<file name="btn_MedalWall_Down.png" path="设计器\xml\image\btn_MedalWall_Down.png" comment="设计器\xml\image\btn_MedalWall_Down.png"/>
+				<file name="btn_MedalWall_Hover.png" path="设计器\xml\image\btn_MedalWall_Hover.png" comment="设计器\xml\image\btn_MedalWall_Hover.png"/>
+				<file name="btn_medalwall_normal.png" path="设计器\xml\image\btn_medalwall_normal.png" comment="设计器\xml\image\btn_medalwall_normal.png"/>
+				<file name="btn_Skin_down.png" path="设计器\xml\image\btn_Skin_down.png" comment="设计器\xml\image\btn_Skin_down.png"/>
+				<file name="btn_Skin_highlight.png" path="设计器\xml\image\btn_Skin_highlight.png" comment="设计器\xml\image\btn_Skin_highlight.png"/>
+				<file name="btn_skin_normal.png" path="设计器\xml\image\btn_skin_normal.png" comment="设计器\xml\image\btn_skin_normal.png"/>
+				<file name="filemanager.png" path="设计器\xml\image\filemanager.png" comment="设计器\xml\image\filemanager.png"/>
+				<file name="filemanager_down.png" path="设计器\xml\image\filemanager_down.png" comment="设计器\xml\image\filemanager_down.png"/>
+				<file name="filemanager_hover.png" path="设计器\xml\image\filemanager_hover.png" comment="设计器\xml\image\filemanager_hover.png"/>
+				<file name="find.png" path="设计器\xml\image\find.png" comment="设计器\xml\image\find.png"/>
+				<file name="find_down.png" path="设计器\xml\image\find_down.png" comment="设计器\xml\image\find_down.png"/>
+				<file name="find_hover.png" path="设计器\xml\image\find_hover.png" comment="设计器\xml\image\find_hover.png"/>
+				<file name="finger_normal.png" path="设计器\xml\image\finger_normal.png" comment="设计器\xml\image\finger_normal.png"/>
+				<file name="icon.png" path="设计器\xml\image\icon.png" comment="设计器\xml\image\icon.png"/>
+				<file name="icon_contacts_hover.png" path="设计器\xml\image\icon_contacts_hover.png" comment="设计器\xml\image\icon_contacts_hover.png"/>
+				<file name="icon_contacts_normal.png" path="设计器\xml\image\icon_contacts_normal.png" comment="设计器\xml\image\icon_contacts_normal.png"/>
+				<file name="icon_contacts_selected.png" path="设计器\xml\image\icon_contacts_selected.png" comment="设计器\xml\image\icon_contacts_selected.png"/>
+				<file name="icon_group_hover.png" path="设计器\xml\image\icon_group_hover.png" comment="设计器\xml\image\icon_group_hover.png"/>
+				<file name="icon_group_normal.png" path="设计器\xml\image\icon_group_normal.png" comment="设计器\xml\image\icon_group_normal.png"/>
+				<file name="icon_group_selected.png" path="设计器\xml\image\icon_group_selected.png" comment="设计器\xml\image\icon_group_selected.png"/>
+				<file name="icon_last_hover.png" path="设计器\xml\image\icon_last_hover.png" comment="设计器\xml\image\icon_last_hover.png"/>
+				<file name="icon_last_normal.png" path="设计器\xml\image\icon_last_normal.png" comment="设计器\xml\image\icon_last_normal.png"/>
+				<file name="icon_last_selected.png" path="设计器\xml\image\icon_last_selected.png" comment="设计器\xml\image\icon_last_selected.png"/>
+				<file name="mainmenu_allservices.png" path="设计器\xml\image\mainmenu_allservices.png" comment="设计器\xml\image\mainmenu_allservices.png"/>
+				<file name="mainpanel_foldernode_collapsetexture.png" path="设计器\xml\image\mainpanel_foldernode_collapsetexture.png" comment="设计器\xml\image\mainpanel_foldernode_collapsetexture.png"/>
+				<file name="mainpanel_foldernode_collapsetexturehighlight.png" path="设计器\xml\image\mainpanel_foldernode_collapsetexturehighlight.png" comment="设计器\xml\image\mainpanel_foldernode_collapsetexturehighlight.png"/>
+				<file name="mainpanel_foldernode_expandtexture.png" path="设计器\xml\image\mainpanel_foldernode_expandtexture.png" comment="设计器\xml\image\mainpanel_foldernode_expandtexture.png"/>
+				<file name="MainPanel_FolderNode_expandTextureHighlight.png" path="设计器\xml\image\MainPanel_FolderNode_expandTextureHighlight.png" comment="设计器\xml\image\MainPanel_FolderNode_expandTextureHighlight.png"/>
+				<file name="main_musicbtn20_music.png" path="设计器\xml\image\main_musicbtn20_music.png" comment="设计器\xml\image\main_musicbtn20_music.png"/>
+				<file name="medalwall_ani.png" path="设计器\xml\image\medalwall_ani.png" comment="设计器\xml\image\medalwall_ani.png"/>
+				<file name="menu_btn_highlight.png" path="设计器\xml\image\menu_btn_highlight.png" comment="设计器\xml\image\menu_btn_highlight.png"/>
+				<file name="menu_btn_normal.png" path="设计器\xml\image\menu_btn_normal.png" comment="设计器\xml\image\menu_btn_normal.png"/>
+				<file name="menu_help.png" path="设计器\xml\image\menu_help.png" comment="设计器\xml\image\menu_help.png"/>
+				<file name="message.png" path="设计器\xml\image\message.png" comment="设计器\xml\image\message.png"/>
+				<file name="messagebox16.png" path="设计器\xml\image\messagebox16.png" comment="设计器\xml\image\messagebox16.png"/>
+				<file name="Messagebox18_highlight.png" path="设计器\xml\image\Messagebox18_highlight.png" comment="设计器\xml\image\Messagebox18_highlight.png"/>
+				<file name="message_down.png" path="设计器\xml\image\message_down.png" comment="设计器\xml\image\message_down.png"/>
+				<file name="message_highlight.png" path="设计器\xml\image\message_highlight.png" comment="设计器\xml\image\message_highlight.png"/>
+				<file name="mycollection_mainpanel.png" path="设计器\xml\image\mycollection_mainpanel.png" comment="设计器\xml\image\mycollection_mainpanel.png"/>
+				<file name="myCollection_mainpanel_down.png" path="设计器\xml\image\myCollection_mainpanel_down.png" comment="设计器\xml\image\myCollection_mainpanel_down.png"/>
+				<file name="myCollection_mainpanel_hover.png" path="设计器\xml\image\myCollection_mainpanel_hover.png" comment="设计器\xml\image\myCollection_mainpanel_hover.png"/>
+				<file name="note1.png" path="设计器\xml\image\note1.png" comment="设计器\xml\image\note1.png"/>
+				<file name="openchat_down.png" path="设计器\xml\image\openchat_down.png" comment="设计器\xml\image\openchat_down.png"/>
+				<file name="openchat_hover.png" path="设计器\xml\image\openchat_hover.png" comment="设计器\xml\image\openchat_hover.png"/>
+				<file name="openchat_normal.png" path="设计器\xml\image\openchat_normal.png" comment="设计器\xml\image\openchat_normal.png"/>
+				<file name="PopTipsTestIcon.png" path="设计器\xml\image\PopTipsTestIcon.png" comment="设计器\xml\image\PopTipsTestIcon.png"/>
+				<file name="qqlogoclassic.png" path="设计器\xml\image\qqlogoclassic.png" comment="设计器\xml\image\qqlogoclassic.png"/>
+				<file name="QQZone.png" path="设计器\xml\image\QQZone.png" comment="设计器\xml\image\QQZone.png"/>
+				<file name="school_joinclass.png" path="设计器\xml\image\school_joinclass.png" comment="设计器\xml\image\school_joinclass.png"/>
+				<file name="ShadowBorder.png" path="设计器\xml\image\ShadowBorder.png" comment="设计器\xml\image\ShadowBorder.png"/>
+				<file name="skin1.jpg" path="设计器\xml\image\skin1.jpg" comment="设计器\xml\image\skin1.jpg"/>
+				<file name="StatusSucceeded.gif" path="设计器\xml\image\StatusSucceeded.gif" comment="设计器\xml\image\StatusSucceeded.gif"/>
+				<file name="success.png" path="设计器\xml\image\success.png" comment="设计器\xml\image\success.png"/>
+				<file name="SuperVIP_LIGHT.png" path="设计器\xml\image\SuperVIP_LIGHT.png" comment="设计器\xml\image\SuperVIP_LIGHT.png"/>
+				<file name="sysbtn_close_down.png" path="设计器\xml\image\sysbtn_close_down.png" comment="设计器\xml\image\sysbtn_close_down.png"/>
+				<file name="sysbtn_close_hover.png" path="设计器\xml\image\sysbtn_close_hover.png" comment="设计器\xml\image\sysbtn_close_hover.png"/>
+				<file name="sysbtn_close_normal.png" path="设计器\xml\image\sysbtn_close_normal.png" comment="设计器\xml\image\sysbtn_close_normal.png"/>
+				<file name="sysbtn_max_down.png" path="设计器\xml\image\sysbtn_max_down.png" comment="设计器\xml\image\sysbtn_max_down.png"/>
+				<file name="sysbtn_max_hover.png" path="设计器\xml\image\sysbtn_max_hover.png" comment="设计器\xml\image\sysbtn_max_hover.png"/>
+				<file name="sysbtn_max_normal.png" path="设计器\xml\image\sysbtn_max_normal.png" comment="设计器\xml\image\sysbtn_max_normal.png"/>
+				<file name="sysbtn_min_down.png" path="设计器\xml\image\sysbtn_min_down.png" comment="设计器\xml\image\sysbtn_min_down.png"/>
+				<file name="sysbtn_min_hover.png" path="设计器\xml\image\sysbtn_min_hover.png" comment="设计器\xml\image\sysbtn_min_hover.png"/>
+				<file name="sysbtn_min_normal.png" path="设计器\xml\image\sysbtn_min_normal.png" comment="设计器\xml\image\sysbtn_min_normal.png"/>
+				<file name="sysbtn_restore_down.png" path="设计器\xml\image\sysbtn_restore_down.png" comment="设计器\xml\image\sysbtn_restore_down.png"/>
+				<file name="sysbtn_restore_hover.png" path="设计器\xml\image\sysbtn_restore_hover.png" comment="设计器\xml\image\sysbtn_restore_hover.png"/>
+				<file name="sysbtn_restore_normal.png" path="设计器\xml\image\sysbtn_restore_normal.png" comment="设计器\xml\image\sysbtn_restore_normal.png"/>
+				<file name="tools.png" path="设计器\xml\image\tools.png" comment="设计器\xml\image\tools.png"/>
+				<file name="tools_down.png" path="设计器\xml\image\tools_down.png" comment="设计器\xml\image\tools_down.png"/>
+				<file name="tools_hover.png" path="设计器\xml\image\tools_hover.png" comment="设计器\xml\image\tools_hover.png"/>
+				<file name="VASFlagEnable.png" path="设计器\xml\image\VASFlagEnable.png" comment="设计器\xml\image\VASFlagEnable.png"/>
+				<file name="vip0.png" path="设计器\xml\image\vip0.png" comment="设计器\xml\image\vip0.png"/>
+				<file name="warning.png" path="设计器\xml\image\warning.png" comment="设计器\xml\image\warning.png"/>
+				<file name="wrong.bmp" path="设计器\xml\image\wrong.bmp" comment="设计器\xml\image\wrong.bmp"/>
+			</folder>
+		</folder>
+	</folder>
+</project>
