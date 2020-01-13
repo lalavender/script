@@ -19,9 +19,12 @@ class pinyin{
 		if(polyphone && (#chars==1)){
 			var ret = {}
 			for(p,c in pyToChars){
-				if( ..table.find(c,chars[1]) ) ..table.push(ret,p); 
+				var i = ..table.find(c,chars[1]);
+				if( i ) ..table.push(ret,{p;i/#chars}); 
 			}
 			
+			..table.sort(ret,lambda(b)owner[2]<b[2]);
+			ret = ..table.map(ret,lambda(v)v[1]);
 			return ..string.join(ret,separator : " ");
 		}
 		

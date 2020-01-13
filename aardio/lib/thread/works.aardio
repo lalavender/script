@@ -168,23 +168,23 @@ class works{
 
 /**intellisense()
 thread.works = 线程工作项管理
-thread.works(线程数,工作函数,等待延时,初始化函数,->->->) = @.works( 20,\n	function(arguments,...) {\n		__/*arguments为线程任务传递的参数,其他参数为创建thread.work时的附加参数*/\n		return "返回值"\n	} \n);
-thread.works() = !thread_wk.
-!thread_wk.queueCount() = 排队等候执行的任务数目
-!thread_wk.clear() = 清空已添加的任务
-!thread_wk.push(__) = 添加调用实参到任务列表尾部\n可使用table对象传递多个参数给任务函数\n工作函数将自动获取参数并执行任务.
-!thread_wk.pop(__) = 弹出工作函数完成任务后的返回值，\n注意如果线程返回的是null将被忽略
-!thread_wk.peek() = 是否有线程完成了新的任务并返回了新的值，\n注意如果线程返回的是null将被忽略
-!thread_wk.quit() =  通知所有线程退出\n并等待线程关闭
-!thread_wk.wait() =  等待所有任务完成,\n可指定一个回调函数作为参数接收工作项返回值\n\n建议在界面线程使用定时器替代此函数
-!thread_wk.waitClose() =  等待所有任务完成\n通知所有线程退出,并等待所有线程关闭.\n可指定一个回调函数作为参数接收工作项返回值\n\n建议在界面线程使用定时器替代此函数
-!thread_wk.busy() = 是否有未完成任务
-!thread_wk.finished() = 是否有未完成任务或未读取的任务返回值
-!thread_wk.suspend() = 所有线程暂停\n可选在参数中指定线程ID\n注意线程是否正在使用互斥锁
-!thread_wk.resume() = 所有线程继续执行\n可选在参数中指定线程ID
-!thread_wk.getHandleById(.(线程ID) = 使用线程ID返回线程句柄\n不可关闭该句柄
-!thread_wk.update(.(索引,参数) = 更新任务参数\该函数只能在each循环内部使用
-!thread_wk.each = @for( idx,args in ??.each() ){
+thread.works(线程数,工作函数,等待延时,初始化函数,->->->) = @.works( 20,\n	function(arguments,...) {\n		__/*arguments为线程任务传递的参数,\n其他参数为创建thread.work时的附加参数,\n这些附加参数也会传递给初始化函数*/\n		return "返回值"\n	} \n);
+thread.works() = !thread_work.
+!thread_work.queueCount() = 排队等候执行的任务数目
+!thread_work.clear() = 清空已添加的任务
+!thread_work.push(__) = 添加调用实参到任务列表尾部\n可使用table对象传递多个参数给任务函数\n工作函数将自动获取参数并执行任务.
+!thread_work.pop(__) = 弹出工作函数完成任务后的返回值，\n注意如果线程返回的是null将被忽略
+!thread_work.peek() = 是否有线程完成了新的任务并返回了新的值，\n注意如果线程返回的是null将被忽略
+!thread_work.quit() =  通知所有线程退出\n并等待线程关闭
+!thread_work.wait() =  等待所有任务完成,\n可指定一个回调函数作为参数接收工作项返回值\n\n建议在界面线程使用定时器替代此函数
+!thread_work.waitClose() =  等待所有任务完成\n通知所有线程退出,并等待所有线程关闭.\n可指定一个回调函数作为参数接收工作项返回值\n\n建议在界面线程使用定时器替代此函数
+!thread_work.busy() = 是否有未完成任务
+!thread_work.finished() = 是否有未完成任务或未读取的任务返回值
+!thread_work.suspend() = 所有线程暂停\n可选在参数中指定线程ID\n注意线程是否正在使用互斥锁
+!thread_work.resume() = 所有线程继续执行\n可选在参数中指定线程ID
+!thread_work.getHandleById(.(线程ID) = 使用线程ID返回线程句柄\n不可关闭该句柄
+!thread_work.update(.(索引,参数) = 更新任务参数\该函数只能在each循环内部使用
+!thread_work.each = @for( idx,args in ??.each() ){
 	__/*遍历所有待执行任务,\n该函数会暂停所有任务*/
 }
 end intellisense**/

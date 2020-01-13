@@ -1,0 +1,14 @@
+import win.ui;
+/*DSG{{*/
+mainForm = win.form(text="剑灵";right=959;bottom=591)
+mainForm.add(
+button={cls="button";text="Button";left=134;top=117;right=257;bottom=176;z=1}
+)
+/*}}*/
+
+mainForm.button.oncommand = function(id,event){
+	import 登陆
+}
+
+mainForm.show();
+return win.loopMessage();

@@ -19,8 +19,10 @@ class tooltip{
 		if(  winform[["tooltipCtrl"]][["destroy"]] ){
 			winform.tooltipCtrl.destroy();
 		}
+		
 		winform[["tooltipCtrl"]] = this;
 		this.create = function (tParam) {};
+		this.tooltips = {};
 	};
 	destroy = function(){
 		if( this.hwnd ){
@@ -28,19 +30,27 @@ class tooltip{
 			this.hwnd = null;
 		}
 	};
+	delTool = function(ti){  
+		::SendMessageByStruct(this.hwnd, 0x433/*_TTM_DELTOOLW*/, 0, ti);
+	};
 	addTool = function(ctrl,text,flags){
 		if( flags === null ) flags = 0;
 		flags = flags | 1/*_TTF_IDISHWND*/ | 0x10/*_TTF_SUBCLASS*/; 
-		
+ 
 		var hCtrl = ctrl[["hwnd"]] : ctrl;
+		if(this.tooltips[hCtrl]){
+			this.delTool(this.tooltips[hCtrl]);
+		}
 		
 		var ti = TOOLINFO();
 		ti.cbSize = ..raw.sizeof(ti);
 		ti.uId = hCtrl;
 		ti.uFlags = flags;
-		ti.lpszText = topointer(text) == topointer(-1) ? topointer(text) : text;  
+		ti.lpszText = topointer(text) == _INVALID_HANDLE_VALUE ? _INVALID_HANDLE_VALUE : text;
 		::SendMessageByStruct(this.hwnd, 0x432/*_TTM_ADDTOOLW*/, 0, ti); 
 		ti.hTooltip = this.hwnd;
+		
+		this.tooltips[hCtrl] = ti;
 		return ti;  
 	};
 	add = function(ctrls){
@@ -48,18 +58,18 @@ class tooltip{
 		for(k,v in ctrls) tis[k] = owner.addTool(winform[k],v);
 		return tis;
 	};
-	delTool = function(ti){  
-		::SendMessageByStruct(this.hwnd, 0x433/*_TTM_DELTOOLW*/, 0, ti);
-	};
 	updateTipText = function(ti,text){
-		return ti.update(text);
+		if(ti.hwnd){ ti = this.tooltips[ti.hwnd] }
+		if(ti) return ti.updateTipText(text);
 	}; 
 	track = function(ti,x,y){
-		return ti.track(x,y);
+		if(ti.hwnd){ ti = this.tooltips[ti.hwnd] }
+		if(ti) return ti.track(x,y);
 	};
 	popup = function(ti,active){
 		if( ti  ){
-			return ti.popup(active);
+			if(ti.hwnd){ ti = this.tooltips[ti.hwnd] }
+			if(ti) return ti.popup(active);
 		}
 		else{
 			::SendMessage(this.hwnd,0x422/*_TTM_POPUP*/); 
@@ -90,7 +100,7 @@ namespace tooltip {
 	class TOOLINFO {
  		INT cbSize;
  		INT uFlags;
- 		ADDR hwnd;
+ 		ADDR hOwner;
  		ADDR uId;
  		struct rect = ::RECT();
  		pointer hinst;
@@ -105,7 +115,7 @@ namespace tooltip {
 	    _meta = {
 	    	_get = {
 	    		sendMessage = function(msg,wParam){
-	    			::User32.SendMessage(owner.hTooltip,0x439/*_TTM_UPDATETIPTEXTW*/, wParam, owner);
+	    			::User32.SendMessage(owner.hTooltip,msg, wParam, owner);
 	    		};
 	    		updateTipText = function(text){
 					owner.lpszText = topointer(text) == topointer(-1) ? topointer(text) : text;  
@@ -142,24 +152,26 @@ namespace tooltip {
 win.ui.tooltip = 提示控件
 win.ui.tooltip() = !win_ui_tooltip.
 win.ui.tooltip(.(winform,创建参数) = 创建提示控件,参数@2可省略\n参数@1为窗体对象 
-!win_ui_tooltip.update() = 刷新
+
 !win_ui_tooltip.setMaxWidth(.(宽度) = 设置提示框最大宽度
 !win_ui_tooltip.setDelayTime(.(超时值,选项) = 设置超时值
 !win_ui_tooltip.setTextColor(.(颜色值) = 设置文本颜色
 !win_ui_tooltip.setBkColor(.(颜色值) = 设置背景颜色
 !win_ui_tooltip.add(__) = 批量添加控件提示\n参数应使用一个表指定多个控件的提示文本,\n表成员的键为控件名,值为控件提示
-!win_ui_tooltip.addTool( = 创建并返回toolInfo对象\n返回值可作为其他有关函数的参数
-!win_ui_tooltip.addTool(.(hwnd,text,flags) = 除hwnd窗口句柄以外其他参数可选\ntext如果为-1则使用_TTN_NEEDTEXT消息回调获取文本\nflags为_TTF_前缀常量组合,例如：\n\n_TTF_TRACK 使用了该选项则可以使用track函数手动弹出提示
+!win_ui_tooltip.addTool( = 创建并返回toolInfo对象
+!win_ui_tooltip.addTool(.(ctrl,text,flags) = 除参数@ctrl以外都是可选参数,\n@ctrl参数指定控件对象,如果控件之前添加了提示会自动删除,\nflags为_TTF_前缀常量组合,例如：\n\n_TTF_TRACK 使用了该选项则可以使用track函数手动弹出提示
+!win_ui_tooltip.delTool(.(ctrl) = 删除提示\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作
 !win_ui_tooltip.delTool(.(toolInfo) = 删除提示\n参数@1请使用addTool函数的返回值
-!win_ui_tooltip.updateTipText(.(toolInfo,text) = 更新提示文本\n参数@1请使用addTool函数的返回值
 !win_ui_tooltip.track( = 弹出提示 
-!win_ui_tooltip.track(.(toolInfo,x,y) = 在指定位置弹出提示\n参数@1请使用addTool函数的返回值,\n要使用此函数,addTool的最后一个参数必须指定 _TTF_TRACK
-!win_ui_tooltip.track(.(toolInfo,false) = 关闭指定窗口的提示\n参数@1请使用addTool函数的返回值
+!win_ui_tooltip.track(.(ctrl,x,y) = 在指定位置弹出提示\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作,\n要使用此函数,addTool的最后一个参数必须指定 _TTF_TRACK
+!win_ui_tooltip.track(.(ctrl,false) = 关闭指定窗口的提示\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作
 !win_ui_tooltip.popup( = 弹出提示
-!win_ui_tooltip.popup(.() = 在最后一次处理的鼠标消息所在位置弹出提示
-!win_ui_tooltip.popup(.(toolInfo,true) = 显示提示\n参数@1请使用addTool函数的返回值
-!win_ui_tooltip.popup(.(toolInfo,false) = 关闭提示\n参数@1请使用addTool函数的返回值
-!win_ui_tooltip.addTool() = !winUiTooltipInfo.
+!win_ui_tooltip.popup(.() = 在最后一次处理的鼠标消息所在位置弹出提示 
+!win_ui_tooltip.popup(.(ctrl,true) = 显示提示\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作
+!win_ui_tooltip.popup(.(ctrl,false) = 关闭提示\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作
+!win_ui_tooltip.updateTipText(.(ctrl,text) = 更新提示文本\n参数@1请使用窗口控件对象,\n如果控件尚未添加提示则忽略不操作
+!win_ui_tooltip.update() = 刷新
+!win_ui_tooltip.addTool() = !winUiTooltipInfo. 
 end intellisense**/
 
 /**intellisense(!winUiTooltipInfo)

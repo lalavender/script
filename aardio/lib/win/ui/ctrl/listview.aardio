@@ -538,7 +538,7 @@ namespace listview{
 			item.iSubItem = 0
 			item.iImage = image;
 			item.state = (state + 1) * 4096;
-			item.stateMask = 0xF000/*_LVIS_STATEIMAGEMASK*/ | 0x8/*_LVS_SHOWSELALWAYS*/;
+			item.stateMask = 0xF000/*_LVIS_STATEIMAGEMASK*/;
 			item.iIndent = indent;
 			item.lParam	 = lParam;
 			
@@ -606,36 +606,111 @@ namespace listview{
 			item.iSubItem = col-1;
 			item.text = ..raw.buffer(len);
 			item.cchTextMax = len /2;
+			if(col==-1){
+				var ret = {}
+				for(i=1;owner.columnCount) {
+					item.iSubItem = i-1;
+					var len = ::SendMessageByStruct(owner.hwnd, 0x1073/*_LVM_GETITEMTEXT*/,row-1, item); 
+					if( len && ( item.text != _LPSTR_TEXTCALLBACK)  ){
+						ret[i] = ..string.fromUnicode(item.text,,len); 
+					} 
+				}
+				return ret;	
+			}
+			
 			var len = ::SendMessageByStruct(owner.hwnd, 0x1073/*_LVM_GETITEMTEXT*/, row-1, item); 
 			if( len && ( item.text != _LPSTR_TEXTCALLBACK)  ) return ..string.fromUnicode( item.text,,len);
 			return "";
-		}
+		};
 		items = {
 			_get = function(){
-				var t = {};
-				var cc = owner.columnCount : 1;
+				var upk = ..table.unpack;
 				var push = ..table.push;
-               	for(i=1;owner.count ){
-					var row = {};
-					for(j=1;cc)push(row,owner.getItemText(i,j));
-					push(t,row) ;
-				}
-					
+				var fromUnicode = ..string.fromUnicode;
+				
+				var item = LVITEM();
+				item.mask = 0x1/*_LVIF_TEXT*/; 
+				item.text = ..raw.buffer(0x208/*_MAX_PATH_U16*/);
+				item.cchTextMax = 0x208/2;
+				
+				var t = {};
+				var columns = owner.columnCount; 
+				for(r=1;owner.count ){ 
+					var row = {}
+					for(i=1;columns) {
+						item.iSubItem = i-1;
+						var len = ::SendMessageByStruct(owner.hwnd, 0x1073/*_LVM_GETITEMTEXT*/, r-1, item); 
+						if( len && ( item.text != _LPSTR_TEXTCALLBACK)  ){
+							row[i] = fromUnicode( item.text,,len); 
+						} 
+					}
+					push(t,row) ; 
+				} 
+				 
                	if(owner.getExtended(0x4/*_LVS_EX_CHECKBOXES*/)){
                		var c = {};
-               		for(i=1;owner.count) if(owner.getChecked(i))..table.push(c,i);
+               		for(i=1;owner.count) if(owner.getChecked(i))push(c,i);
                 	t.checked = c;
                	}
               
-				return t;
+				return t; 
 			}
 			_set = function( t ){ 
 				owner.clear();
-		    	for(i=1;#t )owner.addItem(t[i]);
+				if( type(t[1])== type.string ){
+					t = ..table.map(t,lambda(v){v});
+				}
+				
+				var item = LVITEM();
+				item.stateMask = 0xF000/*_LVIS_STATEIMAGEMASK*/; 
+				item.mask = 1/*_LVIF_TEXT*/;
+				
+				toUnicode = ..string.toUnicode;
+				for(r=1;#t ){
+					var row = t[r];
+					item.text = toUnicode( tostring(row[1]) );
+					item.iItem = r - 1;
+					item.iSubItem = 0;
+					::SendMessageByStruct(owner.hwnd, 0x104D/*_LVM_INSERTITEM*/, 0, item);
+					
+					item.mask = 0x1/*_LVIF_TEXT*/;
+					for (c = 2; #row) {
+						item.iSubItem = c - 1;
+						item.text = toUnicode( tostring(row[c]) );
+						::SendMessageByStruct(owner.hwnd, 0x1074/*_LVM_SETITEMTEXT*/, r-1, item);
+					}
+				}
 		    	
 				var c = t.checked;	
 				if(c) for(i=1;#c) owner.setChecked(c[i],true);
 			} 	
+		};
+		setTable = function(t){
+			var row;
+			var fields = t.fields;
+			if( owner.columnCount == 0){ owner.setColumns(fields); };
+			
+			owner.clear();
+			
+			var item = LVITEM(); 	
+			item.stateMask = 0xF000/*_LVIS_STATEIMAGEMASK*/; 
+			item.mask = 0x1/*_LVIF_TEXT*/;
+			toUnicode = ..string.toUnicode;
+			
+			for(r=1;#t ){
+				var row = t[r];
+				item.text = toUnicode( tostring(row[ fields[1] ]) );
+				item.iItem = r - 1; 
+				item.iSubItem = 0; 
+				::SendMessageByStruct(owner.hwnd, 0x104D/*_LVM_INSERTITEM*/, 0, item);
+				
+				item.mask = 0x1/*_LVIF_TEXT*/;
+				for (c = 2; #fields) {
+					item.iSubItem = c - 1;
+					item.text = toUnicode( tostring(row[ fields[c] ]) );
+					::SendMessageByStruct(owner.hwnd, 0x1074/*_LVM_SETITEMTEXT*/, r-1, item);
+				}
+			} 
 		};
 		setColumns = function(fields){
 			for(i=owner.columnCount-1;0;-1){
@@ -649,23 +724,6 @@ namespace listview{
 			var col = width/ #str;
 			
 			for(i=1;#fields;1) owner.insertColumn(fields[i],col*#fields[i]);
-		};
-		setTable = function(data){
-			var row;
-			var fields = data.fields;
-			if( owner.columnCount == 0){
-				owner.setColumns(fields);
-			};
-			
-			owner.clear();
-			for(r=1;#data;1){
-				row = data[r];
-				owner.addItem(row[ fields[1] ] );
-				
-				for(c=2;#fields) {
-					owner.setItemText(row[ fields[c] ],r,c);
-				}
-			} 
 		};
 		checked = {
 			_get = function(){  
@@ -822,7 +880,7 @@ namespace listview{
 !listview.addItem(.(文本,位置,图像索引) = 位置参数可省略,默认为count值\n图像索引可省略,默认为-1\n文本可以是一个指定多列文本的table数组,\n如果列文本不是指针、空值则自动转换为字符串,\n返回新增项行号
 !listview.addItem(.(LVITEM对象,位置) = 参数一可以是指定一个或多个LVITEM对象成员的table对象\ntext成员指定项目文件,也可以是一个指定多列文本的数组\n位置参数可省略,默认为count值\n返回新增项行号
 !listview.setItemText(.(文本,行,列) = 设置项目指定列文本,\n参数一也可是指定多列文本的数组(table对象),\n设置的文本如果不是指针或空值则自动转换为字符串,\n其他参数可选
-!listview.getItemText(.(行,列,缓冲区长度) = 列默认值为1,缓冲区最大字符数默认为100
+!listview.getItemText(.(行,列,缓冲区长度) = 返回指定项指定列文本，列默认值为1,\n如果列指定为-1，则返回一个包含所有列文本的数组,\n缓冲区最大字符数默认为520
 !listview.getItemRect(.(行,列,RECT,选项) = 返回表示项目表示项目区块的RECT结构体,\n除第一个参数以外,其他参数为可选参数,\n如果不指定列则返回所在行区块,\n使用_LVIR_前缀常量指定选项
 !listview.getItemRect() = !rect.
 !listview.hitTest(.(x坐标,y坐标,是否屏幕坐标) = 该函数返回指定坐标的行号,参数三可省略,默认为false.\n如果不指定任何参数,则自动调用 win.getMessagePos() 获取消息坐标\n返回行号,列号,_LVHT_前缀的状态常量
@@ -863,7 +921,7 @@ namespace listview{
 !listview.clientRect =  获取控件客户区块位置(::RECT结构体)
 !listview.theme = 外观主题,例如\nwinform.button.theme = "Explorer"\nwinform.button.theme = false
 !listview.delItem(__) = 参数为数值,移除指定索引的项目
-!listview.items = 返回包含所有列表项的文本数组 
+!listview.items = 返回或设置包含所有列表项的数组\n数组的每个项表示一行，每行也必须是包含列文本的数组\n返回数组有一个可选字段checked包含了所有勾选的行
 !listview.setColumns(__) = 用一个字符串数组指定要显示的列\n如果参数为空则清空所有列
 !listview.setTable(__) = 用listview控件显示数据表\n此函数会自动清空控件之前的所有项,\n如果没有创建任何列,则自动创建列\n如果要重新创建列,请先调用clear(true)清空原来的列,\n\n数据表应当包含行组成的数组,\n每行的数据列必须是由列名和列值组成的键值对\n数据表应使用fields包含需要显示的列名称数组\n可以通过fields控制要显的列、以及要显示的顺序\n\n使用sqlite,access,sqlServer等数据库对象提供的getTable函数可获取符合此规格的数据表
 !listview.checked = 返回已勾选复选框的项目索引数组,\n需要先启用复选框支持

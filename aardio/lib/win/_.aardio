@@ -199,16 +199,30 @@ getChild = function(hwnd){
 	return getWindow(hwnd,0x5/*_GW_CHILD*/);
 }
 
-eachChild =  function(parent) { 
-	var hwnds = {};
-	return function(next) { 
-        if( next ) next = getWindow( next  ,0x2/*_GW_HWNDNEXT*/ );
-        else next = getWindow( parent ,0x5/*_GW_CHILD*/ )  
-        if( hwnds[next] ) return;
-		hwnds[next] = true;
-        if(next) return next;
-	}; 
-} 
+eachChild =  function(parent,cls) { 
+    if(!parent) parent = getDesktop();
+    if(cls){
+        var next = eachChild(parent)
+        return function(){
+            while(var hwnd = next() ){
+                if(cls && !..string.cmpMatch(..win.getClass(hwnd),cls) )continue;
+                return hwnd
+            }		
+        } 
+    }
+    
+    var hwnd;
+    var map = {};
+    return function() { 
+        if( hwnd ) hwnd = getWindow( hwnd  ,0x2/*_GW_HWNDNEXT*/ );
+        else hwnd = getWindow( parent ,0x5/*_GW_CHILD*/ )  
+        
+        if( map[hwnd] ) return;
+        map[hwnd] = true;
+        
+        if(hwnd) return hwnd;
+    }; 
+}
 
 enum = function( onfind ) {
     ::User32.EnumWindows(..raw.tostdcall(onfind,"bool(int,int)")  ,0);  
@@ -284,9 +298,8 @@ setOwner( = 设置所有者窗口\n下属窗口总是显示在所有者窗口前
 setOwner(.(窗口句柄,所有者窗口句柄) = 成功返回原来的所有者窗口句柄\n窗口拥有WS_CHILD样式时不执行并返回空值
 getOwner(__/*输入窗口句柄*/) = 获取所有者窗口句柄\n注意子窗口没有所有者窗口\n\n下属窗口总是显示在所有者窗口前面\n例如模态对话框通常会指定一个所有者窗口 
 getChild(__/*输入窗口句柄*/) = 获取子窗口句柄 
-eachChild( 父窗口句柄 ) = @for hwnd in win.eachChild(__/*请输入父窗口句柄*/) {
-    //按Z序遍历所有子窗口
-
+eachChild(父窗口句柄,窗口类名) = @for hwnd in win.eachChild(__/*按Z序遍历所有子窗口,\n省略父窗口句柄遍历顶层窗口,\n窗口类名是可选参数，支持模式匹配语法*/) {
+   
 }
 getFullscreen() = 返回当前全屏窗口
 getWindow( hwnd, _GW__ ) = 获取相关窗口

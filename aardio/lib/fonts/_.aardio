@@ -49,7 +49,7 @@ getFamilyByName = function(k){
 /**intellisense()
 fonts.addFamily( = 加载并注册嵌入字体,\n加载的字样会添加到共享缓存,请不要删除返回的字样对象，\n字样可以用于创建不同样式的同名字体，\n\n在这里注册的嵌入字体，GDI,GDI+，普通控件，plus控件等都可以自动支持
 fonts.addFamily(.(fontData) = fontData指定字体路径或者内存字体数据,\n加载并注册嵌入字体文件中的第一个字样\n普通控件、plus控件、gdi,gdip等都可以自动支持内存字体,\n但部分组件(例如web.form)不支持内存字体,可参考 fonts.fontAwesome源码运行时保存到appData加载
-fonts.addFamily(.(fontData,fontName) = 加载并注册嵌入字体文件中指定名称的字样,\nfontName指定字体名,字体名大小写必须与字体设置对话框中的名字完全一致\n注册成功的嵌入字体,gdi,gdip,普通窗口控件,plus控件等将自动支持\nweb.form等不支持直接内存加载的字体,可调用fsys.appData将内存数据转换为本地路径后加载
+fonts.addFamily(.(fontData,fontName) = 加载并注册嵌入字体文件中指定名称的字样,\nfontName指定字体名,必须是字体文件中存在的字体名称,并且大小写一致,\n注册成功的嵌入字体,gdi,gdip,普通窗口控件,plus控件等将自动支持\nweb.form等不支持直接内存加载的字体,可调用fsys.appData将内存数据转换为本地路径后加载
 fonts.getFamilyNames() = 获取已加载的嵌入字体名数组
 fonts.getFamilyByName(__) = 在已加载的嵌入字体中查找指定名字的 gdip.family对象
 fonts.addFamily() = !gdipfamily.

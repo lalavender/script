@@ -24,7 +24,7 @@ class dlManager {
 	 		
 	 			var send = ..thread.command.send;
 	 			var post = ..thread.command.post;
-				var remoteFile = inet.httpFile( args.url,savepath,args.resumePath );
+				var remoteFile = inet.httpFile( args.url,savepath,args.resumePath,args.userAgent,args.proxy,args.proxyBypass,args.httpFlags));
 				if( !remoteFile ){
 					send( hwndCommand,"onError",id,"参数错误");
 					return;
@@ -47,16 +47,17 @@ class dlManager {
 				
 	
 				var time_tick = ..time.tick;
-				var tickIdle = 0;
+				var tkPrev = 0;
 				var sizePs = 0;
 				remoteFile.onReceive = function(str,size,contentLength){ 
 					totalSize = totalSize + size;
 					sizePs = sizePs + size; 
-					var tick = time_tick();
-					if( tick - tickIdle > 1000 ){
-						post( hwndCommand,"onReceive",id,sizePs,totalSize);
+					var tkCurrent = time_tick();
+					var ms = tkCurrent - tkPrev;
+					if( ms > 1000 ){
+						post( hwndCommand,"onReceive",id,sizePs/(ms/1000),totalSize);
 						sizePs = 0;
-						tickIdle = tick;
+						tkPrev = tkCurrent;
 					}
 					
 					return ! event.wait(1) /*检测主线程是否发出停止信号*/;

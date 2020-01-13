@@ -207,7 +207,7 @@ class win.form {
 	    }
 	    else{   
 			if( ! tParam.className ){
-				tParam.cls := "AAU_FORM" 
+				tParam.cls := "AARDIO_FORM" 
 				tParam.className = ..win.registerFormClass( tParam.cls );
 				if( !  tParam.className ){
 					error("注册窗口类失败1",2);
