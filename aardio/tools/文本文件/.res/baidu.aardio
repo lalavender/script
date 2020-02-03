@@ -1,0 +1,44 @@
+import win.ui;
+/*DSG{{*/
+var winform = win.form(text="aardio form";right=759;bottom=469)
+winform.add()
+/*}}*/
+
+import web.form;
+var wbBaidu = web.form( winform);
+wbBaidu.noScriptErr = true;
+wbBaidu.go("http://fanyi.baidu.com/#en/zh/");
+
+subscribe("adClear",function(...){
+	var header = wbBaidu.waitQueryEles({className="header"},5000);;
+	if( header ){
+		header.outerHTML = ""
+	}
+	
+	var ad = wbBaidu.waitQueryEles({className="showad-close-btn icon-close"},3000);
+	if( ad && ad.length ){ 
+		ad.click();
+	}
+} )
+
+winform.getValue = function(){
+	var bdInput = wbBaidu.getEle("baidu_translate_input");	
+	if(bdInput){
+		return bdInput.value;
+	}
+}
+
+winform.setValue = function(value){
+	var bdInput = wbBaidu.getEle("baidu_translate_input");	
+	if(bdInput){
+		bdInput.value = value;
+	}
+}
+
+winform.translate = function(word){
+	wbBaidu.go("http://fanyi.baidu.com/#en/zh/" + word);
+}
+
+winform.show();
+win.loopMessage();
+return winform;

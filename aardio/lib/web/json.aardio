@@ -54,7 +54,7 @@ var scanSpace = function(s,pos){
 
 
 var scanObject = function(str,unescape,pos){ 
-	var object = { @{ _defined = {};_type="object" } };
+	var object = { @{ _defined = {};_type="object";_readonly = false } };
 	var len = #str;
 	var key,value; 
 	pos++;

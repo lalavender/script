@@ -88,7 +88,7 @@ class asynHttpServer{
         	REQUEST_URI = startRequestLine[2];
         	SERVER_PROTOCOL = startRequestLine[3];
         	SERVER_SOFTWARE = "aardio server/1.0";
-        	GATEWAY_INTERFACE = 'AARDIO CGI/1.1';
+        	GATEWAY_INTERFACE = 'CGI/1.1';
         	DOCUMENT_ROOT = ..io.fullpath(this.documentRoot);
         	HTTPS = "off";
         	REQUEST_SCHEME = "http";
@@ -323,7 +323,10 @@ class asynHttpServer{
 					var h = ..web.joinHeaders(owner.preheaders);
 					owner.write(h);
 				};	
-				owner.write("Content-Type: ",owner.contentType:"text/html","; charset=",owner.charset : "UTF-8", '\r\n');
+				
+				owner.write("Content-Type: ",owner.contentType:"text/html");
+				if(owner.charset!=""){owner.write("; charset=",owner.charset : "UTF-8");}
+				owner.write('\r\n');
 			
 			 	//用户不应当修改Connection，这个值应当由服务端控制
 			 	if(!owner.headers.Connection) {

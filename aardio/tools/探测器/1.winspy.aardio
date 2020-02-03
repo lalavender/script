@@ -1,4 +1,4 @@
-//窗口探测器(winspy)
+//窗口探测器
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="窗口探测器";left=-2;top=100;right=688;bottom=526)

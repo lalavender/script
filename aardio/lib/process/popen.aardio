@@ -11,10 +11,12 @@ class popen{
    			
 		var sa = ..table.mixin(..process.STARTUPINFO(),startInfo);
 		sa.flags = (sa.flags:0) | 0x100/*_STARTF_USESTDHANDLES*/ | 0x1/*_STARTF_USESHOWWINDOW*/ 
-		// sa.showWindow = 0x0/*_SW_HIDE*/  
-		
-		saPipe = SECURITY_ATTRIBUTES();
-		saPipe.bInheritHandle = true; 
+
+		var saPipe = { 
+    		INT nLength;
+    		pointer lpSecurityDescriptor;
+    		bool bInheritHandle = true;
+		};
 		var ok,outPipeRead,outPipeWrite = CreatePipe(,,saPipe,0)
 		var ok,errPipeRead,errPipeWrite = CreatePipe(,,saPipe,0)
 		var ok,inPipeRead,inPipeWrite = CreatePipe(,,saPipe,0)
@@ -252,12 +254,6 @@ namespace popen{
 	SetHandleInformation = ::Kernel32.api( "SetHandleInformation", "bool(pointer object,INT mask,INT flags)");
 	PeekNamedPipe = ::Kernel32.api( "PeekNamedPipe", "bool(pointer pipe,pointer buf,INT size,INT &read,INT & total,INT & leftMsg)");
 
-	class SECURITY_ATTRIBUTES{ 
-    	INT nLength;
-    	pointer lpSecurityDescriptor;
-    	bool bInheritHandle;
-	}
-	
 	cmd = function(cmdline,...){
 		cmdline = ..string.trim(cmdline);
 		

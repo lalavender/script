@@ -383,7 +383,27 @@ edit._metaProperty =  metaProperty(
     		::Imm32.ImmReleaseContext(owner.hwnd,imc); 
 		}
 	};
-
+	showBalloonTip = function(title,text,icon){ 
+		var ti =  {
+			INT cbSize;
+			ustring title = title:"";
+			ustring text = text:"";
+			addr icon = icon;
+		}
+		
+		ti.cbSize = ..raw.sizeof(ti);
+		::SendMessageByStruct(owner.hwnd,5379/*EM_SHOWBALLOONTIP*/,0,ti);
+	};
+	showInfoTip  = function(title,text,large){
+		return owner.showBalloonTip(title,text,large?4:1);
+	};
+	showWarningTip  = function(title,text,large){
+		return owner.showBalloonTip(title,text,large?5:2);
+	};
+	showErrorTip  = function(title,text,large){ 
+		return owner.showBalloonTip(title,text,large?6:3);
+	};
+	
 	/* richedit已重写下面的属性 */
 	limit = {
 		_get = function(){ 
@@ -506,7 +526,6 @@ edit._metaProperty =  metaProperty(
 !edit.saveScale(.(scaleX,scaleY,dpiScaleX,dpiScaleY) = 根据控件当前的运行时位置更新设计时大小\如果控件允许自动缩放，窗口缩放时依据设计时大小按比例缩放\n所有参数可省略,并且不建议写参数
 !edit.threadCallable() = 开启此控件的跨线程调用功能
 !edit.orphanWindow() = 使控件脱离原来的窗口,可显示在父窗口外面,\n但保持原来的相对位置,继续如影随形的跟随父窗口移动或改变大小,\n控件原来的固定边距等参数仍然有效	
-!edit.translateAccelerator = @.translateAccelerator = function( msg ){ \n    var ctrl = ::GetKeyState(0x11/*_VK_CTRL*/);\n    var shift =  ::GetKeyState(0x10/*_VK_SHIFT*/);\n    var alt = ::GetKeyState(0x12/*_VK_ALT*/);\n    if( msg.wParam == 'A'#  && ctrl && !alt && !shift){\n        ??.selectAll();\n        return true;\n    }__\n}
 !edit.lines(忽略空白) = @for line in ??.lines(true){ 
 	__/*遍历所有文本行,\n如果迭代器参数为true则清除每行首尾空格,并忽略空行*/
 }
@@ -530,6 +549,14 @@ edit._metaProperty =  metaProperty(
 !edit.passwordChar = 指定隐藏密码的占位字符,\n例如指定为"*"隐藏密码,指定为null正常显示文本
 !edit.sendMessage(.(msg,wParam,lParam) = 发送窗口消息\n此函数用法请参考 ::User32.SendMessage
 !edit.postMessage(.(msg,wParam,lParam) = 投递窗口消息到消息队列中\n此函数用法请参考 ::User32.PostMessage
+!edit.showBalloonTip( = 显示气泡提示,\n建议直接调用showInfoTip，showWarningTip 或 showErrorTip
+!edit.showBalloonTip(.(title,text,icon) = 在输入光标处显示汽泡提示,\n@title参数指定标题,\n@text参数指定文本,\nicon指定图标句柄，可省略
+!edit.showInfoTip( = 在输入光标处显示汽泡提示
+!edit.showInfoTip(.(title,text,large) = 在输入光标处显示汽泡提示,使用提示信息图标,\n@title参数指定标题,\n@text参数指定文本,\nlarge指定是否使用大图标，可省略
+!edit.showWarningTip( = 在输入光标处显示汽泡提示,使用警告图标
+!edit.showWarningTip(.(title,text,large) = 在输入光标处显示汽泡提示,使用警告图标,\n@title参数指定标题,\n@text参数指定文本,\nlarge指定是否使用大图标，可省略
+!edit.showErrorTip( = 在输入光标处显示汽泡提示,使用错误图标
+!edit.showErrorTip(.(title,text,large) = 在输入光标处显示汽泡提示,使用错误图标,\n@title参数指定标题,\n@text参数指定文本,\nlarge指定是否使用大图标，可省略
 ?win.ui.ctrl.edit  =!edit.
 win.ui.ctrl.edit() = 文本框控件\n!edit.
 win.ui.ctrl.edit = 文本框控件支持库

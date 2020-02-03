@@ -1,4 +1,5 @@
 ﻿//simpleHttpServer 服务端
+import inet.url;
 import wsock.tcp.server; 
 import thread.works;
 
@@ -45,7 +46,7 @@ class simpleHttpServer{
                 		REQUEST_URI = startRequestLine[2];
                 		SERVER_PROTOCOL = startRequestLine[3];
                 		SERVER_SOFTWARE = "aardio server/1.0";
-                		GATEWAY_INTERFACE = 'AARDIO CGI/1.1';
+                		GATEWAY_INTERFACE = 'CGI/1.1';
                 		DOCUMENT_ROOT = _SIMPLEHTTPSRV_DOCUMENT_ROOT;
                 		HTTPS = "off";
                 		REQUEST_SCHEME = "http";
@@ -288,7 +289,11 @@ class simpleHttpServer{
 								var h = ..web.joinHeaders(owner.preheaders);
 								owner.write(h);
 							};
-							owner.write("Content-Type: ",owner.contentType:"text/html","; charset=",owner.charset : "UTF-8", '\r\n');
+							
+							owner.write("Content-Type: ",owner.contentType:"text/html");
+							if(owner.charset!=""){owner.write("; charset=",owner.charset : "UTF-8");}
+							owner.write('\r\n');
+							
 							owner.headers.Connection = "close";
 							if(!owner.headers.Date) owner.headers.Date = tostring(  ..time.gmt() );
 							for (k, v in owner.headers) {
@@ -677,20 +682,15 @@ namespace simpleHttpServer{
 	}
 	
 	
-	startUrl = function(path,documentRoot){
-		if(documentRoot) self.documentRoot = documentRoot;
-		var app;
-		if( type(path) == type.function){
+	startUrl = function(path,documentRoot,app){
+		if(documentRoot) self.documentRoot = documentRoot; 
+		if( (app===null) && ( type(path) == type.function) ){
 			app = path;
 			path = null;
 		}
-		if( lastStartUrl && ..thread.get(lastStartUrl) ){
-			if(path){
-				path = ..string.replace(path,"@\","/");
-				if(path[1]!='/'#) path= "/" + path;
-				return lastStartUrl + path;
-			}
-			return lastStartUrl;
+		
+		if( lastStartUrl && ..thread.get(lastStartUrl) ){ 
+			return ..inet.url.joinpath(lastStartUrl,path);;
 		}
 		lastStartUrl = null;
 		
@@ -730,14 +730,9 @@ namespace simpleHttpServer{
 					stopUrl(url);
 					sleep(1000);
 				} );
-				
-				if(path){
-					path = ..string.replace(path,"@\","/"); 
-					if(path[1]!='/'#) path= "/" + path;
-					url = url + path;
-				}
+				 
 				lastStartUrl = url;
-				return url;
+				return ..inet.url.joinpath(url,path);
 			}
 		}while(1) 
 	}
@@ -746,8 +741,8 @@ namespace simpleHttpServer{
 }
 
 /**intellisense()
-wsock.tcp.simpleHttpServer.startUrl("网页相对路径") = 可选使用参数@2指定网站根目录,默认为"/",\n查找可用端口创建HTTP服务器，返回返回完整URL\n此服务端限制使用本机IP127.0.0.1访问,并随机分配端口不会出现端口冲突\n如果HTTP服务器已启动则直接返回URL而不是重复启动服务器,\n省略参数返回首页URL,尾部不包含斜杠\n注意当前线程结束时,此服务器线程会自动退出
-wsock.tcp.simpleHttpServer.startUrl(HTTP服务线程函数） = @.startUrl(\n	function(response,request){\n		response.loadcode( request.path );__/*注意此函数是用于响应网页请求的多线程回调函数,startUrl函数返回首页URL*/\n	} \n)
+wsock.tcp.simpleHttpServer.startUrl( =  查找可用端口创建HTTP服务器，返回返回完整URL\n此服务端限制使用本机IP127.0.0.1访问,并随机分配端口不会出现端口冲突\n如果HTTP服务器已启动则直接返回URL而不是重复启动服务器,\n注意当前线程结束时,此服务器线程会自动退出
+wsock.tcp.simpleHttpServer.startUrl(.(path,documentRoot,app) = 查找可用端口创建HTTP服务器，返回返回完整URL\n如果HTTP服务器已启动则直接返回URL而不是重复启动服务器,\n省略参数返回首页URL,尾部不包含斜杠\n可选用@path参数指定请求目标文件的相对路径\n可选使用参数@documentRoot指定网站根目录,默认为"/",\n可选用@app参数指定处理HTTP请求的线程函数
 wsock.tcp.simpleHttpServer.stopUrl(__) = \n退出startUrl函数创建的HTTP服务器线程\n参数为URL,也可以省略参数
 wsock.tcp.simpleHttpServer = HTTP服务端\n支持文件上传,下载,下载支持断点续传\n支持多线程处理请求
 wsock.tcp.simpleHttpServer(.(IP,端口,请求队列大小) = 创建HTTP服务端,所有参数可选,\n\n如果不写IP，则默认设为"0.0.0.0"也即监听本机所有IP,访问此服务端也不限制IP\n限制仅本机可以访问建议写127.0.0.1\n\n端口为0或省略则自动选择未用端口\n注意0-1023为系统通用服务保留端口,\n1024-49151为用户服务端口,其中大约%9已由IANA注册分配\n49152-65535为私有或临时端口

@@ -14,27 +14,10 @@ import console;
 var html =  /* 
 <!doctype html>
 <html>
-<head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <style type="text/css">
-    html,body{ height:100%; margin:0; } 
-    </style>
-    <script type="text/javascript"></script>
-</head>
+<head></head>
 <body>
 <table id="container">
-<tr>  
-	<td rowspan="1" class="tab_time tab_time102540630">06:30</td>
-	<td rowspan="1" class="tab_time1020160419100002540630"><div class = "flag_bb"><div class="c_new_zealand circle_flag"></div></div></td>
-	<td class = "tab_font"><a class = 'nowrap' target='_blank' href = '/id/1341234.html'>表现指数</a></td>
-	<td class = "previous_price">57.1</td>
-	<td class = "survey_price"></td>
-	<td class = "gb loading-bg" id="1341234123412">52.8</td>
-	<td></td>
-	<td><div class = "getmore2 gt10201604"></div></td>
-	<td><a target = '_blank' href='/id/60191254.html'><img src="/Public/images/more.png"></a></td>
-</tr>
+<tr><td rowspan="1" class="tab_time tab_time102540630">06:30</td></tr>
 </table>
 </body>
 */
@@ -73,6 +56,20 @@ for(index,tagName,childCount,xNode in body[1].eachChild() ){
 	console.log( index,tagName,childCount,xNode.outerXml() ) 
 }
 
+console.log("可以使用id或name属性直接获取节点");
+console.log( htmlDoc.getEle("container").outerXml(true) );
+
+//自文档中移除节点
+htmlDoc.getEle("container").remove();
+
+//添加节点
+body[1].pushElement(tagName = "span";style="font-size:12px").pushElement( 
+    text = "这是文本节点"
+) 
+
+//也可以直接写HTML添加节点
+body[1].pushXml(`<span class="test">直接写HTML也可以</span>`)
+ 
 //在body最后面添加一个超链接
 body[1].pushElement(
     tagName = "a";
@@ -93,8 +90,10 @@ var ele = body[1].queryEle(
 	innerText = "这是一个超链接"
 );
 
-console.log( ele.outerXml() )
-console.more(1)
+console.log( ele.outerXml(true) ) 
+
+console.clearScreen();
+console.log( htmlDoc.outerXml(true) )
 /**
 string.html里一个节点对象是一个表,
 这个节点对象如果有tagName属性表示标记名 - 那他就是一个普通节点。
@@ -111,10 +110,5 @@ CDATA节点使用 cdata 属性表示数据, 无tagName,无其他属性
 xml声明节点的tagName为"?xml"
 **/
 
-console.log("也可以使用id或name属性直接获取节点");
-console.log( htmlDoc.getEle("container").outerXml() );
-
-//自文档中移除节点
-htmlDoc.getEle("container").remove();
 
 console.pause()

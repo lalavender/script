@@ -662,7 +662,7 @@ namespace http{
 /**intellisense()
 inet.http = WinInet HTTP支持库\n支持进程内多对象共享会话cookie,支持持久化cookie\n与web.form浏览器控件,IE浏览器共享cookie与代理设置 
 inet.http( = 创建HTTP会话对象,所有参数可选
-inet.http(.("UserAgent","代理服务器","绕过代理的主机",连接选项) = 所有参数可选,例：\ninet.http("Mozilla/4.0", "HTTP=HTTP://proxyserver:port","localhost,127.0.0.*")
+inet.http(.("UserAgent","代理服务器","绕过代理的主机",连接选项) = 所有参数可选,例：\ninet.http("Mozilla/4.0", "HTTP=HTTP://proxyserver:port","localhost,127.0.0.*")\n代理参数语法请参考inet.setProxy函数说明
 inet.http() = !inet_http.
 !inet_http.setSessionOption( _INTERNET_OPTION__, ) = 设置会话选项,\n参数可以是数值或结构体\n用法参数MSDN
 !inet_http.setRequestOption( _INTERNET_OPTION__, ) = 设置会话选项,\n参数可以是数值或结构体\n用法参数MSDN

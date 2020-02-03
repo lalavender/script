@@ -37,7 +37,7 @@ class interface{
 			
 			this  = ..raw.interface( pObj, itface ); 
 		}
-		else{ 
+		else{
 			var pItface = ..com.GetIUnknown(pObj,itface.IID);
 			assert(pItface,"无效的com指针");
 			
@@ -168,8 +168,8 @@ com.interface(.(com对象,静态接口类) = 参数一可以是com对象、com�
 end intellisense**/           
 
 /**intellisense()
-_SUCCEEDED = @ (__/*hr*/)>=0/*_SUCCEEDED*/
-_FAILED = @ (__/*hr*/)<0/*_FAILED*/
+_SUCCEEDED = @ __/*hr*/ >= 0/*_SUCCEEDED*/
+_FAILED = @ __/*hr*/ < 0/*_FAILED*/
 _CLSCTX_INPROC_SERVER=@1/*_CLSCTX_INPROC_SERVER*/
 _CLSCTX_INPROC_HANDLER=@2/*_CLSCTX_INPROC_HANDLER*/
 _CLSCTX_LOCAL_SERVER=@4/*_CLSCTX_LOCAL_SERVER*/

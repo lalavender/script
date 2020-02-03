@@ -11,11 +11,16 @@ delayPress = 5;
 delayDown = 5;
 delayUp = 1;
 extraInfo = 0;
- 
-getName = function(vk,ext){
-    return ( ext ? VK_EXT2NAME[vk]) : VK_NAME[vk] 
-}
 
+getName = function(vk,ext,noLocation){
+    if(noLocation) vk = VK_NLR[vk] : vk;
+    return ( ext ? VK_EXT2NAME[vk]) : VK_NAME[vk] 
+} 
+
+removeLocation = function(vk){
+	return VK_NLR[vk] : vk;;
+}
+ 
 upper = ..string.upper;
 getCode = function(kn){
 	var vk = (type(kn)==type.number)?kn:VK[upper(kn)] : VK_MAPSHIFT[kn]
@@ -253,8 +258,8 @@ repeat(.(键名或键码,重复次数) = 重复发送指定的击键\n参数可�
 repeat(.(键名或键码,重复次数,间隔毫秒) = 重复发送指定的击键\n参数可以是键名字,或者按键的虚拟码(_VK前缀常量)
 send("__/*字符串*/") = 发送字符串,支持单字符键名、中英文字符串
 send("__/*字符串*/",100) =  发送字符串,支持单字符键名、中英文字符串\n并在每次按键添加指定的延时(以毫秒为单位)
-getName(_VK__) = 返回虚拟键码对应的键点
-getName(_VK__,true) = 返回虚拟键码对应的扩展键名,例如数字键盘的回车键
+getName(.(vk,ext,noLocation) = 返回虚拟键码对应的键名,\n除参数@vk以外，其他参数为可选参数\n如果@ext为true，允许返回扩展键名，主要指小键盘的回车键\n如果参数@noLocation为true，返回键名不区分左右控制键
+removeLocation(__) =  对传入的虚拟键码，移除左右控制键的差别,\n返回转换后的虚拟键码，例如_VK_LCTRL转换_VK_为CTRL
 getCode("__") = 返回虚拟键码、是否扩展键
 pressEx("CTRL","__") = 请使用key.combine替代此函数
 combine("CTRL","__") = 发送组合热键,参数个数不限.\n参数可以是键名字,或者按键的虚拟码(_VK前缀常量)

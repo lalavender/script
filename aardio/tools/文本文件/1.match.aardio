@@ -1,4 +1,4 @@
-//模式匹配工具
+//模式匹配
 import win.ui; 
 import win.ui.menu;
 /*DSG{{*/

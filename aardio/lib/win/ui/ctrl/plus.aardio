@@ -1181,16 +1181,17 @@ namespace plus {
 					tabstop=owner.tabstop;
 					acceptfiles=owner.acceptfiles;
 				},p,{ 
-					cls="richedit";
 					marginLeft=owner.paddingLeft + (tp[["left"]]:0);
 					marginRight=owner.paddingRight + (tp[["right"]]:0);
 					marginBottom=owner.paddingBottom + (tp[["bottom"]]:0);
 					marginTop=owner.paddingTop + (tp[["top"]]:0);
-					transparent=true
 				} );
+				
+			if(!param.cls){ param.cls="richedit" }
+			if(param.cls=="richedit" ){param.transparent=true;}
 			
 			owner.addCtrl({editBox = param});
-			owner[["editBox"]].enablePopMenu();
+			if(owner[["editBox"]].enablePopMenu) owner[["editBox"]].enablePopMenu();
 			owner.translateCommand();
 			owner.editable = true;
 			
@@ -1265,7 +1266,9 @@ namespace plus {
 				if( v == owner[["(editable)"]] ) return;
 				
 				if(v){
-					if(!owner[["editBox"]]) return owner.createEditBox();
+					if(!owner[["editBox"]]) {
+						return owner.createEditBox( cls = ( v==="edit"?v:null ) );
+					}
 					owner.editBox.text = owner[["(text)"]];
 					owner[["(text)"]] = null;
 					owner.editBox.hide = false;
@@ -1665,7 +1668,7 @@ setForeground(.(前景图像,缓存名,刷新重绘) = 修改前景图像\n参�
 setForeground(.(背景图像,false) = 加载前景图像并禁用缓存
 setForeground(.(颜色数值) = 修改foregroundColor的值\n注意plus控件、GDI+都是ARGB格式数值表示颜色分量,即:0xAARRGGBB\n与RGB的分量顺序是反过来的
 createEditBox(创建控件参数) = @.createEditBox( \n	vscroll = true; \n	hscroll = true; \n	multiline = true;\n);__/*创建并启用透明背景的richedit文本编辑框，可用参数与窗体设计器相同，\n创建文本框时应用plus控件预设的字体、颜色、水平对齐方式，\n并且使用plus控件预设的内边距限制文本编辑框显示范围。\n\n可使用editBox属性访问此文本编辑框，\n可通过设置plus控件的editable属性显示或隐藏文本编辑框*/
-editable = 是否允许编辑文本\n如果此值设为true则切换到可编辑模式\n\n在首次切换到可编辑模式下,会自动创建透明背景的richedit文本编辑框，\n创建文本框时应用plus控件预设的字体、颜色、水平对齐方式，\n并且使用plus控件预设的内边距限制文本编辑框显示范围。\n\n可使用editBox属性访问此文本编辑框，\n如果文本编辑框已创建，再次修改editable仅显示或隐藏文本编辑框
+editable = 是否允许编辑文本\n如果此值设为true则切换到可编辑模式,\n也可以指定要嵌入的编辑框的类名，例如"edit",\n不指定类名则创建透明背景的richedit文本编辑框\n\n在首次切换到可编辑模式下创建文本框，\n并同步应用plus控件预设的字体、颜色、水平对齐方式，\n并使用plus控件预设的内边距限制文本编辑框显示范围。\n\n可使用editBox属性访问此文本编辑框，\n如果文本编辑框已创建，再次修改editable仅显示或隐藏文本编辑框
 editBox = 文本编辑框,此文本框也是一个win.ui.tracker对象,\n!richedit.
 editState = 允许共享内部编辑框的外观状态,不指定默认值为true,\n如果希望利用文本边距、前景边距等模拟分离按钮\n可将此值显示指定为false
 state.hover = 鼠标是否在控件上方\n注意直接修改该状态控件不负责重绘
@@ -1677,6 +1680,9 @@ state.dragging = 是否按下鼠标且正在拖动
 oncommand = @.oncommand = function( id,event ){
 	__/*控件被单击*/
 }
+onnotify = @.onnotify = function(id,code,ptr){
+	__/*处理通知消息,\nplus控件默认不发送通知消息,\n但如果绑定tooltip控件这些会触发这个事件*/
+} 
 onPosChanged = @.onPosChanged = function( pos,thumbTrack ){
 	__/*进度值变更,\n如果此事件由用户在滑块上点按鼠标触发,则thumbTrack参数为true*/
 }

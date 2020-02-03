@@ -1,14 +1,15 @@
 //上传代码工具
-
+import fonts.fontAwesome;
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="aardio源代码临时上传代码工具";right=939;bottom=731;bgcolor=16777215)
 winform.add(
 custom={cls="custom";left=148;top=11;right=921;bottom=653;bgcolor=16777215;db=1;dl=1;dr=1;dt=1;z=4};
-plusCopyLink={cls="plus";text="复制链接";left=588;top=688;right=666;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15);notify=1;z=7};
-plusPost={cls="plus";text="上传并转换为HTML";left=781;top=688;right=931;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15);notify=1;z=6};
-plusUrl={cls="plus";left=47;top=694;right=551;bottom=714;border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;z=5};
-plusUrlDelete={cls="plus";text="删除链接";left=685;top=688;right=763;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15);notify=1;z=8};
+plusCopyLink={cls="plus";text="复制链接";left=559;top=683;right=651;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=7};
+plusOpenLink={cls="plus";text="打开链接";left=459;top=683;right=551;bottom=714;border={color=-4144960;width=1};db=1;disabled=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=9};
+plusPost={cls="plus";text="上传并转换为HTML";left=758;top=683;right=928;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=6};
+plusUrl={cls="plus";left=47;top=694;right=450;bottom=714;border={bottom=1;color=-16744448};dl=1;dr=1;editable=1;z=5};
+plusUrlDelete={cls="plus";text="删除链接";left=658;top=683;right=750;bottom=714;border={color=-4144960;width=1};db=1;dr=1;font=LOGFONT(h=-15;name='FontAwesome');notify=1;z=8};
 static={cls="static";left=139;top=7;right=140;bottom=653;bgcolor=16752414;clip=1;db=1;dl=1;dt=1;z=3};
 strip1={cls="plus";text="测试文本";left=31;top=34;right=139;bottom=63;bgcolor=16752414;clip=1;dl=1;dt=1;z=1};
 strip2={cls="plus";text="测试文本";left=31;top=63;right=139;bottom=92;bgcolor=16752414;clip=1;dl=1;dt=1;z=2}
@@ -121,13 +122,11 @@ tbs.onSelchange = function(idx,strip,form){
 import ide;
 var editor = ide.getActiveCodeEditor();
 if (editor) {
-	var sel = editor.selText;
-	if(#sel){
-		 tbs.query(  "源代码" ).richedit.text = sel;
-	}
-	else {
-		 tbs.query(  "源代码" ).richedit.text = editor.text;	
-	}
+	var code = editor.selText;
+	if( !#code )  {code = editor.text; }
+	
+	code = string.replace(code,"\n(\s+)",lambda(space) '\n'+ ..string.replace(space,'\t','    ') ); 
+	tbs.query(  "源代码" ).richedit.text = code;
 }
 
 winform.plusCopyLink.skin(
@@ -162,10 +161,9 @@ winform.updateHtml = function(html){
 	frmHtmlEditor.richedit.text = html;
 }
 
-
 winform.plusPost.oncommand = function(id,event){
-    winform.plusPost.disabledText = "正在上传...";
-    
+    winform.plusPost.disabledText = {'\uF254';'\uF251';'\uF252';'\uF253';'\uF250'}
+ 
     var ok = win.invoke(
     	function(winform,srcCode){
     		import web.rest.client;
@@ -179,6 +177,7 @@ winform.plusPost.oncommand = function(id,event){
 				winform.updateHtml( http.get(url + ".js") );
 				winform.plusCopyLink.disabled = false;
 				winform.plusUrlDelete.disabled = false;
+				winform.plusOpenLink.disabled = false;
 			}
 			
 			http.close();
@@ -221,6 +220,24 @@ winform.plusUrlDelete.oncommand = function(id,event){
     
     winform.msgbox("已删除服务器链接")
     winform.plusUrlDelete.disabledText = null;
+}
+
+winform.plusOpenLink.skin(
+    color = { 
+        hover = 0xFFFF0000;
+        active = 0xFF0000FF; 
+        disabled = 0xFFCCCCCC; 
+    }
+    border ={
+    	hover = { color  = 0xC0FF0000;bottom = 1}
+    }
+)
+import process;
+winform.plusOpenLink.oncommand = function(id,event){
+	var url = winform.plusUrl.text;
+	if(#url){
+		process.openUrl(url)
+	}
 }
 
 winform.show();

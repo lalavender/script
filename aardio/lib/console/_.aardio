@@ -479,6 +479,11 @@ dump = function(v,...){
 	return dump(...);
 } 
 
+dumpTable = function(t){
+	open();
+	writeText( ..table.tostring(t) )
+}
+
 setTitle = function(title){
 	if(!::Kernel32.SetConsoleTitleW(title) ){
 		open();
@@ -605,12 +610,13 @@ setTextAttribute(0xF2__) = 一位表示背景色,第二位表示前景色\n0=黑
 varDump(__/*变量*/) = 此函数显示一个或多个参数的类型与值
 dump(__/*变量*/) = 显示变量的值,支持多参数\n注意仅显示普通table,string,number等类型的值,不显示函数等\ntable对象仅显示键名为字符串的值，以及数值索引自1开始的顺序数组
 dumpJson(__/*变量*/) = 将对像转换为格式化的JSON文本并输出到控制台\n对象如果包含数值索引自1开始的顺序数组成员则转换为JSON数组\nJSON数组会忽略其他索引不在数组范围内的成员
+dumpTable(__/*表对象*/) = 使用table.tostring转换表对象为文本然后输出到控制台,\n循环引用的成员将显示为null值
 close() = 关闭控制台
 pause( = 暂停,\n按任意键继续
 pause(.(按键后是否关闭控制台,提示) = 返回用户按键键码 
 setTitle("__") = 设置控制台标题
 getTitle() = 获取控制台标题
-clearScreen () = 清屏
+clearScreen() = 清屏
 getScreenBufferInfo() = 返回屏幕缓冲区信息
 getPos() = 返回光标坐标
 setPos(.(列,行)= 设置光标坐标

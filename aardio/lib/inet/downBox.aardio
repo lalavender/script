@@ -11,7 +11,7 @@ ctor(...){
 		bk={cls="bk";left=0;top=0;right=505;bottom=27;bgcolor=16777215;forecolor=8421504;linearGradient=0;z=4};
 		caption={cls="static";text="正在下载.....";left=21;top=5;right=355;bottom=21;transparent=1;z=5};
 		labInfo={cls="plus";left=21;top=44;right=465;bottom=65;align="left";z=3};
-		labProgress={cls="static";text="文件大小: 0KB";left=21;top=107;right=465;bottom=128;notify=1;transparent=1;z=2};
+		labProgress={cls="static";text="正在连接......";left=21;top=107;right=465;bottom=128;notify=1;transparent=1;z=2};
 		progress={cls="plus";left=21;top=69;right=486;bottom=96;align="right";bgcolor=6447459;forecolor=9959653;hide=1;iconColor=10409;notify=1;textPadding={right=15};z=1}
 		)
 	

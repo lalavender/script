@@ -201,7 +201,8 @@ namespace bitmap {
 		clone = function(x=0,y=0,cx,cy,pixelFormat=0x26200A/*_GdipPixelFormat32bppARGB*/){
  			if(!cx) cx = owner.width;
  			if(!cy) cy = owner.height;
-
+			x = ..math.floor(x);
+			y = ..math.floor(y);
  			var e,bmp = gdip.CloneBitmapArea(x,y,cx,cy,pixelFormat,owner[["pBitmap"]]);
  			if(e) return null,..gdip.errMsg[e]
  			if(bmp) return ..table.gc( {

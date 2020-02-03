@@ -1,3 +1,4 @@
+//HTML抓取与修改
 import win.ui;
 /*DSG{{*/
 var winform = win.form(text="贴吧抓取﻿工具";right=1141;bottom=791;bgcolor=16777215)
@@ -12,28 +13,23 @@ static={cls="static";left=10;top=46;right=1120;bottom=788;db=1;dl=1;dr=1;dt=1;tr
 import web.form;
 var wb = web.form(winform.static);
 
+import web.json;
 import string.html;
 import web.rest.client;
 
 var http = web.rest.client()
 var tieba = http.api("http://tieba.baidu.com/f?ie=utf-8&kw={kw}","GET"
     ,`id="pagelet_html_frs-list/pagelet/thread_list" style="display\:none;">\<\!--(.+?)--\>`)
-    
+ 
 winform.cmbKeyWord.items = {"吧名1";"吧名2"}
+winform.cmbKeyWord.selIndex = 1;
+
 winform.btnGet.oncommand = function(id,event){
     var kw = winform.cmbKeyWord.text;
     if(!#kw){
         return winform.msgboxErr("请输入关键字")
     }
-    
-    var html = tieba[kw](pn=0) 
-    var htmlDoc = string.html( html )
-    var links = htmlDoc.queryEles(["class"]="j_th_tit";["tagName"]="a")
-    
-    for i,a in table.eachIndex(links){
-        a.href = "https://tieba.baidu.com" + a.href; 
-    }	
- 
+     
     var htmlNew =  /* 
     <!doctype html>
     <html>
@@ -41,20 +37,45 @@ winform.btnGet.oncommand = function(id,event){
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge" />
         <style type="text/css">
-        html,body{ height:100%; margin:0; } 
+        html,body{ height:100%; margin:0;font: 14px/1.6 Segoe UI, Tahoma, Arial, "Microsoft YaHei";} 
+        .info{font-size:12px;color:#999;}
         </style> 
     </head>
     <body> 
     </body>
     */
-    
     var htmlNewDoc = string.html(htmlNew);
-    var body = htmlNewDoc.queryEle(tagName="body");
-    for(i=1;#links;1){
-        body.pushElement(links[i])
-        body.pushElement( tagName =  "br")
-    }
-     
+    var bodyNew = htmlNewDoc.queryEle(tagName="body");
+    
+    var html = tieba[kw](pn=0) 
+    var threadList  = string.splitEx(html,`<\<li\s+class\=\"\s*j_thread_list>?=`)
+    for(i=1;#threadList;1){
+    	var htmlDoc = string.html( threadList[i] )
+    	var li = htmlDoc.queryEle(["class"]="j_thread_list";["tagName"]="li")
+    	if(!li) continue;
+       
+      
+        var a = li.queryEle(["class"]="j_th_tit";["tagName"]="a")
+        a.href = "https://tieba.baidu.com" + a.href; 
+        
+        var content = li.queryEle(["class"]="threadlist_abs threadlist_abs_onlyline";["tagName"]="div");
+        if(content && content[1]){
+            a.title = content[1].text;
+        }
+        
+        bodyNew.pushElement(a) 
+        
+        var dataField=web.json.parse(string.html.ncr(li["data-field"]));
+        var threadInfo = "作者:"+(dataField.author_nickname || dataField.author_name) +" 回复数:" + dataField.reply_num;
+        var replyer = li.queryEle(["class"]="tb_icon_author_rely j_replyer";["tagName"]="span")
+        if(replyer){
+        	threadInfo = threadInfo + " " + replyer.title;
+        }
+         
+        bodyNew.pushElement(["tagName"]="span";["class"]="info").pushElement(text=threadInfo);
+        bodyNew.pushElement(["tagName"]="br")
+    }	 
+ 
     wb.html = tostring(htmlNewDoc)
 }
 

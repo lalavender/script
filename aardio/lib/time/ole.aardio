@@ -107,8 +107,13 @@ namespace ole{
     	_tostring = function(format,locale){
     		return owner.systemFormat(format,locale);
     	}; 
-    	_serialize = function(){
-    		return ..string.format(`..time.ole(%s,"%s")`,tonumber(owner), owner.format); 
+    	_serialize = function(kernelCall){
+    		if(kernelCall){
+    			return ..string.format(`global.import('time.ole') : ..time.ole(%s,"%s")`,tonumber(owner), owner.format); 	
+    		}
+    		else {
+    			return ..string.format(`..time.ole(%s,"%s")`,tonumber(owner), owner.format); 
+    		}
     	}
 	} 
 	 
@@ -138,7 +143,7 @@ end intellisense*/
 
 /**intellisense(!time_ole)
 year= 年
-dayofweek = 星期
+dayofweek = 星期\n注意修改这个字段不会更新时间值
 day = 日
 month= 月
 hour= 小时

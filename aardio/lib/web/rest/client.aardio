@@ -42,6 +42,11 @@ class client{
 			}
 		};
 		
+		var headers;
+		if(this.beforeRequestHeaders){
+			headers = this.beforeRequestHeaders(params);
+		}
+		
 		if( this.beforeStringifyRequestParameters ){
 			params = this.beforeStringifyRequestParameters(params,codepage);
 		}
@@ -67,10 +72,12 @@ class client{
 
 		var contentType = this.contentType || this.defaultContentType ;
 		if( contentType ==  this.defaultContentType ) contentType = contentType + '; charset=' + this.charset; 
+		
 		var ret,errMsg,errCode = this._http.down(this.lastRequestUrl,params
-			,'\r\nContent-Type:' + contentType ,this.referer,this.acceptType,this.lastRequestMethod,owner._httpFlags); 
+			,..web.joinHeaders('\r\nContent-Type:' + contentType,headers) 
+			,this.referer,this.acceptType,this.lastRequestMethod,owner._httpFlags); 
 		this.contentType = this.defaultContentType;
-
+		
 		//关闭上传下载文件	
 		if( fileSend ){
 			fileSend.close(); //兼容 io.file,web.multipartFormData
@@ -357,7 +364,8 @@ namespace client {
 
 /**intellisense()
 web.rest.client = REST客户端
-web.rest.client() = 创建REST客户端,\n!web_restClient.
+web.rest.client() = !web_restClient.
+web.rest.client(.("UserAgent","代理服务器","绕过代理的主机",连接选项) = 创建REST客户端,所有参数可选,例：\nweb.rest.client("Mozilla/4.0", "HTTP=HTTP://proxyserver:port","localhost,127.0.0.*")\n代理参数语法请参考inet.setProxy函数说明
 !web_restClient.stringifyRequestParameters(提交参数表,代码页) = @.stringifyRequestParameters = function(params,codepage){
 	__/*参数是表对象时调用此函数转换为字符串\n此函数一般由库文件定义，一般调用不应修改此函数\n注意返回的文本格式应与 owner.contentType 一致\n在该函数中可获取或修改对象的 lastRequestUrl, lastRequestMethod 属性*/
 	return params;
@@ -365,6 +373,10 @@ web.rest.client() = 创建REST客户端,\n!web_restClient.
 !web_restClient.beforeStringifyRequestParameters(提交参数,代码页) = @.beforeStringifyRequestParameters = function(params,codepage){
 	__/*可以在该函数中修改提交提交参数表,或在此添加默认参数\n此函数在stringifyRequestParameters之前调用\n参数可能是字符串或者表*/
 	return params; 
+}
+!web_restClient.beforeRequestHeaders(提交参数) = @.beforeRequestHeaders = function(params){
+	__/*每次请求前触发此函数,\nparams参数为本次请求的提交参数,\n可选返回字符串、数组、键值等web.joinHeaders函数支持的HTTP头\n*/
+	return {}; 
 }
 !web_restClient.afterStringifyRequestParameters(提交参数,代码页) = @.afterStringifyRequestParameters = function(params,codepage){
 	__/*此时参数已转换为字符串并准备提交到服务器*/
@@ -400,7 +412,7 @@ web.rest.client() = 创建REST客户端,\n!web_restClient.
 !web_restClient.sendMultipartForm(上传表单,上传进度回调函数) = @.sendMultipartForm( {\n		file = "@__/*上传文件路径字段首字符为@*/"\n	},function(str,sendSize,contentLength){\n        ..io.print("正在上传",sendSize,contentLength);\n    }\n); 
 !web_restClient.sendFile("上传文件路径",上传进度回调函数) = @.sendFile( "上传文件路径" \n    ,function(str,sendSize,contentLength){\n        ..io.print("正在上传",sendSize,contentLength);__\n    }\n); 
 !web_restClient.receiveFile("下载文件路径",下载进度回调函数) = @.receiveFile( "下载文件路径" \n    ,function(str,receiveSize,contentLength){\n        ..io.print("正在下载",receiveSize,contentLength);__\n    }\n); 
-!web_restClient.request(.(网址,参数表,"HTTP动词") = 发送请求,\n该函数不会解析URL中的替换占位符\n省略参数三则使用默认的调用方法\n成功返回数据,失败返回空值,错误信息,错误代码
+!web_restClient.request(.(网址,参数表,"HTTP动词") = 发送请求,\n该函数不会解析URL中的模板参数,\n省略参数三则使用默认的调用方法\n成功返回数据,失败返回空值,错误信息,错误代码
 !web_restClient.head(.(网址,参数表) = 使用该HEAD方法提交请求\n如果该函数返回非null值为成功,请使用lastResponseHeaders获取应答HTTP头\n成功返回数据,失败返回空值,错误信息,错误代码
 !web_restClient.get(.(网址,参数表) = 使用该GET方法提交请求,获取资源\n请求参数将会自动转换为URL附加参数,\n请求参数可以指定表或字符串,如果是表请求前会转换为字符串\n成功返回数据,失败返回空值,错误信息,错误代码
 !web_restClient.post(.(网址,参数表) = 使用该POST方法提交请求,新增或修改资源\n请求参数可以指定表或字符串,如果是表请求前会转换为字符串\n成功返回数据,失败返回空值,错误信息,错误代码
@@ -408,7 +420,8 @@ web.rest.client() = 创建REST客户端,\n!web_restClient.
 !web_restClient.put(.(网址,参数表) = 使用该PUT方法提交请求,替换或更新资源\n请求参数可以指定表或字符串,如果是表请求前会转换为字符串\n成功返回数据,失败返回空值,错误信息,错误代码
 !web_restClient.patch(.(网址,参数表) = 使用该PATCH方法提交请求,更新资源\n请求参数可以指定表或字符串,如果是表请求前会转换为字符串\n成功返回数据,失败返回空值,错误信息,错误代码
 !web_restClient.api( = 定义API对象，使用成员操作符或下标获取API对象的成员时将会自动转换为新的API对象
-!web_restClient.api(.("网址模板","HTTP动词","模式表达式") = 网址模板可使用{name}或{/name}指定占位符,大括号内可使用英文字符或数字,\nAPI对象的下标是表，则表中的键值对用于替换同名占位符,\n否则下标应该是字符串，并且按下标前后顺序替换占位符,{/name}在替换时保留斜杠,\n {...}表示不定个数的占位符,在多次替换时用斜杠拼接下标中的名字，默认在网址模板尾部自动添加{...}占位符。\n\n可选用参数@2指定默认HTTP请求方法,默认为"POST"\n\n如果参数@3指定模式表达式，或者指定包含模式表达式的数组、表,\n则调用string.map函数在服务器结果中搜索并返回搜索结果\n参数@3也可以指定一个转换并返回响应数据的函数\n\n可选在参数@4用 _INTERNET_FLAG_ 前缀常量自定义http请求选项
+!web_restClient.api(.("网址模板","HTTP动词","模式串") = 网址模板可使用 {name}、{/name}、或 {...} 指定模板参数,\n大括号内的参数名可使用英文字符或数字,\n模板参数名首字符为斜杠（例如{/name}）表示使用实参替换后保留斜杠，\n {...} 表示不定个数的模板参数,如使用多个实参替换则自动使用斜杠拼接，\n默认在网址模板尾部自动添加 {...}\n\n返回API对象使用下标指定模板实参，\n如果下标是字符串，按下标出现的前后顺序替换模板参数，\n如果下标是表对象，则表中的键值对用于替换与键同名的模板参数,\n\n可选用参数@2指定HTTP动词,默认值为"POST"\n\n参数@3如果为模式串，则使用模式匹配转换响应数据并返回。\n参数@2如果为函数，则调用该函数转换转换响应数据并返回。\n参数@3如果为数组，则作为string.map的模式参数@2转换响应数据并返回
+!web_restClient.api(.("网址模板","HTTP动词","模式串",HTTP选项) = 可选在参数@4用 _INTERNET_FLAG_ 前缀常量自定义http请求选项\n其他参数用法同上
 !web_restClient.api() = !web_rest_api.
 !web_rest_api.? = 可输入任意资源名\n对象负责转换为资源请求URL\n!web_rest_api.
 !web_rest_api.head = HEAD方法提交请求\n如果该函数返回非null值为成功,请使用lastResponseHeaders获取应答HTTP头\n调用时可以写 head() 或 head.其他资源名()\n请求参数可以指定表或字符串,如果是表请求前会转换为字符串

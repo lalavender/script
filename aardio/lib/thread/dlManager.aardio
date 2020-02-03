@@ -24,7 +24,7 @@ class dlManager {
 	 		
 	 			var send = ..thread.command.send;
 	 			var post = ..thread.command.post;
-				var remoteFile = inet.httpFile( args.url,savepath,args.resumePath,args.userAgent,args.proxy,args.proxyBypass,args.httpFlags));
+				var remoteFile = inet.httpFile(args.url,savepath,args.resumePath,args.userAgent,args.proxy,args.proxyBypass,args.httpFlags);
 				if( !remoteFile ){
 					send( hwndCommand,"onError",id,"参数错误");
 					return;

@@ -26,7 +26,7 @@ lnk._metaProperty = ..util.metaProperty(
 
 		owner.filename = ..io.splitpath(path).file;
 		owner.filepath = path;
-		return true;
+		return owner;
 	};
 	save = function(path){
 		
@@ -373,7 +373,8 @@ end intellisense**/
 !lnkfile.showCmd = 显示参数
 !lnkfile.getIcon() = 返回图标文件路径,以及图标索引
 !lnkfile.setIcon(.(文件路径,图标索引) = 设置图标文件路径\n可以指定ico文件路径,也可指定EXE文件路径用于获取EXE图标\n图标索引可省略,默认为0
-!lnkfile.load(__/*lnk文件路径*/) = 载入快捷方式
+!lnkfile.load(__/*lnk文件路径*/) = 载入快捷方式,返回fsys.lnk对象自身
+!lnkfile.load() = !lnkfile.
 !lnkfile.save(__/*lnk文件存储路径*/) = 保存快捷方式\n如果指定了filename或path属性,参数也可以指定存储目录
 !lnkfile.pinToStartMenu(true) = 快捷方式钉到开始菜单\n不支持的操作系统忽略不执行\n此函数无返回值
 !lnkfile.pinToTaskbar(true) = 锁定到任务栏\n此函数无返回值

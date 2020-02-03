@@ -722,10 +722,10 @@ namespace win.form{
 			if(lParam){ 
 				var nmhdr;
 				var id = wParam; 
-				var ctrl = this._ctrlId[id];
-				if(!ctrl && !id){
-					nmhdr = ..raw.convert(topointer(lParam),::NMHDR() )
-					ctrl = this._ctrlHwnd[nmhdr.hwndFrom]
+				var ctrl = this._ctrlId[id] : this._ctrlHwnd[id];
+				if(!ctrl){
+					nmhdr = ..raw.convert(topointer(lParam),::NMHDR() );
+					ctrl = this._ctrlHwnd[nmhdr.hwndFrom];
 				}
 				 
 				if(ctrl){
@@ -812,10 +812,6 @@ namespace win.form{
 				}
 			}
 			
-			if(  this[["tooltipCtrl"]][["destroy"]] ){
-				this.tooltipCtrl.destroy();
-				this.tooltipCtrl = null;
-			}
 			if( this[["(ownFontHandle)"]] ){  
 				::DeleteObject( this[["(ownFontHandle)"]]  );
 				this[["(ownFontHandle)"]] = null;

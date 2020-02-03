@@ -80,7 +80,9 @@ NewControl(.(tab,progId) = 创建COM控件,可选使用参数@3指定tlb类型�
 ReleaseConnection(.(com对象, 事件接口, cookie) = 释放事件接口,cookie来自com.AddConnection的返回值\n即使不调用此函数,所有事件接口会自动释放
 ReleaseConnection(.(com对象) = 释放默认事件接口\n指释放com.Connect挂接的事件\n即使不调用此函数,所有事件接口会自动释放
 Release(__) = 释放com对象或IUnknown指针,也可用于释放com.interface创建的对象\n如果参数是pointer类型指针调用IUnknown接口Release函数使引用计数减一\n如果参数是cdata内核对象或自元表中返回cdata,则调用cdata的_gc析构函数
-DumpTypeInfo(__/*com对象*/) =  在控制台输出com对象类型信息、成员函数列表,\n请先打开控制台
+DumpTypeInfo(  =  输出com对象类型信息、成员函数列表
+DumpTypeInfo(.(comObject) = 在控制台输出com对象类型信息、成员函数列表,\n请先打开控制台
+DumpTypeInfo(.(comObject,true) = 返回一个字符串\n包含com对象类型信息、成员函数列表,\n不输出到控制台
 GetTypeInfo(__/*com对象*/) = 返回类型信息
 Variant( = 创建VARIANT对象\n可用于API中VARIANT*API函数中可自动转换为pointer指针类型\n也可用于普通COM参数
 Variant(.(指针,true) = 创建VARIANT对象\n如果参数@2为true,则参数@1必须为VARIANT指针\n调用VariantCopyInd函数拷贝参数指定的源VARIANT对象
@@ -104,6 +106,7 @@ end intellisense**/
 
 
 /**intellisense(!comTypeInfo)
+DumpTypeInfo() = 返回一个字符串,\n列出此类型所有的成员
 GetTypeLib() = 返回类型库\n!comTypeLib.
 GetFuncDesc(__/*索引*/) = 返回函数描述\n注意超始索引为1
 GetVarDesc(__/*索引*/) = COM变量/常量描述\n注意超始索引为1

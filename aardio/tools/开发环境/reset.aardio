@@ -1,13 +1,16 @@
 //清理重置工具
 import win.ui;
 /*DSG{{*/
-var winform = win.form(text="aardio - 清理注册表配置信息";right=500;bottom=235;border="dialog frame";max=false;min=false)
+var winform = win.form(text="aardio - 清理重置工具（ 建议将本工具生成EXE文件后备用 ）";right=558;bottom=320;border="dialog frame";max=false;min=false)
 winform.add(
-button={cls="button";text="一键清理";left=236;top=158;right=439;bottom=221;note="清理本软件配置信息";z=1};
+button={cls="button";text="清理重置";left=292;top=248;right=495;bottom=311;font=LOGFONT(h=-13);note="清理本软件配置信息";z=1};
 static={cls="static";text="
-    请先关闭aardio开发环境，然后点击下面的『一键清理』按钮：清除系统注册表中的aardio源码文件、工程文件格式关联、以及删除注册表中本软件的配置等，你可以右键点击本工具并查看源码了解详情。
+    请先关闭aardio开发环境，然后点击下面的『清理重置』按钮：清除系统注册表中的aardio源码文件、工程文件格式关联、以及删除注册表中本软件的配置等，你可以右键点击本工具并查看源码了解详情。
 
-    『一键清理』以后，您将不能双击aardio源码或工程文件直接启动，也无法通过桌面右键菜单新建aardio源码文件， 如果您再次运行aardio，则相关设置可重置为默认设置，你也可以运行本工具恢复aardio界面布局到默认设置。";left=30;top=18;right=456;bottom=146;transparent=1;z=2}
+    『清理重置』以后，您将不能双击aardio源码或工程文件直接启动，也无法通过桌面右键菜单新建aardio源码文件， 如果您再次运行aardio，则相关设置可重置为默认设置，你也可以运行本工具恢复aardio界面布局到默认设置。
+    
+    『清理重置』可修复 aardio 无法启动的问题（ 为避免此问题，建议将 aardio 存放在固定的目录，不要放在不同位置运行 ）。
+    ";left=25;top=15;right=541;bottom=245;font=LOGFONT(h=-13);transparent=1;z=2}
 )
 /*}}*/
 

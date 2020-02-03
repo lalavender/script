@@ -1,1 +1,1 @@
-﻿{btnClose=true;lnkDown=true;beforeSave=null;chkRestart=true;chkReset=true;btnStart=true;afterLoad=null}
+﻿{btnClose=false;afterLoad=null;beforeSave=null;chkRestart=true;chkReset=true;btnStart=true;lnkDown=false}

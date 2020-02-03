@@ -235,6 +235,12 @@ var nodePrototype = {
 		
 		return true;	
 	};
+	pushXml = function(html){
+		var r;
+		var nodes = ..string.xml(html,owner@.xmlElementType,owner@.optionalTags); 
+		for(i=1;#nodes;1){r = owner.pushElement(nodes[1]);} 
+		return r;
+	};
 	pushElement = function(ele,root){
 		if(ele.tagName && ( ele.tagName != "tagName") ){
 			var t = type(owner[ele.tagName]);
@@ -253,11 +259,20 @@ var nodePrototype = {
 			ele@.xmlParentNode = owner;
 			ele@.xmlRootNode = owner@.xmlRootNode : root;
 		}
+		
+		return ele; 
 	}
 }
 
 createElementMeta = function(parent,root){
-	return { xmlParentNode = parent; xmlRootNode = ( parent ? parent.xmlRootNode ) : root ; _get = nodePrototype;_tostring = nodePrototype.outerXml;_type="object" }
+	return { 
+		xmlParentNode = parent; 
+		xmlRootNode = ( parent ? parent.xmlRootNode ) : root ; 
+		_get = nodePrototype;
+		_tostring = nodePrototype.outerXml;
+		_readonly = false;
+		_type = "object";
+	}
 }
 
 var function parseProperties (ele, str) {  
@@ -274,7 +289,7 @@ var function parseProperties (ele, str) {
 		} 
 	) 
 }
- 
+
 class xml{
 	ctor( xmlstr,xmlElementType,optionalTags ){ {
 		if(!xmlstr) error("XML文本参数不能为空",2);
@@ -288,6 +303,7 @@ class xml{
 		this@ = createElementMeta();
 		this@.xmlRootNode = this;
 		this@.xmlElementType = xmlElementType;
+		this@.optionalTags = optionalTags;
 		
 		var nodeStack = {};
 		var topNode = this;
@@ -383,15 +399,12 @@ class xml{
 				if(optionalTags){
 					var tags = optionalTags[lower(tagName)];
 					if(tags){
-						while(#nodeStack>1){
+						if(#nodeStack>1){
 							var lastNode = nodeStack[#nodeStack];
 							if(lastNode && lastNode.tagName && tags[lower(lastNode.tagName)]){
 								var ele = pop(nodeStack);
 								topNode = nodeStack[#nodeStack];
 								topNode.pushElement( ele,this );
-							}
-							else {
-								break;
 							}
 						}	
 					}
@@ -406,15 +419,12 @@ class xml{
 				if(optionalTags){
 					var tags = optionalTags[lower(tagName)];
 					if(tags){
-						while(#nodeStack>1){
+						if(#nodeStack>1){
 							var lastNode = nodeStack[#nodeStack];
 							if(lastNode && lastNode.tagName && tags[lower(lastNode.tagName)]){
 								var ele = pop(nodeStack);
 								topNode = nodeStack[#nodeStack];
 								topNode.pushElement( ele,this );
-							}
-							else {
-								break;
 							}
 						}	
 					}
@@ -487,8 +497,10 @@ class xml{
 				tagfrom,tagto,tagName = find(xmlstr, "\<(<@![CDATA[@>|<\/[\?!\w_\-\::]+>)(.*?)\>" , strfrom);	
 				if( tagName == "![CDATA[" ) continue;
 				
-				slash_front = "/";
-				tagName = ..string.right(tagName,-2);
+				if(tagName){
+					slash_front = "/";
+					tagName = ..string.right(tagName,-2);	
+				}
 				continue;
 			}
 			tagfrom,tagto,slash_front,tagName,properties,slash_back = find(xmlstr, elementPattern , strfrom);	
@@ -538,7 +550,10 @@ string.xml() = !string_xml.
 !string_xml.encoding = 源文本字符集
 !string_xml.codepage = 源文本代码页
 !string_xml.? = !string_xml.
-!string_xml.pushElement(节点属性表) = @.pushElement(\n    tagName = \n    cdata = \n    text = __/*注意text,cdata,tagName三个属性只能指定一个*/\n)
+!string_xml.pushElement(节点属性表) = @.pushElement(\n    tagName = \n    cdata = \n    text = __/*注意text,cdata,tagName三个属性只能指定一个\n返回新增的节点对象*/\n)
+!string_xml.pushXml(__) = 将字符串参数@1中指定的XML添加到当前节点的子节点,\n返回新增XML中最后一个根节点
+!string_xml.pushElement() = !string_xml.
+!string_xml.pushXml() = !string_xml.
 !string_xml.getParent() = 获取父节点
 !string_xml.remove() = 如果存在父节点,在父节点中移除此节点
 string.xml.ncr(__) = NCR字符编码、HTML实体字符还原为UTF8文本

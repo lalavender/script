@@ -133,7 +133,7 @@ var BROWSEINFO = class {
 	int iImage;
 }
 
-opendir = function( dir,hwndOwner,caption,title='请选择目录'u ){
+opendir = function(dir,hwndOwner,caption,title='请选择目录'u ){
     dir = ..io.exist(dir) 
 
 	var browseCallbackProc = function( hwnd, uMsg, lp, pData) {  

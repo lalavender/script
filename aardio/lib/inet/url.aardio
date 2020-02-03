@@ -9,6 +9,7 @@ is = function(url,urlis){
 
 UrlCombine = Shlwapi.api("UrlCombineW", "int(ustring base,ustring relative,ustring& combined,INT& size, INT flags)" )
 joinpath = function(base,relative,flag=0){ 
+    if(!#relative)return base;
 	var hr,url,cch = UrlCombine(base,relative,0,0,flag);
 	var hr,url = UrlCombine(base,relative,cch,cch,flag);
 	if( !hr) return url;
@@ -106,16 +107,14 @@ stringifyParameters = function(param,cp,cmp){
 splitParameters = function(param,delimiter,cp){ 
     if( (param[1] == '?'#) && (delimiter===null) ) param = ..string.right(param,-2);
     
-	var list,k = {};
+	var list,k = {@{_readonly=false;_type="object"}};
 	for line in ..string.lines(param,delimiter : "\&\s*") { 
 		var nv = ..string.split(line,"=",2);
 		if(#nv==2) {
 			k = decode(nv[1],cp);
 			if( k ){
 				k = ..string.lower(k);
-				if( ( list[k] === null ) || (k[1]!='_'#) ){
-					list[k] = decode( nv[2],cp );
-				}
+				list[k] = decode( nv[2],cp );
 			} 
 		}
 	}
@@ -203,7 +202,7 @@ getFileName = function(url,d = "index.html"){
 /**intellisense(inet.url)
 is(url,_URLIS__) = 检测URL 
 joinpath( = 当对于当前URL的相对路径转换为完整URL\n注意该函数忽略文件名,简单拼接请使用append函数替代
-joinpath(.("当前URL",相对路径,_URL__) = 当对于当前URL的相对路径转换为完整URL\n可选使用参数三指定转换选项
+joinpath(.("当前URL",相对路径,_URL__) = 当对于当前URL的相对路径转换为完整URL\n相对路径如果为空则直接返回参数@1,\n可选使用参数三指定转换选项
 appendExtraInfo(.(url,附加参数) = 在URL后追加参数\n参数首字符不能是问号
 append( = 拼接URL
 append(.(url目录,url子路径,->->->) = 支持不定个数参数\n第一个参数无论是否以"/"字符结束都认为是一个目录

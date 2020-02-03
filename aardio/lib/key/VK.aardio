@@ -342,7 +342,7 @@ VK_NAME = {
 [177]="MEDIA_PREV_TRACK";
 [28]="CONVERT";
 [95]="SLEEP";
-[187]="+";
+[187]="=";
 [234]="OEM_JUMP";
 [108]="SEPARATOR";
 [117]="F6";
